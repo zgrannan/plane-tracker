@@ -2,6 +2,7 @@
 #include <cv.h>
 #include <highgui.h>
 #include <vector>
+#include "plane_tracker.h"
 
 /* Plane detection flags */
 #define USE_VELOCITY true
