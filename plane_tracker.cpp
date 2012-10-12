@@ -11,82 +11,120 @@
 #define USE_PLANE_COLOR true
 
 /* Color -> Black and White conversion technique */
-#define RAW_CONVERT 0
+#define THRESHHOLD 0
 #define ERODE 1
 #define SOBEL 2
 #define ADAPTIVE_THRESHHOLD 3
 
+/* The erosion type to use for cvErode */
 #define EROSION_TYPE MORPH_RECT
 // #define EROSION_TYPE MORPH_CROSS
 // #define EROSION_TYPE MORPH_ELLIPSE
 #define EROSION_SIZE 5
 
+/* The default scale to display images at */
 #define DEFAULT_SCALE 0.25
 
 using namespace cvb;
 using namespace std;
 using namespace cv;
 
+/**
+ * Displays the image on the screen for debugging purposes
+ */
 void showImage(string name, IplImage* image, float scale = DEFAULT_SCALE){
 	CvSize newSize = cvSize((int)(image->width * scale),(int)(image->height * scale));
-	cerr <<"New size: ("<<newSize.width<<","<<newSize.height<<")\n";
 	IplImage* newImage = cvCreateImage(newSize,image->depth,image->nChannels);
 	cvResize(image,newImage);
 	cvShowImage(name.c_str(),newImage);
-//	delete newImage;
+	// TODO: Free the memory for newImage
 }
-struct PlaneData {
+
+class PlaneData {
 	CvBlob* planeBlob;
-	IplImage* planeImage;
-	IplImage* labeledImage;
-	double dx, dy;
+	IplImage* image;
 	
-	PlaneData(CvBlob* planeBlob, IplImage* planeImage, IplImage* labeledImage) {
+	PlaneData(CvBlob* planeBlob, IplImage* image) {
 		this->planeBlob = planeBlob;
-		this->planeImage = planeImage;
-		this->labeledImage = labeledImage;
-		dx = planeBlob->centroid.x - labeledImage->width / 2;
-		dy = planeBlob->centroid.y - labeledImage->height / 2;
+		this->image = image;
 	}
 
 };
 
-vector<double>* getVelocityVector(CvBlob* currentPlaneBlob, CvBlob* lastPlaneBlob) {
+vector<double>* getVelocityVector(CvBlob* currentBlob, CvBlob* lastBlob) {
 	return NULL;
-	//new vector<double>(currentPlaneBlob->centroid.x - lastPlaneBlob->centroid.x,
-	//		currentPlaneBlob->centroid.y - lastPlaneBlob->centroid.y);
 }
 
+/**
+ * Converts a full-color image to a black and white image that can be used
+ * for blob detection.
+ */
 IplImage* fullColorToBW (IplImage* image, int conversionMethod){
 	IplImage* binaryImage = cvCreateImage(cvGetSize(image),8,1);
-	if (conversionMethod == RAW_CONVERT){
+
+	/**
+	 * Very basic conversion to a black and white image. This yields
+	 * very poor results
+	 */
+	if (conversionMethod == THRESHHOLD){
+		// Convert the color image into a grayscale image
 		cvCvtColor(image,binaryImage,CV_RGB2GRAY);
+		// Convert the grayscale image into a black-and-white image
 		cvThreshold(binaryImage,binaryImage,128,255,CV_THRESH_BINARY);
-	} else if (conversionMethod == ERODE){
+	} 
+	
+	/**
+	 * Uses erosion to increase the saliency of the plane, and then does a threshhold
+	 * conversion to BW. This yields mediocre results
+	 */
+	if (conversionMethod == ERODE){
 		IplImage* erodedImage = cvCreateImage(cvGetSize(image),image->depth,image->nChannels);
 		Mat imageMat = image, erodedMat = erodedImage;
+
+		// Define the erosion operator
 		Mat element = getStructuringElement(EROSION_TYPE,
 											Size(2 * EROSION_SIZE + 1,2 * EROSION_SIZE + 1),
 											Point(EROSION_SIZE,EROSION_SIZE));
+		// Apply the erosion operator
 		erode(imageMat,erodedMat,element);
 		showImage("Eroded image",erodedImage);
-		binaryImage = fullColorToBW(erodedImage,RAW_CONVERT);
-	} else if (conversionMethod == SOBEL){
+
+		// Convert the image to black and white
+		binaryImage = fullColorToBW(erodedImage,THRESHHOLD);
+	} 
+	/**
+	 * Uses a sobel filter to get the edges from the image. In theory this should yield the 
+	 * outline of the plane, making it good for blob detection. But it's not working 
+	 * right now
+	 */
+	if (conversionMethod == SOBEL){
+		// Using the sobel operation requires destination image with 16-bit depth per channel
 		IplImage *deepImage= cvCreateImage(cvGetSize(image),16,1);
-		Mat sobeled, imageMat = image, grad_x,grad_y,abs_grad_x,abs_grad_y;	
-		cvCvtColor(image,binaryImage,CV_RGB2GRAY);
+		// Convert to grayscale 
+		cvCvtColor(image,binaryImage,CV_RGB2GRAY); //TODO: Only use the hue channel
+		// Apply sobel filter
 		cvSobel(binaryImage,deepImage,1,1,1);
 		showImage("Sobel image",deepImage);
-	} else if (conversionMethod == ADAPTIVE_THRESHHOLD){
+	} 
+	/**
+	 * Uses adaptive threshholding to yield a black and white image. This gets the best results
+	 * so far
+	 */
+	if (conversionMethod == ADAPTIVE_THRESHHOLD){
 		IplImage *hsvImage = cvCreateImage(cvGetSize(image),image->depth,image->nChannels);
+		// Create a hue-saturation-value version of this image
 		cvCvtColor(image,hsvImage,CV_BGR2HSV);
+		// Isolate the hue channel
 		cvSplit(hsvImage,binaryImage,NULL,NULL,NULL);
-		showImage("Hue image",binaryImage);
+		showImage("Hue channel isolated",binaryImage);
+		// Apply adaptive threshholding
 		cvAdaptiveThreshold(binaryImage,binaryImage,255,ADAPTIVE_THRESH_MEAN_C,THRESH_BINARY,41,20);
-		
+		showImage("Threshholding applied", binaryImage);
+		// Erode the image to increase the saliency of the plane	
 		cvErode(binaryImage,binaryImage,0,4);
+		showImage("Erosion applied", binaryImage);
+		// Invert the colors for blob detection to work
 		cvNot(binaryImage,binaryImage);
-		showImage("Adaptive Image", binaryImage);
 	}
 	return binaryImage;
 }
@@ -145,7 +183,6 @@ int main(int argc, char** argv){
 
 	PlaneData* data = findPlane(image,previousPlanes,skyHSV,planeHSV);
 
-	//showImage("Labeled image", data->labeledImage);
 	cvWaitKey(0);
 	return 0;
 }
