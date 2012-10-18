@@ -10,6 +10,7 @@ class PlaneData {
 public:
 	CvBlob* planeBlob;
 	IplImage* image;
+	vector<int> getDisplacement();
 	PlaneData(CvBlob* planeBlob, IplImage* image);
 };
 
