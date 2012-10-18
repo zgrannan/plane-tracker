@@ -40,21 +40,19 @@ void showImage(string name, IplImage* image, float scale = DEFAULT_SCALE){
 	// TODO: Free the memory for newImage
 }
 
-vector<int> VisualPlaneData::getDisplacement(){
-	double imageCenterX = image->cols / 2.0;
-	double imageCenterY = image->rows / 2.0;
-	double planeX = planeBlob->centroid.x;
-	double planeY = planeBlob->centroid.y;
-	int dx = planeX - imageCenterX;
-	int dy = planeY - imageCenterY;
-	vector<int> result = {dx,dy};
-	return result;
-}
-
-vector<double> getVelocityVector(CvBlob* currentBlob, CvBlob* lastBlob) {
-	double dx = currentBlob->centroid.x - lastBlob->centroid.x;
-	double dy = currentBlob->centroid.y - lastBlob->centroid.y;
+class PlaneData {
+	CvBlob* planeBlob;
+	IplImage* image;
 	
+	PlaneData(CvBlob* planeBlob, IplImage* image) {
+		this->planeBlob = planeBlob;
+		this->image = image;
+	}
+
+};
+
+vector<double>* getVelocityVector(CvBlob* currentBlob, CvBlob* lastBlob) {
+	return NULL;
 }
 
 /**
@@ -151,7 +149,7 @@ CvBlobs* findCandidates(IplImage *image, vector<int>* skyHSV){
 	}
 }
 
-VisualPlaneData* findPlane(IplImage* image, list<VisualPlaneData*>* previousPlanes, vector<int>* skyHSV, vector<int>* planeHSV){
+PlaneData* findPlane(IplImage* image, vector<PlaneData*>* previousPlanes, vector<int>* skyHSV, vector<int>* planeHSV){
 	
 	assert(image != NULL);
 	assert(previousPlanes != NULL);
@@ -179,11 +177,11 @@ int main(int argc, char** argv){
 	}
 	
 	IplImage* image = cvLoadImage(argv[1]);
-	vector<VisualPlaneData*>* previousPlanes = new vector<VisualPlaneData*>();
+	vector<PlaneData*>* previousPlanes = new vector<PlaneData*>();
 	vector<int>* skyHSV= new vector<int>();
 	vector<int>* planeHSV = new vector<int>();
 
-	VisualPlaneData* data = findPlane(image,previousPlanes,skyHSV,planeHSV);
+	PlaneData* data = findPlane(image,previousPlanes,skyHSV,planeHSV);
 
 	cvWaitKey(0);
 	return 0;

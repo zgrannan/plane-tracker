@@ -1,5 +1,8 @@
 #ifndef VISION_H
 #define VISION_H 
+#include <vector>
+using std::vector;
+class CvBlob;
 
 /**
  * This class represents the result of a successful CV plane detection
@@ -31,25 +34,25 @@ public:
  * the image, taking only the sky color into account. Later filtering will 
  * be performed on this data to reduce the number of blobs found
  */
-CvBlobs* findCandidates(IplImage *image, vector<int>* skyHSV){
+CvBlobs* findCandidates(IplImage *image, vector<int>* skyHSV);
 
 /**
  * Converts the image into a binary image that is suitable for blob detection, using 
  * a given conversion method. This does most of the CV work.
  */
-IplImage* fullColorToBW (IplImage* image, int conversionMethod){
+IplImage* fullColorToBW (IplImage* image, int conversionMethod);
 
 /**
  * This function attempts to find the plane from the image, and uses CV along with some
  * heurestics to determine the plane's location.
  */
-PlaneData* findPlane(IplImage* image, vector<PlaneData*>* previousPlanes, vector<int>* skyHSV, vector<int>* planeHSV){
+PlaneData* findPlane(IplImage* image, vector<PlaneData*>* previousPlanes, vector<int>* skyHSV, vector<int>* planeHSV);
 
 /**
  * This determines the displacement between the centroids of the blobs. This is used for 
  * velocity calculation
  */
-vector<double>* getDisplacement(CvBlob* currentBlob, CvBlob* lastBlob) {
+vector<double>* getDisplacement(CvBlob* currentBlob, CvBlob* lastBlob);
 
 /**
  * This is a test utility that displays an image on the screen at a given
@@ -57,6 +60,6 @@ vector<double>* getDisplacement(CvBlob* currentBlob, CvBlob* lastBlob) {
  * name: The window name
  * scale: The scale rate (1.0 = normal resolution)
  */
-void showImage(string name, IplImage* image, float scale){
+void showImage(string name, IplImage* image, float scale);
 
 #endif
