@@ -2,17 +2,17 @@
 #define FRAME_ANALYZER_ACTOR_H
 
 #include <Theron/Theron.h>
-
-class ImageMessage;
+#include "Messages.h"
 
 class FrameAnalyzerActor : public Theron::Actor {
 public:
-	explicit Actor(Theron::Framework &framework, Theron::Address multimodalActor) : Theron::Actor(framework) {
-		RegisterHandler(this, &Actor::Handler);
+	FrameAnalyzerActor(Theron::Framework &framework, Theron::Address multimodalActor) : Theron::Actor(framework) {
+		RegisterHandler(this, &FrameAnalyzerActor::Handler);
 	}
 private:
     RelativePositionMessage calculateRelativePosition(ImageMessage* message);
-	void Handler(const ImageMessage* message, const Theron::Address sender);
+	void Handler(const ImageMessage& message, const Theron::Address from){}
     Theron::Address multimodalActor;
 };
 
+#endif

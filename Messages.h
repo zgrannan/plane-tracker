@@ -1,6 +1,8 @@
 #ifndef MESSAGES_H
 #define MESSAGES_H
 
+class IplImage;
+
 class ImageMessage{
 	public:
 		IplImage* image;
@@ -22,8 +24,8 @@ class PositionMessage{
 		PositionMessage(double pan, double tilt): pan(pan), tilt(tilt){}
 };
 
-class RelativePositionMessage: PositionMessage;
-class AbsolutePositionMessage: PositionMessage;
+class RelativePositionMessage: PositionMessage{};
+class AbsolutePositionMessage: PositionMessage{};
 
 
 #endif

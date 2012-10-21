@@ -1,15 +1,17 @@
 #ifndef GPSRECIEVER_INTERFACE_H 
 #define GPSRECIEVER_INTERFACE_H 
 
-class boost::serial_port;
+#include <boost/asio.hpp>
+#include <Theron/Theron.h>
+
 class GPSDataMessage;
-class Theron::Address;
-class GPSRecieverInterface: ListeningInterface {
+
+class GPSRecieverInterface {
   GPSRecieverInterface(Theron::Framework framework, Theron::Address georeferencingActor);
 private: 
   void workerFunction();
   void sendGPS(GPSDataMessage message);
-  boost::serial_port port;
+  boost::asio::serial_port port;
   Theron::Address georeferencingActor;
   Theron::Framework framework;
 };

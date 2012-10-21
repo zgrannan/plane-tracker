@@ -2,21 +2,20 @@
 #define FRAME_ANALYZER_ACTOR_H
 
 #include <Theron/Theron.h>
-
-class GPSDataMessage;
+#include "Messages.h"
 
 class GeoreferencingActor : public Theron::Actor {
 public:
-	explicit Actor(Theron::Framework &framework, double lat, double lon, double alt, Theron::Address multiModalActor) : Theron::Actor(framework) {
+	GeoreferencingActor(Theron::Framework &framework, double lat, double lon, double alt, Theron::Address multiModalActor) : Theron::Actor(framework) {
         trackerLatitude = lat;
         trackerLongitude = lon;
         trackerAltitude = alt;
-		RegisterHandler(this, &Actor::Handler);
+		RegisterHandler(this, &GeoreferencingActor::Handler);
 	}
 private:
-	void Handler(const GPSDataMessage* message, const Theron::Address sender);
+	void Handler(const GPSDataMessage& message, const Theron::Address from);
 	AbsolutePositionMessage calculateAbsolutePosition(GPSDataMessage * gpsData);
-    const double trackerLatitude,trackerLongitude,trackerAltitude;
+    double trackerLatitude,trackerLongitude,trackerAltitude;
     Theron::Address multiModalActor;
 };
 
