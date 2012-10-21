@@ -7,10 +7,12 @@ class ImageMessage;
 
 class FrameAnalyzerActor : public Theron::Actor {
 public:
-	explicit Actor(Theron::Framework &framework) : Theron::Actor(framework) {
+	explicit Actor(Theron::Framework &framework, Theron::Address multimodalActor) : Theron::Actor(framework) {
 		RegisterHandler(this, &Actor::Handler);
 	}
 private:
+    RelativePositionMessage calculateRelativePosition(ImageMessage* message);
 	void Handler(const ImageMessage* message, const Theron::Address sender);
+    Theron::Address multimodalActor;
 };
 

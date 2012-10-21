@@ -8,8 +8,15 @@ class GPSDataMessage;
 class MultimodalActor : public Theron::Actor {
 public:
 	explicit MultimodalActor(Theron::Framework &framework) : Theron::Actor(framework) {
-		RegisterHandler(this, &Actor::Handler);
+        this->framework = framework;
+        port.open("/dev/ttys1");
+		RegisterHandler(this, &Actor::GPSHandler);
+        RegisterHandler(this, &Actor::VisionHandler);
 	}
 private:
+  void GPSHandler(const AbsolutePositionMessage &message, const Theron::Address sender);
+  void VisionHandler(const RelativePositionMessage &message, const Theron::Address sender);
+  void instructGimbal(const PositionMessage &message);
+  boost::serial_port port;
 };
 

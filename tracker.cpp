@@ -10,9 +10,6 @@ int main(int argc, char* argv[]){
 	MultimodalActor multimodalActor(framework);
 	FrameAnalyzerActor frameAnalyzerActor(framework,multimodalActor.getAddress());
 	GeoreferencingActor = georeferencingActor(framework,multimodalActor.getAddress());
-	CvCapture* camera = cvCaptureFromCam(-1);
-	VideoRecieverInterface* videoInterface = new VideoRecieverInterface(framework,camera,frameAnalyzerActor.getAddress());
-	GPSRecieverInterface* gpsRecieverInterface = new GPSRecieverInterface(framework,serialConnection, georeferencingActor.getAddress());
-	videoInterface->startListening();
-	gpsRecieverInterface->startListening();
+	VideoRecieverInterface* videoInterface = new VideoRecieverInterface(framework,frameAnalyzerActor.getAddress());
+	GPSRecieverInterface* gpsRecieverInterface = new GPSRecieverInterface(framework, georeferencingActor.getAddress());
 }
