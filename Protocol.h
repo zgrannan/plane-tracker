@@ -1,7 +1,7 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-class std::string;
+class string;
 class GPSDataMessage;
 
 namespace Protocol {

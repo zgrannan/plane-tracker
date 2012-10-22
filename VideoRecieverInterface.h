@@ -4,14 +4,14 @@
 
 class IplImage;
 
-class VideoRecieverInterface : ListeningInterface {
-  VisionRecieverInterface(Theron::Framework framework, Theron::Address frameAnalyzerActor);
+class VideoRecieverInterface {
+  VideoRecieverInterface(Theron::Framework framework, Theron::Address frameAnalyzerActor);
 private:
 	void sendImage(IplImage* image);
     void workerFunction();
     Theron::Framework framework;
     Theron::Address frameAnalyzerActor;
-    Theron::Reciever reciever;
+    Theron::Receiver reciever;
 };
 
 #endif
