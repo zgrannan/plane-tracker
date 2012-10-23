@@ -5,6 +5,8 @@
 #include <boost/asio.hpp>
 #include "Messages.h"
 
+using namespace Messages;
+
 class MultimodalActor : public Theron::Actor {
 public:
 	explicit MultimodalActor(Theron::Framework &framework) : Theron::Actor(framework) {

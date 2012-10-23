@@ -1,19 +1,22 @@
-#include "FrameAnalyzerActor.h"
 #include <Theron/Theron.h>
-#include "vision.h"
+#include "FrameAnalyzerActor.h"
+#include "Vision.h"
+#include "Messages.h"
 
-void FrameAnalyzerActor::Handler(const ImageMessage* message, const Theron::Address sender){
-  RelativePositionMessage positionMessage = calculateRelativePosition(message);
+using namespace Vision;
+
+void FrameAnalyzerActor::Handler(const ImageMessage& message, const Theron::Address sender){
+  RelativePositionMessage positionMessage = this->calculateRelativePosition(message);
   Send(positionMessage, multimodalActor);
 }
 
-RelativePositionMessage calculateRelativePosition(ImageMessage* message){
+RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const ImageMessage& message){
   vector<VisualPlaneData*>* previousPlanes = new vector<VisualPlaneData*>();
   vector<int>* skyHSV= new vector<int>();
   vector<int>* planeHSV = new vector<int>();
 
-  VisualPlaneData* data = findPlane(image,previousPlanes,skyHSV,planeHSV);
+  VisualPlaneData* data = findPlane(message.image,previousPlanes,skyHSV,planeHSV);
   double tilt = data->getDisplacement()[0];
-  double plan = data->getDisplacement()[1];
+  double pan = data->getDisplacement()[1];
   return RelativePositionMessage(pan,tilt);
 }

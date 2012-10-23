@@ -1,31 +1,42 @@
 #ifndef MESSAGES_H
 #define MESSAGES_H
+#include <cv.h>
 
-class IplImage;
+using namespace cv;
 
-class ImageMessage{
-	public:
-		IplImage* image;
-		ImageMessage(IplImage* image): image(image){}
-};
+namespace Messages{
 
-class GPSDataMessage{
-	public:
-		double lat, lon, alt;
-		GPSDataMessage(double lat, double lon, double alt): lat(lat),lon(lon),alt(alt){}
-};
+  class ImageMessage{
+    public:
+      IplImage* image;
+      ImageMessage(IplImage* image): image(image){}
+  };
 
-class GPSLostMessage;
-class VideoLostMessage;
+  class GPSDataMessage{
+    public:
+      double lat, lon, alt;
+      GPSDataMessage(double lat, double lon, double alt): lat(lat),lon(lon),alt(alt){}
+      GPSDataMessage(): lat(0),lon(0),alt(0){}
+  };
 
-class PositionMessage{
-	public:
-		double pan, tilt;
-		PositionMessage(double pan, double tilt): pan(pan), tilt(tilt){}
-};
+  class GPSLostMessage{};
+  class VideoLostMessage{};
 
-class RelativePositionMessage: PositionMessage{};
-class AbsolutePositionMessage: PositionMessage{};
+  class PositionMessage{
+    public:
+      double pan, tilt;
+      PositionMessage(double pan, double tilt): pan(pan), tilt(tilt){}
+  };
 
+  class RelativePositionMessage: public PositionMessage{
+    public:
+      RelativePositionMessage(double pan, double tilt): PositionMessage(pan,tilt){}
+  };
+
+  class AbsolutePositionMessage: public PositionMessage{
+    public:
+      AbsolutePositionMessage(double pan, double tilt): PositionMessage(pan,tilt){}
+  };
+}
 
 #endif

@@ -29,3 +29,17 @@ double Protocol::parseLatitudeOrLongitude(string input){
   double minutesFraction = minutes / 60.0;
   return (double)degrees + minutesFraction;
 }
+
+vector<char> Protocol::getSerialBytesForArduino(const RelativePositionMessage& message){
+  string byteString = "START RELATIVE " + message.pan + " " + message.tilt + " END";
+  vector<char> byteVector;
+  memcpy(byteString,byteVector,byteString.length);
+  return byteVector;
+}
+
+vector<char> Protocol::getSerialBytesForArduino(const AbsolutePositionMessage& message){
+  string byteString = "START ABSOLUTE" + message.pan + " " + message.tilt + " END";
+  vector<char> byteVector;
+  memcpy(byteString,byteVector,byteString.length);
+  return byteVector;
+}
