@@ -19,25 +19,27 @@ namespace Messages{
       GPSDataMessage(): lat(0),lon(0),alt(0){}
   };
 
-  class GPSLostMessage{};
-  class VideoLostMessage{};
 
   class PositionMessage{
     public:
       double pan, tilt;
-      PositionMessage(double pan, double tilt): pan(pan), tilt(tilt){}
+      bool positionLost;
+      PositionMessage(double pan, double tilt): pan(pan), tilt(tilt), positionLost(false){}
+      PositionMessage(): pan(0), tilt(0), positionLost(true){}
       virtual vector<char> toBytes() const = 0;
   };
 
   class RelativePositionMessage: public PositionMessage{
     public:
       RelativePositionMessage(double pan, double tilt): PositionMessage(pan,tilt){}
+      RelativePositionMessage(): PositionMessage(){}
       vector<char> toBytes() const;
   };
 
   class AbsolutePositionMessage: public PositionMessage{
     public:
       AbsolutePositionMessage(double pan, double tilt): PositionMessage(pan,tilt){}
+      AbsolutePositionMessage(): PositionMessage(){}
       vector<char> toBytes() const;
   };
 }

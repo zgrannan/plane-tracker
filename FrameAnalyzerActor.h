@@ -8,7 +8,7 @@ using namespace Messages;
 
 class FrameAnalyzerActor : public Theron::Actor {
 public:
-	FrameAnalyzerActor(Theron::Framework &framework, Theron::Address multimodalActor) : Theron::Actor(framework) {
+	FrameAnalyzerActor(Theron::Framework &framework, Theron::Address multimodalActor) : Theron::Actor(framework), multimodalActor(multimodalActor){
 		RegisterHandler(this, &FrameAnalyzerActor::Handler);
 	}
 private:

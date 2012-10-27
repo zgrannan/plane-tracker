@@ -2,15 +2,15 @@
 #include "Protocol.h"
 #include "Messages.h"
 
-void MultimodalActor::GPSHandler(const AbsolutePositionMessage &message, const Theron::Address sender){
+void MultimodalActor::GPSHandler(const AbsolutePositionMessage &message, const Theron::Address from){
   instructGimbal(message);
 }
-void MultimodalActor::VisionHandler(const RelativePositionMessage &message, const Theron::Address sender){
+void MultimodalActor::VisionHandler(const RelativePositionMessage &message, const Theron::Address from){
   instructGimbal(message);
 }
 
 void MultimodalActor::instructGimbal(const PositionMessage &message){
   const vector<char> bytes = message.toBytes();
   const char* bytePtr = &bytes[0];
-  boost::asio::write(port,boost::asio::buffer(bytePtr, bytes.size()));
+  fwrite(bytePtr, 1, bytes.size(), fd);
 }

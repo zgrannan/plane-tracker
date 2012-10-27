@@ -1,17 +1,25 @@
 #include "VideoReceiverInterface.h"
+#include "Messages.h"
 #include <boost/thread.hpp>
 #include <cv.h>
 #include <highgui.h>
+#include <iostream>
+
 
 using namespace cv;
+using namespace std;
+using namespace Messages;
 
 void VideoReceiverInterface::sendImage(IplImage* image){
-  framework.Send(*image,receiver.GetAddress(),frameAnalyzerActor);
+  const ImageMessage message(image);
+  cerr <<"Sending message";
+  framework.Send(message,receiver.GetAddress(),frameAnalyzerActor);
+  cerr <<"Sent";
 }
 
 void VideoReceiverInterface::workerFunction(){
   boost::posix_time::seconds sleepTime(3);
-  IplImage* image = cvLoadImage("testImage.jpg");
+  IplImage* image = cvLoadImage("testimage.png");
   while(true){
     boost::this_thread::sleep(sleepTime);
     sendImage(image);

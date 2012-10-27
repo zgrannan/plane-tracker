@@ -9,20 +9,23 @@
 using namespace std;
 using namespace Messages;
 
-GPSReceiverInterface::GPSReceiverInterface(Theron::Framework& framework, Theron::Address georeferencingActor): georeferencingActor(georeferencingActor), framework(framework), io(), port(io,"/dev/ttys0"){
+GPSReceiverInterface::GPSReceiverInterface(Theron::Framework& framework, Theron::Address georeferencingActor): georeferencingActor(georeferencingActor), framework(framework){ 
   boost::thread workerThread(&GPSReceiverInterface::workerFunction,this);
 }
 
+FILE* open_port(void) {
+  FILE* fd; /* File descriptor for the port */
+  fd = fopen("/dev/ttyS0","r");
+  return (fd);
+}
+
 void GPSReceiverInterface::workerFunction(){
-  boost::system::error_code error; 
-  boost::asio::streambuf buffer; 
-  istream str(&buffer); 
-  string s; 
+  FILE* fd = fopen("/dev/ttyw0","r");
+  char* buffer = (char*)malloc(1024);
   GPSDataMessage message;
   while (true){
-    boost::asio::read_until( port, buffer, "\r\n", error );
-    getline(str,s);
-    message = Protocol::parseSerialInputForGPS(s);
+    fgets(buffer,1024,fd);
+    message = Protocol::parseSerialInputForGPS(string(buffer));
     sendGPSData(message);
   }
 }

@@ -5,8 +5,8 @@
 
 using namespace Vision;
 
-void FrameAnalyzerActor::Handler(const ImageMessage& message, const Theron::Address sender){
-  RelativePositionMessage positionMessage = this->calculateRelativePosition(message);
+void FrameAnalyzerActor::Handler(const ImageMessage& message, const Theron::Address from){
+  const RelativePositionMessage positionMessage = calculateRelativePosition(message);
   Send(positionMessage, multimodalActor);
 }
 
@@ -16,7 +16,11 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
   vector<int> planeHSV;
 
   VisualPlaneData data = findPlane(message.image,previousPlanes,skyHSV,planeHSV);
-  double tilt = data.getDisplacement()[0];
-  double pan = data.getDisplacement()[1];
-  return RelativePositionMessage(pan,tilt);
+  if (data.hasPlane){
+    double tilt = data.getDisplacement()[0];
+    double pan = data.getDisplacement()[1];
+    return RelativePositionMessage(pan,tilt);
+  } else {
+    return RelativePositionMessage();
+  }
 }

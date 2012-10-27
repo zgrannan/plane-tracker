@@ -12,6 +12,7 @@ LIB_FLAGS = \
   `pkg-config opencv cvblob --cflags --libs` \
   -lopencv_core \
   -lboost_system-mt \
+  -lboost_iostreams-mt \
   -ltherond \
   -lboost_thread-mt \
   -lopencv_highgui \
@@ -40,4 +41,4 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) -c $(MISC_FLAGS) $(INCLUDE_FLAGS) $<  
 
 clean :
-	rm -f *.o tracker
+	rm -rf *.o tracker *.dSYM

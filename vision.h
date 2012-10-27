@@ -19,8 +19,11 @@ namespace Vision {
       CvBlob planeBlob;
       IplImage* image;
       vector<int> getDisplacement();
-      VisualPlaneData(CvBlob planeBlob, IplImage* image): planeBlob(planeBlob), image(image){
-      };
+      bool hasPlane;
+      VisualPlaneData(CvBlob planeBlob, IplImage* image): planeBlob(planeBlob),
+                                                          image(image),
+                                                          hasPlane(true){};
+      VisualPlaneData(): planeBlob(CvBlob()), image(0), hasPlane(false){};
   };
 
   class BlobScore {

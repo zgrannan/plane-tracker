@@ -12,6 +12,9 @@ GPSDataMessage Protocol::parseSerialInputForGPS(string input){
   double lat,lon,alt;
   vector<string> strs;
   boost::split(strs,input,is_any_of(","));
+  if (strs.size() != 22){
+    throw string("Invalid serial data received: " + input);
+  }
   lat = parseLatitudeOrLongitude(strs[3]);
   if(strs[4] == "N"){
     lon = parseLatitudeOrLongitude(strs[5]);

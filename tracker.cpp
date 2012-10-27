@@ -12,4 +12,5 @@ int main(int argc, char* argv[]){
 	GeoreferencingActor georeferencingActor(framework,32.0, -117.0, 0.0,multimodalActor.GetAddress());
 	VideoReceiverInterface videoInterface(framework,frameAnalyzerActor.GetAddress());
 	GPSReceiverInterface gpsReceiverInterface(framework, georeferencingActor.GetAddress());
+    getchar();
 }

@@ -11,8 +11,6 @@ public:
 private: 
   void workerFunction();
   void sendGPSData(Messages::GPSDataMessage message);
-  boost::asio::io_service io;
-  boost::asio::serial_port port;
   Theron::Address georeferencingActor;
   Theron::Framework& framework;
   Theron::Receiver receiver;
