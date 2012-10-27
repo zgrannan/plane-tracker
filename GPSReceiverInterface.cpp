@@ -13,11 +13,6 @@ GPSReceiverInterface::GPSReceiverInterface(Theron::Framework& framework, Theron:
   boost::thread workerThread(&GPSReceiverInterface::workerFunction,this);
 }
 
-FILE* open_port(void) {
-  FILE* fd; /* File descriptor for the port */
-  fd = fopen("/dev/ttyS0","r");
-  return (fd);
-}
 
 void GPSReceiverInterface::workerFunction(){
   FILE* fd = fopen("/dev/ttyw0","r");

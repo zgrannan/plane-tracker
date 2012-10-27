@@ -19,7 +19,7 @@ void VideoReceiverInterface::sendImage(IplImage* image){
 
 void VideoReceiverInterface::workerFunction(){
   boost::posix_time::seconds sleepTime(3);
-  IplImage* image = cvLoadImage("testimage.png");
+  IplImage* image = cvLoadImage("plane.jpg");
   while(true){
     boost::this_thread::sleep(sleepTime);
     sendImage(image);

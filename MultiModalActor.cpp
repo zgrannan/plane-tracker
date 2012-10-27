@@ -12,5 +12,5 @@ void MultimodalActor::VisionHandler(const RelativePositionMessage &message, cons
 void MultimodalActor::instructGimbal(const PositionMessage &message){
   const vector<char> bytes = message.toBytes();
   const char* bytePtr = &bytes[0];
-  fwrite(bytePtr, 1, bytes.size(), fd);
+  write(fd, bytePtr, bytes.size());
 }

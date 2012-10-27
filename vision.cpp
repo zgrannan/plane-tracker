@@ -37,11 +37,10 @@ using namespace cv;
  * Displays the image on the screen for debugging purposes
  */
 void Vision::showImage(string name, IplImage* image, float scale = DEFAULT_SCALE){
-  CvSize newSize = cvSize((int)(image->width * scale),(int)(image->height * scale));
+ CvSize newSize = cvSize((int)(image->width * scale),(int)(image->height * scale));
   IplImage* newImage = cvCreateImage(newSize,image->depth,image->nChannels);
-  cvResize(image,newImage);
-  cvShowImage(name.c_str(),newImage);
-  // TODO: Free the memory for newImage
+  cvResize(image,newImage); 
+  imshow("Display window",Mat(newImage));
 }
 
 vector<int> Vision::VisualPlaneData::getDisplacement(){
@@ -108,7 +107,7 @@ IplImage* Vision::fullColorToBW (IplImage* image, int conversionMethod){
         Point(EROSION_SIZE,EROSION_SIZE));
     // Apply the erosion operator
     erode(imageMat,erodedMat,element);
-    showImage("Eroded image",erodedImage);
+    //showImage("Eroded image",erodedImage);
 
     // Convert the image to black and white
     binaryImage = fullColorToBW(erodedImage,THRESHHOLD);
@@ -137,13 +136,13 @@ IplImage* Vision::fullColorToBW (IplImage* image, int conversionMethod){
     cvCvtColor(image,hsvImage,CV_BGR2HSV);
     // Isolate the hue channel
     cvSplit(hsvImage,binaryImage,NULL,NULL,NULL);
-    showImage("Hue channel isolated",binaryImage);
+    //showImage("Hue channel isolated",binaryImage);
     // Apply adaptive threshholding
     cvAdaptiveThreshold(binaryImage,binaryImage,255,ADAPTIVE_THRESH_MEAN_C,THRESH_BINARY,41,20);
-    showImage("Threshholding applied", binaryImage);
+    //showImage("Threshholding applied", binaryImage);
     // Erode the image to increase the saliency of the plane	
     cvErode(binaryImage,binaryImage,0,4);
-    showImage("Erosion applied", binaryImage);
+    //showImage("Erosion applied", binaryImage);
     // Invert the colors for blob detection to work
     cvNot(binaryImage,binaryImage);
   }
@@ -151,6 +150,7 @@ IplImage* Vision::fullColorToBW (IplImage* image, int conversionMethod){
 }
 
 CvBlobs Vision::findCandidates(IplImage *image, vector<int> skyHSV){
+  cout <<"Looking for images\n";
   assert(image != NULL);
 
   if (skyHSV.size() == 3){
@@ -161,8 +161,8 @@ CvBlobs Vision::findCandidates(IplImage *image, vector<int> skyHSV){
     IplImage* output = cvCreateImage(cvGetSize(image),image->depth,image->nChannels);
     CvBlobs blobs;
     unsigned int result = cvLabel(bwImage,label,blobs);
-    showImage("Original image", image);
-    showImage("Black and White image",bwImage);
+    //showImage("Original image", image);
+    //showImage("Black and White image",bwImage);
     cvRenderBlobs(label,blobs,image,output);
     showImage("Labeled image",output);
     return blobs;
