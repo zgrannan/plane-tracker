@@ -26,16 +26,19 @@ namespace Messages{
     public:
       double pan, tilt;
       PositionMessage(double pan, double tilt): pan(pan), tilt(tilt){}
+      virtual vector<char> toBytes() const = 0;
   };
 
   class RelativePositionMessage: public PositionMessage{
     public:
       RelativePositionMessage(double pan, double tilt): PositionMessage(pan,tilt){}
+      vector<char> toBytes() const;
   };
 
   class AbsolutePositionMessage: public PositionMessage{
     public:
       AbsolutePositionMessage(double pan, double tilt): PositionMessage(pan,tilt){}
+      vector<char> toBytes() const;
   };
 }
 

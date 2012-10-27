@@ -11,12 +11,12 @@ void FrameAnalyzerActor::Handler(const ImageMessage& message, const Theron::Addr
 }
 
 RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const ImageMessage& message){
-  vector<VisualPlaneData*>* previousPlanes = new vector<VisualPlaneData*>();
-  vector<int>* skyHSV= new vector<int>();
-  vector<int>* planeHSV = new vector<int>();
+  vector<VisualPlaneData> previousPlanes;
+  vector<int> skyHSV;
+  vector<int> planeHSV;
 
-  VisualPlaneData* data = findPlane(message.image,previousPlanes,skyHSV,planeHSV);
-  double tilt = data->getDisplacement()[0];
-  double pan = data->getDisplacement()[1];
+  VisualPlaneData data = findPlane(message.image,previousPlanes,skyHSV,planeHSV);
+  double tilt = data.getDisplacement()[0];
+  double pan = data.getDisplacement()[1];
   return RelativePositionMessage(pan,tilt);
 }

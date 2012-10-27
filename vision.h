@@ -16,10 +16,11 @@ namespace Vision {
    */
   class VisualPlaneData {
     public:
-      CvBlob* planeBlob;
+      CvBlob planeBlob;
       IplImage* image;
       vector<int> getDisplacement();
-      VisualPlaneData(CvBlob* planeBlob, IplImage* image);
+      VisualPlaneData(CvBlob planeBlob, IplImage* image): planeBlob(planeBlob), image(image){
+      };
   };
 
   class BlobScore {
@@ -39,7 +40,7 @@ namespace Vision {
    * the image, taking only the sky color into account. Later filtering will 
    * be performed on this data to reduce the number of blobs found
    */
-  CvBlobs* findCandidates(IplImage *image, vector<int>* skyHSV);
+  CvBlobs findCandidates(IplImage *image, vector<int> skyHSV);
 
   /**
    * Converts the image into a binary image that is suitable for blob detection, using 
@@ -51,13 +52,13 @@ namespace Vision {
    * This function attempts to find the plane from the image, and uses CV along with some
    * heurestics to determine the plane's location.
    */
-  VisualPlaneData* findPlane(IplImage* image, vector<VisualPlaneData*>* previousPlanes, vector<int>* skyHSV, vector<int>* planeHSV);
+  VisualPlaneData findPlane(IplImage* image, vector<VisualPlaneData> previousPlanes, vector<int> skyHSV, vector<int> planeHSV);
 
   /**
    * This determines the displacement between the centroids of the blobs. This is used for 
    * velocity calculation
    */
-  vector<double>* getDisplacement(CvBlob* currentBlob, CvBlob* lastBlob);
+  vector<double> getDisplacement(CvBlob* currentBlob, CvBlob* lastBlob);
 
   /**
    * This is a test utility that displays an image on the screen at a given
@@ -66,5 +67,7 @@ namespace Vision {
    * scale: The scale rate (1.0 = normal resolution)
    */
   void showImage(string name, IplImage* image, float scale);
+
+  vector<double> getVelocityVector(CvBlob currentBlob, CvBlob lastBlob);
 }
 #endif

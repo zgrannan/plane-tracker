@@ -3,6 +3,10 @@
 #include <highgui.h>
 #include <vector>
 
+#include "Vision.h"
+
+using namespace Vision;
+
 /* Plane detection flags */
 #define USE_VELOCITY true
 #define USE_POSITION true
@@ -32,7 +36,7 @@ using namespace cv;
 /**
  * Displays the image on the screen for debugging purposes
  */
-void showImage(string name, IplImage* image, float scale = DEFAULT_SCALE){
+void Vision::showImage(string name, IplImage* image, float scale = DEFAULT_SCALE){
 	CvSize newSize = cvSize((int)(image->width * scale),(int)(image->height * scale));
 	IplImage* newImage = cvCreateImage(newSize,image->depth,image->nChannels);
 	cvResize(image,newImage);
@@ -40,28 +44,33 @@ void showImage(string name, IplImage* image, float scale = DEFAULT_SCALE){
 	// TODO: Free the memory for newImage
 }
 
-vector<int> VisualPlaneData::getDisplacement(){
-	double imageCenterX = image->cols / 2.0;
-	double imageCenterY = image->rows / 2.0;
-	double planeX = planeBlob->centroid.x;
-	double planeY = planeBlob->centroid.y;
+vector<int> Vision::VisualPlaneData::getDisplacement(){
+	double imageCenterX = image->width/ 2.0;
+	double imageCenterY = image->height/ 2.0;
+	double planeX = planeBlob.centroid.x;
+	double planeY = planeBlob.centroid.y;
 	int dx = planeX - imageCenterX;
 	int dy = planeY - imageCenterY;
-	vector<int> result = {dx,dy};
+	vector<int> result;
+    result.push_back(dx);
+    result.push_back(dy);
 	return result;
 }
 
-vector<double> getVelocityVector(CvBlob* currentBlob, CvBlob* lastBlob) {
-	double dx = currentBlob->centroid.x - lastBlob->centroid.x;
-	double dy = currentBlob->centroid.y - lastBlob->centroid.y;
-	
+vector<double> Vision::getVelocityVector(CvBlob currentBlob, CvBlob lastBlob) {
+	double dx = currentBlob.centroid.x - lastBlob.centroid.x;
+	double dy = currentBlob.centroid.y - lastBlob.centroid.y;
+	vector<double> result;
+    result.push_back(dx);
+    result.push_back(dy);
+    return result;
 }
 
 /**
  * Converts a full-color image to a black and white image that can be used
  * for blob detection.
  */
-IplImage* fullColorToBW (IplImage* image, int conversionMethod){
+IplImage* Vision::fullColorToBW (IplImage* image, int conversionMethod){
 	IplImage* binaryImage = cvCreateImage(cvGetSize(image),8,1);
 
 	/**
@@ -131,60 +140,40 @@ IplImage* fullColorToBW (IplImage* image, int conversionMethod){
 	return binaryImage;
 }
 
-CvBlobs* findCandidates(IplImage *image, vector<int>* skyHSV){
+CvBlobs Vision::findCandidates(IplImage *image, vector<int> skyHSV){
 	assert(image != NULL);
-	assert(skyHSV != NULL);
 
-	if (skyHSV->size() == 3){
-		return NULL;
+	if (skyHSV.size() == 3){
+		return CvBlobs();
 	} else {
 		IplImage* bwImage = fullColorToBW(image,ADAPTIVE_THRESHHOLD);
 		IplImage* label= cvCreateImage(cvGetSize(image),IPL_DEPTH_LABEL,1);
 		IplImage* output = cvCreateImage(cvGetSize(image),image->depth,image->nChannels);
-		CvBlobs* blobs = new CvBlobs();
-		unsigned int result = cvLabel(bwImage,label,*blobs);
+		CvBlobs blobs;
+		unsigned int result = cvLabel(bwImage,label,blobs);
 		showImage("Original image", image);
 		showImage("Black and White image",bwImage);
-		cvRenderBlobs(label,*blobs,image,output);
+		cvRenderBlobs(label,blobs,image,output);
 		showImage("Labeled image",output);
 		return blobs;
 	}
 }
 
-VisualPlaneData* findPlane(IplImage* image, list<VisualPlaneData*>* previousPlanes, vector<int>* skyHSV, vector<int>* planeHSV){
+VisualPlaneData Vision::findPlane(IplImage* image, vector<VisualPlaneData> previousPlanes, vector<int> skyHSV, vector<int> planeHSV){
 	
 	assert(image != NULL);
-	assert(previousPlanes != NULL);
-	assert(skyHSV != NULL);
-	assert(planeHSV != NULL);
 
-	bool useVelocity = USE_VELOCITY && previousPlanes->size() > 1;
-	bool usePosition = USE_POSITION && previousPlanes->size() > 0;
-	bool usePlaneSize = USE_PLANE_SIZE && previousPlanes->size() > 0; 
-	bool useSkyColor = USE_SKY_COLOR && skyHSV->size() == 3;
-	bool usePlaneColor = USE_PLANE_COLOR && planeHSV->size() == 3;
+	bool useVelocity = USE_VELOCITY && previousPlanes.size() > 1;
+	bool usePosition = USE_POSITION && previousPlanes.size() > 0;
+	bool usePlaneSize = USE_PLANE_SIZE && previousPlanes.size() > 0; 
+	bool useSkyColor = USE_SKY_COLOR && skyHSV.size() == 3;
+	bool usePlaneColor = USE_PLANE_COLOR && planeHSV.size() == 3;
 	
-	CvBlobs* candidates = findCandidates(image,skyHSV);
+	CvBlobs candidates = findCandidates(image,skyHSV);
 	
-	for (CvBlobs::const_iterator it=candidates->begin(); it!=candidates->end(); ++it){
+	for (CvBlobs::const_iterator it=candidates.begin(); it!=candidates.end(); ++it){
   		cout << "Blob #" << it->second->label << ": Area=" << it->second->area;
 		cout << ", Centroid=(" << it->second->centroid.x << ", " << it->second->centroid.y << ")\n";
 	}
-	return NULL;
-}
-int main(int argc, char** argv){
-	if (argc == 1){
-		cout << "An image file is required.\n";
-		return NULL;
-	}
-	
-	IplImage* image = cvLoadImage(argv[1]);
-	vector<VisualPlaneData*>* previousPlanes = new vector<VisualPlaneData*>();
-	vector<int>* skyHSV= new vector<int>();
-	vector<int>* planeHSV = new vector<int>();
-
-	VisualPlaneData* data = findPlane(image,previousPlanes,skyHSV,planeHSV);
-
-	cvWaitKey(0);
-	return 0;
+	return VisualPlaneData(*candidates.begin()->second,image);
 }

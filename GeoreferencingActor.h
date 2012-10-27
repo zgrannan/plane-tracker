@@ -1,5 +1,5 @@
-#ifndef FRAME_ANALYZER_ACTOR_H
-#define FRAME_ANALYZER_ACTOR_H
+#ifndef GEOREFERENCING_ACTOR_H
+#define GEOREFERENCING_ACTOR_H
 
 #include <Theron/Theron.h>
 #include "Messages.h"

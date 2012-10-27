@@ -8,7 +8,9 @@ void MultimodalActor::GPSHandler(const AbsolutePositionMessage &message, const T
 void MultimodalActor::VisionHandler(const RelativePositionMessage &message, const Theron::Address sender){
   instructGimbal(message);
 }
+
 void MultimodalActor::instructGimbal(const PositionMessage &message){
-  vector<char> bytes = Protocol::getSerialBytesForArduino(message);
-  port.write(bytes);
+  const vector<char> bytes = message.toBytes();
+  const char* bytePtr = &bytes[0];
+  boost::asio::write(port,boost::asio::buffer(bytePtr, bytes.size()));
 }

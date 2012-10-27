@@ -3,11 +3,11 @@
 
 #include "Messages.h"
 
+using namespace Messages;
+
 namespace Protocol {
   Messages::GPSDataMessage parseSerialInputForGPS(string input);
   double parseLatitudeOrLongitude(string input);
-  vector<char> getSerialBytesForArduino(const AbsolutePositionMessage &message);
-  vector<char> getSerialBytesForArduino(const RelativePositionMessage &message);
 }
 
 #endif

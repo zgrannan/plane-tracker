@@ -6,6 +6,7 @@
 #include "Messages.h"
 
 class GPSReceiverInterface {
+public:
   GPSReceiverInterface(Theron::Framework& framework, Theron::Address georeferencingActor);
 private: 
   void workerFunction();

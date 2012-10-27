@@ -6,7 +6,6 @@
 /**
  * PlaneTracker controller
  */
-k
 
 int main(int argc, char** argv){
 	int cameraIndex = -1;

@@ -24,7 +24,6 @@ class GeoReference {
 
   public:
     static void runTests();
-    //:static vector<string> latLonToDMS(double lat, double lon);
 
     static double GPStoMeters(double gps);
     static double metersToGPS(double meters);
@@ -35,9 +34,6 @@ class GeoReference {
     static cv::Mat EulerAngles(bool transpose, cv::Mat Orig_Vector, double Roll, double Pitch, double Yaw);
     static bool getGPS(double plane_latitude, double plane_longitude, double plane_altitude, double plane_roll, double plane_pitch, double plane_heading, double gimbal_roll, double gimbal_pitch, double gimbal_yaw, 
         double target_x, double target_y, double zoom, double & Target_Latitude, double & Target_Longitude, double & Target_Height);
-    //static void getTargetGPS(Database::CandidateRowData * data, double & centerLatitude, double & centerLongitude, double & centerAltitude );
-    //static void getTargetGPS(Database::UnverifiedRowData * data, double & centerLatitude, double & centerLongitude, double & centerAltitude );
-    //static void getTargetOrientation(Database::UnverifiedRowData * data, double & orientation);
     static void reverseGeoreference(double plane_latitude, double plane_longitude, double plane_altitude, double plane_roll, double plane_pitch, double plane_heading, 
         double Target_Latitude, double Target_Longitude, double Target_Height, double & gimbal_roll, double & gimbal_pitch);
     static bool forwardGeoreferencing(double plane_latitude, double plane_longitude, double plane_altitude, double plane_roll, double plane_pitch, double plane_heading, double gimbal_roll, double gimbal_pitch, double gimbal_yaw, 
