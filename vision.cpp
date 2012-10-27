@@ -164,7 +164,7 @@ CvBlobs Vision::findCandidates(IplImage *image, vector<int> skyHSV){
     //showImage("Original image", image);
     //showImage("Black and White image",bwImage);
     cvRenderBlobs(label,blobs,image,output);
-    showImage("Labeled image",output);
+    //showImage("Labeled image",output);
     return blobs;
   }
 }
