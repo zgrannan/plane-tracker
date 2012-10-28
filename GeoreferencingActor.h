@@ -8,7 +8,7 @@ using namespace Messages;
 
 class GeoreferencingActor : public Theron::Actor {
 public:
-	GeoreferencingActor(Theron::Framework &framework, double lat, double lon, double alt, Theron::Address multiModalActor) : Theron::Actor(framework), trackerLatitude(lat), trackerLongitude(lon), trackerAltitude(alt) {
+	GeoreferencingActor(Theron::Framework &framework, double lat, double lon, double alt, Theron::Address multiModalActor) : Theron::Actor(framework), trackerLatitude(lat), trackerLongitude(lon), trackerAltitude(alt), multiModalActor(multiModalActor){
 		RegisterHandler(this, &GeoreferencingActor::Handler);
 	}
 private:

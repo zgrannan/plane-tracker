@@ -1,6 +1,7 @@
 #include <Theron/Theron.h>
 #include <iostream>
 #include <boost/thread.hpp>
+#include <termios.h>
 #include "GPSReceiverInterface.h"
 #include "Messages.h"
 #include "Protocol.h"
@@ -15,16 +16,30 @@ GPSReceiverInterface::GPSReceiverInterface(Theron::Framework& framework, Theron:
 
 
 void GPSReceiverInterface::workerFunction(){
-  FILE* fd = fopen("/dev/ttyw0","r");
+  int fd = open("/dev/ptyw0",O_RDONLY | O_NOCTTY | O_NDELAY);
+  termios options;
+  tcgetattr(fd, &options);
+  options.c_cflag |= (CLOCAL | CREAD);
+  tcsetattr(fd,TCSANOW, &options);
   char* buffer = (char*)malloc(1024);
   GPSDataMessage message;
   while (true){
-    fgets(buffer,1024,fd);
-    message = Protocol::parseSerialInputForGPS(string(buffer));
-    sendGPSData(message);
+    cerr <<"Reading serial...";
+    read(fd,buffer,1024);
+    cerr<<"Done\n";
+    if (*buffer != '\0'){
+      try {
+        message = Protocol::parseSerialInputForGPS(string(buffer));
+        sendGPSData(message);
+      } catch (string msg){
+        cerr <<"Protocol error: "<<msg<<endl;
+      }
+    }
+    *buffer = '\0';
+    boost::this_thread::sleep(boost::posix_time::milliseconds(200)); 
   }
 }
 
-void GPSReceiverInterface::sendGPSData(GPSDataMessage message){
+void GPSReceiverInterface::sendGPSData(const GPSDataMessage message){
   framework.Send(message,receiver.GetAddress(),georeferencingActor); 
 }

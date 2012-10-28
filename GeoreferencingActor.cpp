@@ -1,14 +1,17 @@
 #include "GeoreferencingActor.h"
 #include "Georeference.h"
 #include "Messages.h"
+#include <cmath>
 
 void GeoreferencingActor::Handler(const GPSDataMessage& message, const Theron::Address from){
-  AbsolutePositionMessage positionMessage = calculateAbsolutePosition(message);
+  const AbsolutePositionMessage positionMessage = calculateAbsolutePosition(message);
   Send(positionMessage,multiModalActor);
 }
 
 AbsolutePositionMessage GeoreferencingActor::calculateAbsolutePosition(const GPSDataMessage& message){
-  double roll,pitch;
-  GeoReference::reverseGeoreference(trackerLatitude,trackerLongitude,trackerAltitude,0,0,0,message.lat,message.lon,message.lon,roll,pitch);
-  return AbsolutePositionMessage(roll,pitch);
+  vector<double> resultVector = GeoReference::calculateBearingAndDistance(trackerLatitude,trackerLongitude,message.lat,message.lon);
+  double bearing = resultVector[0];
+  double distance = resultVector[1];
+  double tilt = tan(message.alt/distance)*180/3.14159;
+  return AbsolutePositionMessage(bearing,tilt);
 }

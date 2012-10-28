@@ -16,16 +16,18 @@ GPSDataMessage Protocol::parseSerialInputForGPS(string input){
     throw string("Invalid serial data received: " + input);
   }
   lat = parseLatitudeOrLongitude(strs[3]);
-  if(strs[4] == "N"){
+  if(strs[4] == "E"){
     lon = parseLatitudeOrLongitude(strs[5]);
   } else {
     lon = 0 - parseLatitudeOrLongitude(strs[5]);
   }
   alt = atof(strs[7].c_str());
+  cout <<"Recieved plane position: ("<<lat<<","<<lon<<") @ "<<alt<<" m\n";
   return GPSDataMessage(lat,lon,alt);
 }
 
 double Protocol::parseLatitudeOrLongitude(string input){
+  cerr <<"Parsing "<<input<<" as lat or lon\n";
   double raw = atof(input.c_str()) / 100;
   int degrees = (int)(raw);
   double minutes = (raw - degrees) * 100; 

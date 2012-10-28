@@ -23,7 +23,7 @@ int main(int argc, char* argv[]){
   cerr <<"Spawning Georeferencing Actor...\n"; 
   GeoreferencingActor georeferencingActor(framework,32.0, -117.0, 0.0,multimodalActor.GetAddress());
   cerr <<"Spawning VideoReceiver Interface...\n"; 
-  VideoReceiverInterface videoInterface(framework,frameAnalyzerActor.GetAddress());
+  //VideoReceiverInterface videoInterface(framework,frameAnalyzerActor.GetAddress());
   cerr <<"Spawning GPSReceiver Interface...\n"; 
   GPSReceiverInterface gpsReceiverInterface(framework, georeferencingActor.GetAddress());
   cerr << "Tracker Initialization Complete.\n";
