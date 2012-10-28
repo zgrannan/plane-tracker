@@ -1,8 +1,7 @@
 #include <cvblob.h>
 #include <cv.h>
-#include <highgui.h>
+#include <opencv2/highgui/highgui.hpp>
 #include <vector>
-
 #include "Vision.h"
 
 using namespace Vision;
@@ -26,9 +25,6 @@ using namespace Vision;
 // #define EROSION_TYPE MORPH_ELLIPSE
 #define EROSION_SIZE 5
 
-/* The default scale to display images at */
-#define DEFAULT_SCALE 0.25
-
 using namespace cvb;
 using namespace std;
 using namespace cv;
@@ -36,8 +32,8 @@ using namespace cv;
 /**
  * Displays the image on the screen for debugging purposes
  */
-void Vision::showImage(string name, IplImage* image, float scale = DEFAULT_SCALE){
- CvSize newSize = cvSize((int)(image->width * scale),(int)(image->height * scale));
+void Vision::showImage(IplImage* image, float scale){
+  CvSize newSize = cvSize((int)(image->width * scale),(int)(image->height * scale));
   IplImage* newImage = cvCreateImage(newSize,image->depth,image->nChannels);
   cvResize(image,newImage); 
   imshow("Display window",Mat(newImage));
@@ -124,7 +120,7 @@ IplImage* Vision::fullColorToBW (IplImage* image, int conversionMethod){
     cvCvtColor(image,binaryImage,CV_RGB2GRAY); //TODO: Only use the hue channel
     // Apply sobel filter
     cvSobel(binaryImage,deepImage,1,1,1);
-    showImage("Sobel image",deepImage);
+    //showImage("Sobel image",deepImage);
   } 
   /**
    * Uses adaptive threshholding to yield a black and white image. This gets the best results

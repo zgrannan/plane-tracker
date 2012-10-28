@@ -3,6 +3,7 @@
 #include "FrameAnalyzerActor.h"
 #include "GeoreferencingActor.h"
 #include "MultiModalActor.h"
+#include "Vision.h"
 #include <Theron/Theron.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -10,12 +11,19 @@
 
 using namespace cv;
 using namespace std;
+using namespace Messages;
+using namespace Vision;
 
 void usage(){
   cout <<"USAGE: tracker [lat lon alt][gps_serial_port arduino_serial_port]\n";
 }
 
 int main(int argc, char* argv[]){
+  Theron::Receiver imageReceiver;
+  Theron::Catcher<ImageMessage> imageCatcher;
+  Theron::Address from;
+  ImageMessage message(NULL);
+  imageReceiver.RegisterHandler(&imageCatcher,&Theron::Catcher<ImageMessage>::Push);
   double lat = 32;
   double lon = -117;
   double alt = 0;
@@ -41,7 +49,7 @@ int main(int argc, char* argv[]){
   cerr << "Spawning Multimodal Actor...\n";
   MultimodalActor multimodalActor(framework,arduinoSerial);
   cerr << "Spawning Frame Analyzer Actor...\n";
-  FrameAnalyzerActor frameAnalyzerActor(framework,multimodalActor.GetAddress());
+  FrameAnalyzerActor frameAnalyzerActor(framework,imageReceiver.GetAddress(), multimodalActor.GetAddress());
   cerr <<"Spawning Georeferencing Actor...\n"; 
   GeoreferencingActor georeferencingActor(framework,lat,lon,alt,multimodalActor.GetAddress());
   cerr <<"Spawning VideoReceiver Interface...\n"; 
@@ -49,6 +57,10 @@ int main(int argc, char* argv[]){
   cerr <<"Spawning GPSReceiver Interface...\n"; 
   GPSReceiverInterface gpsReceiverInterface(framework, gpsSerial, georeferencingActor.GetAddress());
   cerr << "Tracker Initialization Complete.\n";
-  cerr <<"Press any key to exit\n";
-  getchar();
+  cvNamedWindow("Display Window");
+  while (true){
+    imageReceiver.Wait();
+    imageCatcher.Pop(message,from);
+    showImage(message.image);
+  }
 }

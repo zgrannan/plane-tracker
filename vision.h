@@ -5,6 +5,8 @@
 #include <cv.h>
 #include <cvblob.h>
 
+#define DEFAULT_SCALE 0.25
+
 using namespace std;
 using namespace cvb;
 
@@ -69,7 +71,7 @@ namespace Vision {
    * name: The window name
    * scale: The scale rate (1.0 = normal resolution)
    */
-  void showImage(string name, IplImage* image, float scale);
+  void showImage(IplImage* image, float scale = DEFAULT_SCALE);
 
   vector<double> getVelocityVector(CvBlob currentBlob, CvBlob lastBlob);
 }

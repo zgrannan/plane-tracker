@@ -1,12 +1,13 @@
 CC=g++
 LDFLAGS= -ggdb
 CFLAGS= -c -Wall
-MISC_FLAGS= -DTHERON_BOOST 
+MISC_FLAGS= -DTHERON_BOOST -O2
 OBJECTS=$(SOURCES:.cpp=.o)
 
 INCLUDE_FLAGS = \
   -I/usr/local/include/External \
-  -I/usr/local/Cellar/opencv/2.4.2/include/opencv
+  -I/usr/local/Cellar/opencv/2.4.2/include/opencv \
+  -I/opt/X11/include
 
 LIB_FLAGS = \
   `pkg-config opencv cvblob --cflags --libs` \
@@ -16,7 +17,11 @@ LIB_FLAGS = \
   -ltherond \
   -lboost_thread-mt \
   -lopencv_highgui \
-  -lopencv_imgproc 
+  -lopencv_imgproc \
+  -lm \
+  -L/usr/X11R6/lib \
+  -lpthread \
+  -lX11
 
 
 SOURCES = \

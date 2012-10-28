@@ -31,7 +31,7 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
     CvPoint destination =  cvPoint(centerX+dx,centerY+dy);
     CvScalar color = cvScalar(0,0,255);
     cvLine(message.image,origin,destination,color,2);
-    showImage("Display Window",message.image,0.2);
+    Send(message,imageViewer);
     return RelativePositionMessage(pan,tilt);
   } else {
     return RelativePositionMessage();
