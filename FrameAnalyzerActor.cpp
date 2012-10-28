@@ -20,8 +20,9 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
 
   VisualPlaneData data = findPlane(message.image,previousPlanes,skyHSV,planeHSV);
   if (data.hasPlane){
-    double dx= data.getDisplacement()[0];
-    double dy= data.getDisplacement()[1];
+    previousPlanes.push_back(data);
+    double dx = data.getDisplacement()[0];
+    double dy = data.getDisplacement()[1];
     double centerX = data.image->width / 2;
     double centerY = data.image->height/ 2;
     double pan = dx / data.image->width * CAMERA_H_FOV;

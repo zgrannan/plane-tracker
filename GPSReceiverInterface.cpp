@@ -24,9 +24,7 @@ void GPSReceiverInterface::workerFunction(){
   char* buffer = (char*)malloc(1024);
   GPSDataMessage message;
   while (true){
-    cerr <<"Reading serial...";
     read(fd,buffer,1024);
-    cerr<<"Done\n";
     if (*buffer != '\0'){
       try {
         message = Protocol::parseSerialInputForGPS(string(buffer));
