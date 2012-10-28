@@ -11,9 +11,9 @@ using namespace Messages;
 
 class MultimodalActor : public Theron::Actor {
   public:
-    explicit MultimodalActor(Theron::Framework &framework) : Theron::Actor(framework) {
+    explicit MultimodalActor(Theron::Framework &framework, string serialPort) : Theron::Actor(framework) {
       cerr << "Opening serial port...\n";
-      fd = open("/dev/ttys1", O_RDWR | O_NOCTTY | O_NDELAY);
+      fd = open(serialPort.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
       cerr << "Registering handlers...\n";
       RegisterHandler(this, &MultimodalActor::GPSHandler);
       RegisterHandler(this, &MultimodalActor::VisionHandler);
