@@ -9,6 +9,7 @@
 using namespace Vision;
 
 void FrameAnalyzerActor::Handler(const ImageMessage& message, const Theron::Address from){
+  if (GetNumQueuedMessages() > 1) return;
   const RelativePositionMessage positionMessage = calculateRelativePosition(message);
   cerr << "Relative position calculated\n";
   Send(positionMessage, multimodalActor);

@@ -100,13 +100,16 @@ int main(int argc, char* argv[]){
 
   while (true){
     imageReceiver.Wait();
-    imageCatcher.Pop(message,from);
-    showImage("Display window", message.result, arguments.scale);
-    cvReleaseImage(&message.result);
+    imageReceiver.Consume(UINT_MAX);
+    while (!imageCatcher.Empty()){
+      imageCatcher.Pop(message,from);
+    }
     for (int i = 0; i < message.extras.size(); i++){
-      showImage(message.extras[i].name,message.extras[i].image, arguments.scale);
+      //showImage(message.extras[i].name,message.extras[i].image, arguments.scale);
       cvReleaseImage(&message.extras[i].image);
     }
-    cvWaitKey(60);
+    showImage("Display window", message.result, arguments.scale);
+    cvReleaseImage(&message.result);
+    cvWaitKey(1);
   }
 }
