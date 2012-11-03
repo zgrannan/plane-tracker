@@ -49,8 +49,9 @@ namespace Messages{
   class GPSDataMessage{
     public:
       double lat, lon, alt;
-      GPSDataMessage(double lat, double lon, double alt): lat(lat),lon(lon),alt(alt){}
-      GPSDataMessage(): lat(0),lon(0),alt(0){}
+      bool hasData;
+      GPSDataMessage(double lat, double lon, double alt): lat(lat),lon(lon),alt(alt),hasData(true){}
+      GPSDataMessage(): lat(0),lon(0),alt(0),hasData(false){}
   };
 
 

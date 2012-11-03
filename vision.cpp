@@ -4,8 +4,6 @@
 #include <vector>
 #include "Vision.h"
 
-using namespace Vision;
-
 /* Plane detection flags */
 #define USE_VELOCITY true
 #define USE_POSITION true
@@ -16,23 +14,10 @@ using namespace Vision;
 /* Color -> Black and White conversion technique */
 #define ADAPTIVE_THRESHHOLD 0
 
-#define VISION_DEBUG true
-
 using namespace cvb;
 using namespace std;
 using namespace cv;
 
-/**
- * Displays the image on the screen for debugging purposes
- */
-IplImage* Vision::showImage(string name, IplImage* image, float scale){
-  CvSize newSize = cvSize((int)(image->width * scale),(int)(image->height * scale));
-  IplImage* newImage = cvCreateImage(newSize,image->depth,image->nChannels);
-  cvResize(image,newImage); 
-  imshow(name,Mat(newImage));
-  cvReleaseImage(&newImage);
-  return newImage;
-}
 
 
 vector<double> Vision::getVelocityVector(CvBlob currentBlob, CvBlob lastBlob) {

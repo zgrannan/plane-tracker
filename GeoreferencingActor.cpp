@@ -4,8 +4,10 @@
 #include <cmath>
 
 void GeoreferencingActor::Handler(const GPSDataMessage& message, const Theron::Address from){
-  const AbsolutePositionMessage positionMessage = calculateAbsolutePosition(message);
-  Send(positionMessage,multiModalActor);
+  if (message.hasData){
+    const AbsolutePositionMessage positionMessage = calculateAbsolutePosition(message);
+    Send(positionMessage,multiModalActor);
+  }
 }
 
 AbsolutePositionMessage GeoreferencingActor::calculateAbsolutePosition(const GPSDataMessage& message){

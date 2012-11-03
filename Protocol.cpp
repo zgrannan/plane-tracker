@@ -6,22 +6,53 @@
 
 using namespace std;
 using namespace boost;
-GPSDataMessage Protocol::parseSerialInputForGPS(string input){
-  // Message Structure:
-  // $PUBX,00,hhmmss.ss,Latitude,N,Longitude,E,AltRef,NavStat,Hacc,Vacc,SOG,COG,Vvel,ageC,HDOP,VDOP,TDOP, GU,RU,DR,*cs<CR><LF>
+
+GPSDataMessage Protocol::parseSerialInputForGPS(string input, string& extra) {
+  vector<string> lines;
+  boost::split(lines,input,is_any_of("\n"));
+  for (int i = 0; i < lines.size(); i++){
+    vector<string> chunks;
+    boost::split(chunks,lines[i],is_any_of(","));
+    string lastChunk = chunks[chunks.size()-1];
+    char lastChar = lastChunk[lastChunk.length()-1];
+    if (chunks[0] == "$GPGGA") {
+      if (lastChar == '\r') {
+        extra = "";
+        return parseSerialInputLineForGPS(lines[i]);
+      } else {
+        cout << "Chunk "<< chunks[chunks.size() - 1] << endl;
+        extra = lines[i];
+      }
+    }
+  }
+  return GPSDataMessage();
+}
+
+GPSDataMessage Protocol::parseSerialInputLineForGPS(string input) { 
+  //$GPGGA,hhmmss.ss,Latitude,N,Longitude,E,FS,NoSV,HDOP,msl,m,Altref,m,DiffAge,DiffStation*cs<CR><LF> 
   double lat,lon,alt;
   vector<string> strs;
   boost::split(strs,input,is_any_of(","));
-  if (strs.size() != 22){
-    throw string("Invalid serial data received: " + input);
+  if (strs.size() < 10 ) {
+    cout << "Invalid message: " << input << endl;
+    return GPSDataMessage();
   }
-  lat = parseLatitudeOrLongitude(strs[3]);
-  if(strs[4] == "E"){
-    lon = parseLatitudeOrLongitude(strs[5]);
+  cout << "Received message: " << input << endl;
+  if (strs[2] == "" || strs[3] == "" || strs[4] == "" || strs[5] == "") {
+    cout << "GPS Data not yet available\n";
+    return GPSDataMessage();
+  }
+  if (strs[3] == "N"){
+    lat = parseLatitudeOrLongitude(strs[2]);
   } else {
-    lon = 0 - parseLatitudeOrLongitude(strs[5]);
+    lat = 0 - parseLatitudeOrLongitude(strs[2]);
   }
-  alt = atof(strs[7].c_str());
+  if(strs[5] == "E"){
+    lon = parseLatitudeOrLongitude(strs[4]);
+  } else {
+    lon = 0 - parseLatitudeOrLongitude(strs[4]);
+  }
+  alt = atof(strs[9].c_str());
   cout <<"Recieved plane position: ("<<lat<<","<<lon<<") @ "<<alt<<" m\n";
   return GPSDataMessage(lat,lon,alt);
 }

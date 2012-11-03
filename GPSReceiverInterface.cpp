@@ -16,18 +16,19 @@ GPSReceiverInterface::GPSReceiverInterface(Theron::Framework& framework, string 
 
 
 void GPSReceiverInterface::workerFunction(){
-  int fd = open("/dev/ptyw0",O_RDONLY | O_NOCTTY | O_NDELAY);
+  int fd = open(serialPort.c_str(),O_RDONLY | O_NOCTTY | O_NDELAY);
   termios options;
   tcgetattr(fd, &options);
   options.c_cflag |= (CLOCAL | CREAD);
   tcsetattr(fd,TCSANOW, &options);
   char* buffer = (char*)malloc(1024);
+  string extra = "";
   GPSDataMessage message;
   while (true){
     read(fd,buffer,1024);
     if (*buffer != '\0'){
       try {
-        message = Protocol::parseSerialInputForGPS(string(buffer));
+        message = Protocol::parseSerialInputForGPS(extra + string(buffer),extra);
         sendGPSData(message);
       } catch (string msg){
         cerr <<"Protocol error: "<<msg<<endl;
