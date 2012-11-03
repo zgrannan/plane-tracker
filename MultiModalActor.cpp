@@ -6,6 +6,7 @@ void MultimodalActor::GPSHandler(const AbsolutePositionMessage &message, const T
   instructGimbal(message);
 }
 void MultimodalActor::VisionHandler(const RelativePositionMessage &message, const Theron::Address from){
+  cerr << "Message received\n";
   instructGimbal(message);
 }
 

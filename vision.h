@@ -5,28 +5,15 @@
 #include <cv.h>
 #include <cvblob.h>
 
-#define DEFAULT_SCALE 0.25
+#include "Messages.h"
+
+#define DEFAULT_SCALE 0.75
 
 using namespace std;
 using namespace cvb;
+using namespace Messages;
 
 namespace Vision {
-  /**
-   * This class represents the result of a successful CV plane detection
-   * planeBlob: The CvBlob that the plane has been identified as
-   * image: The image that captured by the camera
-   */
-  class VisualPlaneData {
-    public:
-      CvBlob planeBlob;
-      IplImage* image;
-      vector<int> getDisplacement();
-      bool hasPlane;
-      VisualPlaneData(CvBlob planeBlob, IplImage* image): planeBlob(planeBlob),
-                                                          image(image),
-                                                          hasPlane(true){};
-      VisualPlaneData(): planeBlob(CvBlob()), image(0), hasPlane(false){};
-  };
 
   class BlobScore {
     public: 
@@ -45,19 +32,19 @@ namespace Vision {
    * the image, taking only the sky color into account. Later filtering will 
    * be performed on this data to reduce the number of blobs found
    */
-  CvBlobs findCandidates(IplImage *image, vector<int> skyHSV);
+  CvBlobs findCandidates(IplImage *image, vector<int> skyHSV, vector<ImageMessage> &extras);
 
   /**
    * Converts the image into a binary image that is suitable for blob detection, using 
    * a given conversion method. This does most of the CV work.
    */
-  IplImage* fullColorToBW (IplImage* image, int conversionMethod);
+  IplImage* fullColorToBW (IplImage* image, int conversionMethod, vector<ImageMessage> &extras);
 
   /**
    * This function attempts to find the plane from the image, and uses CV along with some
    * heurestics to determine the plane's location.
    */
-  VisualPlaneData findPlane(IplImage* image, vector<VisualPlaneData> previousPlanes, vector<int> skyHSV, vector<int> planeHSV);
+  PlaneVisionMessage findPlane(IplImage* image, vector<PlaneVisionMessage> previousPlanes, vector<int> skyHSV, vector<int> planeHSV);
 
   /**
    * This determines the displacement between the centroids of the blobs. This is used for 
@@ -71,7 +58,7 @@ namespace Vision {
    * name: The window name
    * scale: The scale rate (1.0 = normal resolution)
    */
-  void showImage(IplImage* image, float scale = DEFAULT_SCALE);
+  IplImage* showImage(string name, IplImage* image, float scale = DEFAULT_SCALE);
 
   vector<double> getVelocityVector(CvBlob currentBlob, CvBlob lastBlob);
 }

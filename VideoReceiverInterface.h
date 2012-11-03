@@ -9,9 +9,11 @@ using namespace cv;
 class VideoReceiverInterface {
 public:
   VideoReceiverInterface(Theron::Framework &framework, Theron::Address frameAnalyzerActor);
+  VideoReceiverInterface(Theron::Framework &framework, string videoFilename, Theron::Address frameAnalyzerActor);
+    void sendImage(IplImage* image);
 private:
-	void sendImage(IplImage* image);
-    void workerFunction();
+    void cameraFunction();
+    void videoFunction(string videoFilename);
     Theron::Framework& framework;
     Theron::Address frameAnalyzerActor;
     Theron::Receiver receiver;

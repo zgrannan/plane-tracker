@@ -7,7 +7,7 @@ OBJECTS=$(SOURCES:.cpp=.o)
 INCLUDE_FLAGS = \
   -I/usr/local/include/External \
   -I/usr/local/Cellar/opencv/2.4.2/include/opencv \
-  -I/opt/X11/include
+  -I/usr/local/include/decklink
 
 LIB_FLAGS = \
   `pkg-config opencv cvblob --cflags --libs` \
@@ -16,12 +16,12 @@ LIB_FLAGS = \
   -lboost_iostreams-mt \
   -ltherond \
   -lboost_thread-mt \
+  -lboost_program_options-mt \
   -lopencv_highgui \
   -lopencv_imgproc \
   -lm \
-  -L/usr/X11R6/lib \
   -lpthread \
-  -lX11
+  -framework CoreFoundation
 
 
 SOURCES = \

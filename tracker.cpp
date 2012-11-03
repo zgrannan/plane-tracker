@@ -8,59 +8,105 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
+#include <boost/program_options.hpp>
 
 using namespace cv;
 using namespace std;
 using namespace Messages;
 using namespace Vision;
 
-void usage(){
-  cout <<"USAGE: tracker [lat lon alt][gps_serial_port arduino_serial_port]\n";
-}
+namespace po = boost::program_options;
+
 
 int main(int argc, char* argv[]){
-  Theron::Receiver imageReceiver;
-  Theron::Catcher<ImageMessage> imageCatcher;
-  Theron::Address from;
-  ImageMessage message(NULL);
-  imageReceiver.RegisterHandler(&imageCatcher,&Theron::Catcher<ImageMessage>::Push);
-  double lat = 32;
-  double lon = -117;
-  double alt = 0;
-  string gpsSerial = "/dev/ttyw0";
-  string arduinoSerial = "/dev/ttyw1";
-  if (argc != 1 && argc != 4 && argc != 6 ){
-    usage();
-    return 0;
-  } 
-  if (argc >= 4){
-    lat = atof(argv[1]); 
-    lon = atof(argv[2]);
-    alt = atof(argv[3]); 
+  struct arguments{
+    double scale; 
+    double lat; 
+    double lon; 
+    double alt; 
+    string gpsSerial; 
+    string arduinoSerial; 
+    string videoFilename;
+  } arguments;
+
+  double aDouble;
+  string aString;
+  po::options_description desc("Allowed options");
+  desc.add_options()
+    ("lat",po::value<double>(&aDouble)->default_value(-32.0),"Set tracker latitude")
+    ("lon",po::value<double>(&aDouble)->default_value(117.0),"Set tracker longitude")
+    ("alt",po::value<double>(&aDouble)->default_value(0.0),"Set tracker altitude")
+    ("scale",po::value<double>(&aDouble)->default_value(0.25),"Video scale")
+    ("gps",po::value<string>(&aString)->default_value("/dev/tty0"),"Specify GPS serial port")
+    ("arduino",po::value<string>(&aString)->default_value("/dev/tty1"),"Specify arduino serial port")
+    ("video",po::value<string>(&aString)->default_value(""),"Simulate using video");
+
+  po::variables_map vm;
+  po::store(po::command_line_parser(argc,argv).options(desc).run(),vm);
+  po::notify(vm);
+
+  arguments.lat = vm["lat"].as<double>();
+  arguments.lon = vm["lon"].as<double>();
+  arguments.alt = vm["alt"].as<double>();
+  arguments.scale = vm["scale"].as<double>();
+  arguments.gpsSerial = vm["gps"].as<string>();
+  arguments.arduinoSerial = vm["arduino"].as<string>();
+  arguments.videoFilename = vm["video"].as<string>();
+
+  /* Initialize variables */
+  Theron::Receiver                          imageReceiver;
+  Theron::Catcher<PlaneVisionMessage>       imageCatcher;
+  Theron::Address                           from;
+  PlaneVisionMessage                        message;
+
+  cout << "Initializing tracker with the following settings: \n";
+  cout << "Tracker Latitude: " << arguments.lat << endl;
+  cout << "Tracker Longitude: " << arguments.lon << endl;
+  cout << "Tracker Altitude: " << arguments.alt << endl;
+  cout << "GPS Serial Device: " << arguments.gpsSerial << endl;
+  cout << "Arduino Serial Device: " << arguments.arduinoSerial << endl;
+
+  if (arguments.videoFilename == ""){
+    cout << "Using live video stream\n";
+  } else {
+    cout << "Simulating flight using "<< arguments.videoFilename << endl;
   }
-  if (argc == 6 ){
-    gpsSerial = string(argv[4]);
-    arduinoSerial = string(argv[5]);
-  }
-  cerr << "Initializing Tracker...\n";
-  namedWindow("Display window", CV_WINDOW_AUTOSIZE);
-  cerr << "Creating Theron Framework...\n";
+
+  imageReceiver.RegisterHandler(&imageCatcher,&Theron::Catcher<PlaneVisionMessage>::Push);
+
+  cout << "Creating Theron Framework...\n";
   Theron::Framework framework;
-  cerr << "Spawning Multimodal Actor...\n";
-  MultimodalActor multimodalActor(framework,arduinoSerial);
-  cerr << "Spawning Frame Analyzer Actor...\n";
+
+  cout << "Spawning Multimodal Actor...\n";
+  MultimodalActor multimodalActor(framework,arguments.arduinoSerial);
+
+  cout << "Spawning Frame Analyzer Actor...\n";
   FrameAnalyzerActor frameAnalyzerActor(framework,imageReceiver.GetAddress(), multimodalActor.GetAddress());
-  cerr <<"Spawning Georeferencing Actor...\n"; 
-  GeoreferencingActor georeferencingActor(framework,lat,lon,alt,multimodalActor.GetAddress());
-  cerr <<"Spawning VideoReceiver Interface...\n"; 
-  VideoReceiverInterface videoInterface(framework,frameAnalyzerActor.GetAddress());
-  cerr <<"Spawning GPSReceiver Interface...\n"; 
-  GPSReceiverInterface gpsReceiverInterface(framework, gpsSerial, georeferencingActor.GetAddress());
-  cerr << "Tracker Initialization Complete.\n";
-  cvNamedWindow("Display Window");
+
+  cout <<"Spawning Georeferencing Actor...\n"; 
+  GeoreferencingActor georeferencingActor(framework,arguments.lat,arguments.lon,arguments.alt,multimodalActor.GetAddress());
+
+  cout <<"Spawning VideoReceiver Interface...\n"; 
+  if (arguments.videoFilename == ""){
+    new VideoReceiverInterface(framework,frameAnalyzerActor.GetAddress());
+  } else {
+    new VideoReceiverInterface(framework, arguments.videoFilename, frameAnalyzerActor.GetAddress());
+  }
+
+  cout <<"Spawning GPSReceiver Interface...\n"; 
+  //  GPSReceiverInterface gpsReceiverInterface(framework, arguments.gpsSerial, georeferencingActor.GetAddress());
+
+  cout << "Tracker Initialization Complete.\n";
+
   while (true){
     imageReceiver.Wait();
     imageCatcher.Pop(message,from);
-    showImage(message.image);
+    showImage("Display window", message.result, arguments.scale);
+    cvReleaseImage(&message.result);
+    for (int i = 0; i < message.extras.size(); i++){
+      showImage(message.extras[i].name,message.extras[i].image, arguments.scale);
+      cvReleaseImage(&message.extras[i].image);
+    }
+    cvWaitKey(60);
   }
 }

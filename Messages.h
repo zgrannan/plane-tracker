@@ -1,15 +1,49 @@
 #ifndef MESSAGES_H
 #define MESSAGES_H
+#include <cvblob.h>
 #include <cv.h>
 
 using namespace cv;
+using namespace cvb;
 
 namespace Messages{
 
+
   class ImageMessage{
     public:
+      String name;
       IplImage* image;
-      ImageMessage(IplImage* image): image(image){}
+      ImageMessage(IplImage* image): name("unnamed"), image(image){}
+      ImageMessage(String name, IplImage* image): name(name), image(image){}
+  };
+
+  /**
+   * This class represents the result of a successful CV plane detection
+   * planeBlob: The CvBlob that the plane has been identified as
+   * image: The image that captured by the camera
+   */
+  class PlaneVisionMessage {
+    public:
+      CvBlob planeBlob;
+      IplImage* result;
+      vector<ImageMessage> extras;
+      vector<int> getDisplacement();
+      bool hasPlane;
+      PlaneVisionMessage(CvBlob planeBlob, IplImage* result, vector<ImageMessage> extras):
+        planeBlob(planeBlob),
+        extras(extras),
+        result(result),
+        hasPlane(true){}
+      PlaneVisionMessage(): 
+        planeBlob(CvBlob()),
+        result(0),
+        extras(vector<ImageMessage>()),
+        hasPlane(false){}
+      PlaneVisionMessage(IplImage* image): 
+        planeBlob(CvBlob()),
+        result(image),
+        extras(vector<ImageMessage>()),
+        hasPlane(false){}
   };
 
   class GPSDataMessage{
