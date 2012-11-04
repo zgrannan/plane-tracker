@@ -51,15 +51,19 @@ IplImage* Vision::fullColorToBW (IplImage* image, int conversionMethod, vector<I
     cvSplit(hsvImage,binaryImage,NULL,NULL,NULL);
 
     cvReleaseImage(&hsvImage);
-    extras.push_back(ImageMessage("Hue channel isolated",cvCloneImage(binaryImage)));
+
+    if (intermediateSteps)
+      extras.push_back(ImageMessage("Hue channel isolated",cvCloneImage(binaryImage)));
 
     // Apply adaptive threshholding
     cvAdaptiveThreshold(binaryImage,binaryImage,255,ADAPTIVE_THRESH_MEAN_C,THRESH_BINARY,41,20);
-    extras.push_back(ImageMessage("Thresholding applied", cvCloneImage(binaryImage)));
+    if (intermediateSteps)
+      extras.push_back(ImageMessage("Thresholding applied", cvCloneImage(binaryImage)));
 
     // Erode the image to increase the saliency of the plane	
     cvErode(binaryImage,binaryImage,0,4);
-    extras.push_back(ImageMessage("Erosion applied", cvCloneImage(binaryImage)));
+    if (intermediateSteps)
+      extras.push_back(ImageMessage("Erosion applied", cvCloneImage(binaryImage)));
 
     // Invert the colors for blob detection to work
     cvNot(binaryImage,binaryImage);
@@ -80,9 +84,11 @@ CvBlobs Vision::findCandidates(IplImage *image, vector<int> skyHSV, vector<Image
     IplImage* output = cvCreateImage(cvGetSize(image),image->depth,image->nChannels);
     CvBlobs blobs;
     unsigned int result = cvLabel(bwImage,label,blobs);
-    extras.push_back(ImageMessage("Black and White image",bwImage));
+    if (intermediateSteps)
+      extras.push_back(ImageMessage("Black and White image",bwImage));
     cvRenderBlobs(label,blobs,image,output);
-    extras.push_back(ImageMessage("Labeled image",output));
+    if (intermediateSteps)
+      extras.push_back(ImageMessage("Labeled image",output));
     cvReleaseImage(&label);
     return blobs;
   }

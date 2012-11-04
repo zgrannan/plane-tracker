@@ -1,6 +1,8 @@
 #include "Messages.h"
 #include "Log.h"
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
+
 using namespace Messages;
 using namespace std;
 using namespace boost;
@@ -8,10 +10,14 @@ using namespace boost;
 vector<char> RelativePositionMessage::toBytes() const {
   vector<char> byteVector;
   string byteString;
+  int _pan = (int)this->pan;
+  int _tilt= (int)this->tilt;
+  string panS = (boost::format("%04d") % _pan).str();
+  string tiltS = (boost::format("%04d") % _tilt).str();
   if (!positionLost){
-    byteString = "RELATIVE " + lexical_cast<string>(this->pan) + " " + lexical_cast<string>(this->tilt) + "\r\n";
+    byteString = "#2 " + panS + " " + tiltS + "\n";
   } else {
-    byteString = "VIDEO LOST\r\n";
+    byteString = "";
   }
   return vector<char>(byteString.begin(),byteString.end()); 
 }
@@ -19,10 +25,14 @@ vector<char> RelativePositionMessage::toBytes() const {
 vector<char> AbsolutePositionMessage::toBytes() const{
   vector<char> byteVector;
   string byteString;
+  int _pan = (int)this->pan;
+  int _tilt= (int)this->tilt;
+  string panS = (boost::format("%04d") % _pan).str();
+  string tiltS = (boost::format("%04d") % _tilt).str();
   if (!positionLost){
-    byteString = "ABSOLUTE " + lexical_cast<string>(this->pan) + " " + lexical_cast<string>(this->tilt) + "\r\n";
+    byteString = "#1 " + panS + " " + tiltS + "\n";
   } else {
-    byteString = "GPS LOST\r\n";
+    byteString = "";
   }
   return vector<char>(byteString.begin(),byteString.end()); 
 }
