@@ -3,6 +3,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <vector>
 #include "Vision.h"
+#include "Log.h"
 
 /* Plane detection flags */
 #define USE_VELOCITY true
@@ -68,7 +69,7 @@ IplImage* Vision::fullColorToBW (IplImage* image, int conversionMethod, vector<I
 }
 
 CvBlobs Vision::findCandidates(IplImage *image, vector<int> skyHSV, vector<ImageMessage> &extras){
-  cout <<"Looking for images\n";
+  Log::debug("Looking for images");
   assert(image != NULL);
 
   if (skyHSV.size() == 3){
@@ -102,15 +103,16 @@ PlaneVisionMessage Vision::findPlane(IplImage* image, vector<PlaneVisionMessage>
   bool useSkyColor = USE_SKY_COLOR && skyHSV.size() == 3;
   bool usePlaneColor = USE_PLANE_COLOR && planeHSV.size() == 3;
 
-  cerr << "\nFrame: " << frame << endl;
+  Log::debug("Frame: " + frame);
   CvBlobs candidates = findCandidates(image,skyHSV,extras);
 
-  cerr <<"Found candidates\n";
-  for (CvBlobs::const_iterator it=candidates.begin(); it!=candidates.end(); ++it){
-    cout << "Blob #" << it->second->label << ": Area=" << it->second->area;
-    cout << ", Centroid=(" << it->second->centroid.x << ", " << it->second->centroid.y << ")\n";
+  Log::debug("Found candidates");
+  if (Log::debugMode){
+    for (CvBlobs::const_iterator it=candidates.begin(); it!=candidates.end(); ++it){
+      cout << "Blob #" << it->second->label << ": Area=" << it->second->area;
+      cout << ", Centroid=(" << it->second->centroid.x << ", " << it->second->centroid.y << ")\n";
+    }
   }
-  cerr << "Done iterating\n";
 
   if (candidates.size() > 0){
     return PlaneVisionMessage(*candidates.begin()->second,image,extras);

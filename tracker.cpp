@@ -4,11 +4,13 @@
 #include "GeoreferencingActor.h"
 #include "MultiModalActor.h"
 #include "Vision.h"
+#include "Log.h"
 #include <Theron/Theron.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 #include <boost/program_options.hpp>
+#include <boost/format.hpp>
 
 using namespace cv;
 using namespace std;
@@ -40,31 +42,43 @@ int main(int argc, char* argv[]){
     bool showExtras;
     bool drawLine;
     bool blind;
+    bool noGPS;
+    bool debug;
   } arguments;
 
   double aDouble;
   string aString;
   po::options_description desc("Allowed options");
   desc.add_options()
+    ("debug", "Display debug output")
     ("extras","Display intermediate steps")
     ("line", "Draw a line to the plane")
-    ("record",po::value<string>(&aString)->default_value(""),"Display intermediate steps")
-    ("lat",po::value<double>(&aDouble)->default_value(-32.0),"Set tracker latitude")
-    ("lon",po::value<double>(&aDouble)->default_value(117.0),"Set tracker longitude")
-    ("alt",po::value<double>(&aDouble)->default_value(0.0),"Set tracker altitude")
+    ("record",po::value<string>(&aString)->default_value(""),"Record to directory [arg]")
+    ("lat",po::value<double>(&aDouble)->default_value(-32.0),"Set tracker latitude (GPS Degrees)")
+    ("lon",po::value<double>(&aDouble)->default_value(117.0),"Set tracker longitude (GPS Degrees)")
+    ("alt",po::value<double>(&aDouble)->default_value(0.0),"Set tracker altitude (Meters)")
     ("scale",po::value<double>(&aDouble)->default_value(0.25),"Video scale")
     ("gps",po::value<string>(&aString)->default_value("/dev/tty0"),"Specify GPS serial port")
     ("arduino",po::value<string>(&aString)->default_value("/dev/tty1"),"Specify arduino serial port")
-    ("video",po::value<string>(&aString)->default_value(""),"Simulate using video")
-    ("blind","Do not use visual input");
+    ("video",po::value<string>(&aString)->default_value(""),"Simulate using video file [arg]")
+    ("blind","Do not use visual input")
+    ("no-gps", "Do not use GPS")
+    ("help", "Display help message");
 
   po::variables_map vm;
   po::store(po::command_line_parser(argc,argv).options(desc).run(),vm);
   po::notify(vm);
 
+  if (vm.count("help")) {
+    cout << desc << endl;
+    return 0;
+  }
+
   arguments.showExtras = vm.count("extras");
   arguments.drawLine = vm.count("drawLine");
   arguments.blind = vm.count("blind");
+  arguments.noGPS = vm.count("no-gps");
+  arguments.debug = vm.count("debug");
   arguments.lat = vm["lat"].as<double>();
   arguments.lon = vm["lon"].as<double>();
   arguments.alt = vm["alt"].as<double>();
@@ -79,73 +93,105 @@ int main(int argc, char* argv[]){
   Theron::Catcher<PlaneVisionMessage>       imageCatcher;
   Theron::Address                           from;
   PlaneVisionMessage                        message;
-  Vision                                    *vision;
+  Vision*                                   vision;
+  MultimodalActor*                          multimodalActor;
+  FrameAnalyzerActor*                       frameAnalyzerActor;
+  VideoReceiverInterface*                   videoReceiverInterface;
+  GeoreferencingActor*                      georeferencingActor;
+  GPSReceiverInterface*                     gpsReceiverInterface;
 
-  cout << "Initializing tracker with the following settings: \n";
-  cout << "Tracker Latitude: " << arguments.lat << endl;
-  cout << "Tracker Longitude: " << arguments.lon << endl;
-  cout << "Tracker Altitude: " << arguments.alt << endl;
-  cout << "GPS Serial Device: " << arguments.gpsSerial << endl;
-  cout << "Arduino Serial Device: " << arguments.arduinoSerial << endl;
+  Log::log("Initializing tracker with the following settings: ");
+  cout << "\tTracker Latitude: \t" << KMAG << arguments.lat << KNRM << endl;
+  cout << "\tTracker Longitude: \t" << KMAG << arguments.lon << KNRM << endl;
+  cout << "\tTracker Altitude: \t" << KMAG << arguments.alt << KNRM << endl;
+  cout << "\tGPS Serial Device: \t" << KMAG << arguments.gpsSerial << KNRM << endl;
+  cout << "\tArduino Serial Device: \t" << KMAG << arguments.arduinoSerial << KNRM << endl << endl;
 
   if (arguments.videoFilename == ""){
-    cout << "Using live video stream\n";
+    Log::log("\tUsing live video stream");
   } else {
-    cout << "Simulating flight using "<< arguments.videoFilename << endl;
+    Log::log("\tSimulating flight using " + arguments.videoFilename);
   }
 
   if (arguments.showExtras) {
-    cout << "Displaying intermediate steps\n";
+    Log::log("\tDisplaying intermediate steps");
     vision = new Vision(true);
   } else {
     vision = new Vision(false);
   }
 
   if (arguments.recordDirectory != "") {
-    cout << "Recording output to: "<< arguments.recordDirectory << endl;
+    Log::log("\tRecording output to: " +  arguments.recordDirectory);
   }
+
+  if (arguments.debug) {
+    Log::debugMode = true;
+    Log::debug("\tDebug output enabled");
+  } else {
+    Log::debugMode = false;
+  }
+
+  cout << endl;
 
   imageReceiver.RegisterHandler(&imageCatcher,&Theron::Catcher<PlaneVisionMessage>::Push);
 
-  cout << "Creating Theron Framework...\n";
+  Log::log("Creating Theron Framework...");
   Theron::Framework framework;
 
-  cout << "Spawning Multimodal Actor...\n";
-  MultimodalActor multimodalActor(framework,arguments.arduinoSerial);
+  Log::log("Spawning Multimodal Actor...");
+  multimodalActor = new MultimodalActor(framework,arguments.arduinoSerial);
 
-  cout << "Spawning Frame Analyzer Actor...\n";
-  FrameAnalyzerActor frameAnalyzerActor(framework, arguments.drawLine, vision, imageReceiver.GetAddress(), multimodalActor.GetAddress());
-
-  cout <<"Spawning Georeferencing Actor...\n"; 
-  GeoreferencingActor georeferencingActor(framework,arguments.lat,arguments.lon,arguments.alt,multimodalActor.GetAddress());
 
   if (!arguments.blind){
-    cout <<"Spawning VideoReceiver Interface...\n"; 
+    Log::log("Spawning Frame Analyzer Actor...");
+    frameAnalyzerActor = new FrameAnalyzerActor(framework, arguments.drawLine, vision, imageReceiver.GetAddress(), multimodalActor->GetAddress());
+    Log::log("Spawning VideoReceiver Interface...");
     if (arguments.videoFilename == ""){
-      new VideoReceiverInterface(framework,frameAnalyzerActor.GetAddress());
+      videoReceiverInterface = new VideoReceiverInterface(framework,frameAnalyzerActor->GetAddress());
     } else {
-      new VideoReceiverInterface(framework, arguments.videoFilename, frameAnalyzerActor.GetAddress());
+      videoReceiverInterface = new VideoReceiverInterface(framework, arguments.videoFilename, frameAnalyzerActor->GetAddress());
     }
   } else {
-    cout << "Not using video input\n";
+    Log::log("Not using video input");
   }
 
-  cout <<"Spawning GPSReceiver Interface...\n"; 
-  GPSReceiverInterface gpsReceiverInterface(framework, arguments.gpsSerial, georeferencingActor.GetAddress());
+  if (!arguments.noGPS){
+    Log::log("Spawning Georeferencing Actor...");
+    georeferencingActor = new GeoreferencingActor(framework,arguments.lat,arguments.lon,arguments.alt,multimodalActor->GetAddress());
+    Log::log("Spawning GPSReceiver Interface..."); 
+    gpsReceiverInterface = new GPSReceiverInterface(framework, arguments.gpsSerial, georeferencingActor->GetAddress());
+  } else {
+    Log::log("Not using GPS");
+  }
 
-  cout << "Tracker Initialization Complete.\n";
+  if (arguments.recordDirectory != "") {
+    string command = string("mkdir ") + arguments.recordDirectory;
+    system(command.c_str());
+    Log::log("Recording to: " +  arguments.recordDirectory);
+  }
 
+  Log::success("Tracker Initialization Complete");
+
+  int currentFrame = 0;
   while (true){
+    currentFrame++;
     imageReceiver.Wait();
     imageReceiver.Consume(UINT_MAX);
     while (!imageCatcher.Empty()){
       imageCatcher.Pop(message,from);
     }
     for (int i = 0; i < message.extras.size(); i++){
-      //showImage(message.extras[i].name,message.extras[i].image, arguments.scale);
+      if (arguments.showExtras){
+        showImage(message.extras[i].name,message.extras[i].image, arguments.scale);
+      }
       cvReleaseImage(&message.extras[i].image);
     }
     showImage("Display window", message.result, arguments.scale);
+    if (arguments.recordDirectory != "") {
+      string frame = (boost::format("%06d") % currentFrame).str();
+      string filename = arguments.recordDirectory + "/" + frame + ".jpg";
+      cvSaveImage(filename.c_str(), message.result);
+    }
     cvReleaseImage(&message.result);
     cvWaitKey(1);
   }

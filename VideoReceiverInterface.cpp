@@ -6,81 +6,109 @@
 #include <iostream>
 #include "VideoReceiverInterface.h"
 #include "Messages.h"
+#include "Log.h"
+
 using namespace cv;
 using namespace std;
 using namespace Messages;
 
 void VideoReceiverInterface::sendImage(IplImage* image){
   const ImageMessage message(cvCloneImage(image));
-  cerr <<"Sending message";
+  Log::debug("Sending message");
   framework.Send(message,receiver.GetAddress(),frameAnalyzerActor);
-  cerr <<"Sent";
 }
 
 class VideoCallback : public IDeckLinkInputCallback {
   public:
-  VideoCallback(VideoReceiverInterface* vInterface): vInterface(vInterface), IDeckLinkInputCallback(){};
-  virtual HRESULT VideoInputFrameArrived(IDeckLinkVideoInputFrame * videoFrame,
-      IDeckLinkAudioInputPacket * audioPacket) {
-    long width = videoFrame->GetWidth();
-    long height = videoFrame->GetHeight();
-    BMDFrameFlags flags = videoFrame->GetFlags();
-    cerr <<"Image width: "<<width<<" height: "<<height<<endl;
-    if (flags == bmdFrameHasNoInputSource) return S_OK;
-    IplImage* image= cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,3);
-    void* _buffer;
-    videoFrame->GetBytes(&_buffer);
-    unsigned char* buffer = (unsigned char*) _buffer;
-    for(int i = 0, j=0; i < width * height * 3; i+=6, j+=4)
-    { 
-      unsigned char u = buffer[j];
-      unsigned char y = buffer[j+1];
-      unsigned char v = buffer[j+2];
+    VideoCallback(VideoReceiverInterface* vInterface): vInterface(vInterface), IDeckLinkInputCallback(){};
+    virtual HRESULT VideoInputFrameArrived(IDeckLinkVideoInputFrame * videoFrame,
+        IDeckLinkAudioInputPacket * audioPacket) {
+      long width = videoFrame->GetWidth();
+      long height = videoFrame->GetHeight();
+      BMDFrameFlags flags = videoFrame->GetFlags();
+      if (flags == bmdFrameHasNoInputSource){
+        Log::debug("No input source connected\n");
+        return S_OK;
+      }
+      IplImage* image= cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,3);
+      void* _buffer;
+      videoFrame->GetBytes(&_buffer);
+      unsigned char* buffer = (unsigned char*) _buffer;
+      for(int i = 0, j=0; i < width * height * 3; i+=6, j+=4)
+      { 
+        unsigned char u = buffer[j];
+        unsigned char y = buffer[j+1];
+        unsigned char v = buffer[j+2];
 
-      image->imageData[i+2] = 1.0*y + 8 + 1.402*(v-128);
-      image->imageData[i+1] = 1.0*y - 0.34413*(u-128) - 0.71414*(v-128);
-      image->imageData[i] = 1.0*y + 1.772*(u-128) + 0;
+        image->imageData[i+2] = 1.0*y + 8 + 1.402*(v-128);
+        image->imageData[i+1] = 1.0*y - 0.34413*(u-128) - 0.71414*(v-128);
+        image->imageData[i] = 1.0*y + 1.772*(u-128) + 0;
 
-      y = buffer[j+3];
-      image->imageData[i+5] = 1.0*y + 8 + 1.402*(v-128);
-      image->imageData[i+4] = 1.0*y - 0.34413*(u-128) - 0.71414*(v-128);
-      image->imageData[i+3] = 1.0*y + 1.772*(u-128) + 0;
+        y = buffer[j+3];
+        image->imageData[i+5] = 1.0*y + 8 + 1.402*(v-128);
+        image->imageData[i+4] = 1.0*y - 0.34413*(u-128) - 0.71414*(v-128);
+        image->imageData[i+3] = 1.0*y + 1.772*(u-128) + 0;
+      }
+      vInterface->sendImage(image);
+      Log::debug("Image received");
+      return S_OK;
     }
-  vInterface->sendImage(image);
-  cerr <<"Image received";
-  return S_OK;
-}
 
-virtual HRESULT VideoInputFormatChanged(BMDVideoInputFormatChangedEvents notifactionEvents,
-    IDeckLinkDisplayMode * newDisplayMode,
-    BMDDetectedVideoInputFormatFlags detectedSignalFlags){
-  return S_OK;
-}
-virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, LPVOID *ppv) { return E_NOINTERFACE; }
-virtual ULONG STDMETHODCALLTYPE AddRef(void){return 0;};
-virtual ULONG STDMETHODCALLTYPE  Release(void){return 0;};
-private:
-VideoReceiverInterface* vInterface;
+    virtual HRESULT VideoInputFormatChanged(BMDVideoInputFormatChangedEvents notifactionEvents,
+        IDeckLinkDisplayMode * newDisplayMode,
+        BMDDetectedVideoInputFormatFlags detectedSignalFlags){
+      return S_OK;
+    }
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, LPVOID *ppv) { return E_NOINTERFACE; }
+    virtual ULONG STDMETHODCALLTYPE AddRef(void){return 0;};
+    virtual ULONG STDMETHODCALLTYPE  Release(void){return 0;};
+  private:
+    VideoReceiverInterface* vInterface;
 };
 
 void VideoReceiverInterface::cameraFunction(){
+
   IDeckLink *deckLink;
   IDeckLinkInput *deckLinkInput;
   BMDVideoInputFlags inputFlags = 0;
   BMDDisplayMode displayMode = bmdModeHD1080i5994;
   BMDPixelFormat pixelFormat = bmdFormat8BitYUV;
   IDeckLinkIterator *deckLinkIterator = CreateDeckLinkIteratorInstance();
-  cerr <<"Created deckling iterator\n";
-  HRESULT result = deckLinkIterator->Next(&deckLink);
-  cerr <<"Created decklink object\n";
-  deckLink->QueryInterface(IID_IDeckLinkInput, (void**)&deckLinkInput);
-  cerr <<"Created decklinkInput object\n";
-  deckLinkInput->SetCallback(new VideoCallback(this));
-  cerr <<"Registered decklinkInput callback\n";
-  deckLinkInput->EnableVideoInput(displayMode,pixelFormat,inputFlags);
-  cerr <<"Enabling video input\n";
-  deckLinkInput->StartStreams();
-  cerr <<"Starting stream\n";
+  Log::debug("Creating decklink iterator...");
+  if (deckLinkIterator == 0 ){
+    cerr << "\n\tUnable to create DeckLink Iterator. Video analysis will be disabled.\n\n";
+    return;
+  }
+
+  Log::debug("Creating decklink object...");
+  if ( deckLinkIterator->Next(&deckLink) != S_OK ) {
+    Log::error("\n\tCould not create decklink object. Video analysis will be disabled\n");
+    return;
+  }
+
+  Log::debug("Querying decklink interface...");
+  if ( deckLink->QueryInterface(IID_IDeckLinkInput, (void**)&deckLinkInput) != S_OK ) {
+    Log::error("\n\tCould not find a decklink interface. Video analysis will be disabled\n");
+    return;
+  }
+
+  Log::debug("Registering decklink input callback...");
+  if ( deckLinkInput->SetCallback(new VideoCallback(this)) != S_OK ) {
+    Log::error("\n\tCould not set the decklink callback. Video analysis will be disabled\n");
+    return;
+  }
+
+  Log::debug("Enabling video input...");
+  if ( deckLinkInput->EnableVideoInput(displayMode,pixelFormat,inputFlags) != S_OK ) {
+    Log::error("\n\tCould not enable video input. Video analysis will be disabled\n");
+    return;
+  }
+  
+  Log::debug("Starting streams...");
+  if ( deckLinkInput->StartStreams() != S_OK ) {
+    Log::error("\n\tCould not start streams. Video analysis will be disabled\n");
+    return;
+  }
 }
 
 void VideoReceiverInterface::videoFunction(string videoFilename){

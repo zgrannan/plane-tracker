@@ -2,6 +2,7 @@
 #include "FrameAnalyzerActor.h"
 #include "Vision.h"
 #include "Messages.h"
+#include "Log.h"
 
 #define CAMERA_H_FOV 60.0
 #define CAMERA_V_FOV 45.0
@@ -9,9 +10,9 @@
 void FrameAnalyzerActor::Handler(const ImageMessage& message, const Theron::Address from){
   if (GetNumQueuedMessages() > 1) return;
   const RelativePositionMessage positionMessage = calculateRelativePosition(message);
-  cerr << "Relative position calculated\n";
+  Log::debug("Relative position calculated");
   Send(positionMessage, multimodalActor);
-  cerr << "Position message sent\n";
+  Log::debug("Position message sent");
 }
 
 RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const ImageMessage& message){

@@ -1,8 +1,10 @@
 #include "Protocol.h"
 #include "Messages.h"
+#include "Log.h"
 #include <string>
 #include <cstdlib>
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 
 using namespace std;
 using namespace boost;
@@ -20,7 +22,7 @@ GPSDataMessage Protocol::parseSerialInputForGPS(string input, string& extra) {
         extra = "";
         return parseSerialInputLineForGPS(lines[i]);
       } else {
-        cout << "Chunk "<< chunks[chunks.size() - 1] << endl;
+        Log::debug("Chunk " +  chunks[chunks.size() - 1]);
         extra = lines[i];
       }
     }
@@ -34,12 +36,12 @@ GPSDataMessage Protocol::parseSerialInputLineForGPS(string input) {
   vector<string> strs;
   boost::split(strs,input,is_any_of(","));
   if (strs.size() < 10 ) {
-    cout << "Invalid message: " << input << endl;
+    Log::warn("Invalid message: " + input);
     return GPSDataMessage();
   }
-  cout << "Received message: " << input << endl;
+  Log::debug("Received message: " +  input);
   if (strs[2] == "" || strs[3] == "" || strs[4] == "" || strs[5] == "") {
-    cout << "GPS Data not yet available\n";
+    Log::debug("GPS Data not yet available");
     return GPSDataMessage();
   }
   if (strs[3] == "N"){
@@ -53,12 +55,12 @@ GPSDataMessage Protocol::parseSerialInputLineForGPS(string input) {
     lon = 0 - parseLatitudeOrLongitude(strs[4]);
   }
   alt = atof(strs[9].c_str());
-  cout <<"Recieved plane position: ("<<lat<<","<<lon<<") @ "<<alt<<" m\n";
+  Log::log("Recieved plane position: (" + boost::lexical_cast<string>(lat) + "," + boost::lexical_cast<string>(lon) + ") @ "+ boost::lexical_cast<string>(alt) + " m");
   return GPSDataMessage(lat,lon,alt);
 }
 
 double Protocol::parseLatitudeOrLongitude(string input){
-  cerr <<"Parsing "<<input<<" as lat or lon\n";
+  Log::debug("Parsing " + input + " as lat or lon");
   double raw = atof(input.c_str()) / 100;
   int degrees = (int)(raw);
   double minutes = (raw - degrees) * 100; 

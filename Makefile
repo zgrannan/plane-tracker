@@ -25,6 +25,7 @@ LIB_FLAGS = \
 
 
 SOURCES = \
+  Log.cpp \
   FrameAnalyzerActor.cpp \
   GPSReceiverInterface.cpp \
   GeoReference.cpp \
@@ -40,9 +41,6 @@ EXECUTABLE=tracker
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(MISC_FLAGS) $(LDFLAGS) $(LIB_FLAGS) $(OBJECTS) -o $@
-
-VisionTester: VisionTester.o FrameAnalyzerActor.o Vision.o Messages.o
-	$(CC) $(MISC_FLAGS) $(LDFLAGS) $(LIB_FLAGS) VisionTester.o FrameAnalyzerActor.o Vision.o Messages.o -o $@
 
 %.o: %.cpp
 	$(CC) -c $(MISC_FLAGS) $(INCLUDE_FLAGS) $<  

@@ -5,6 +5,7 @@
 #include "GPSReceiverInterface.h"
 #include "Messages.h"
 #include "Protocol.h"
+#include "Log.h"
 
 
 using namespace std;
@@ -31,7 +32,7 @@ void GPSReceiverInterface::workerFunction(){
         message = Protocol::parseSerialInputForGPS(extra + string(buffer),extra);
         sendGPSData(message);
       } catch (string msg){
-        cerr <<"Protocol error: "<<msg<<endl;
+        Log::error("Protocol error: " + msg);
       }
     }
     *buffer = '\0';
