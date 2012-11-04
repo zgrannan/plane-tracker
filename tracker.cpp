@@ -39,6 +39,7 @@ int main(int argc, char* argv[]){
     string arduinoSerial; 
     string videoFilename;
     string recordDirectory;
+    string imageFilename;
     bool showExtras;
     bool drawLine;
     bool blind;
@@ -60,7 +61,8 @@ int main(int argc, char* argv[]){
     ("scale",po::value<double>(&aDouble)->default_value(0.25),"Video scale")
     ("gps",po::value<string>(&aString)->default_value("/dev/tty0"),"Specify GPS serial port")
     ("arduino",po::value<string>(&aString)->default_value("/dev/tty1"),"Specify arduino serial port")
-    ("video",po::value<string>(&aString)->default_value(""),"Simulate using video file [arg]")
+    ("video", po::value<string>(&aString)->default_value(""),"Simulate using video file [arg]")
+    ("image", po::value<string>(&aString)->default_value(""), "Analyze a single image [arg]")
     ("blind","Do not use visual input")
     ("no-gps", "Do not use GPS")
     ("help", "Display help message");
@@ -75,7 +77,7 @@ int main(int argc, char* argv[]){
   }
 
   arguments.showExtras = vm.count("extras");
-  arguments.drawLine = vm.count("drawLine");
+  arguments.drawLine = vm.count("line");
   arguments.blind = vm.count("blind");
   arguments.noGPS = vm.count("no-gps");
   arguments.debug = vm.count("debug");
@@ -86,6 +88,7 @@ int main(int argc, char* argv[]){
   arguments.gpsSerial = vm["gps"].as<string>();
   arguments.arduinoSerial = vm["arduino"].as<string>();
   arguments.videoFilename = vm["video"].as<string>();
+  arguments.imageFilename = vm["image"].as<string>();
   arguments.recordDirectory = vm["record"].as<string>();
 
   /* Initialize variables */
@@ -107,10 +110,12 @@ int main(int argc, char* argv[]){
   cout << "\tGPS Serial Device: \t" << KMAG << arguments.gpsSerial << KNRM << endl;
   cout << "\tArduino Serial Device: \t" << KMAG << arguments.arduinoSerial << KNRM << endl << endl;
 
-  if (arguments.videoFilename == ""){
-    Log::log("\tUsing live video stream");
-  } else {
+  if (arguments.videoFilename != ""){
     Log::log("\tSimulating flight using " + arguments.videoFilename);
+  } else if (arguments.imageFilename != "") {
+    Log::log("\tAnalyzing image: " + arguments.imageFilename);
+  } else {
+    Log::log("\tUsing live video");
   }
 
   if (arguments.showExtras) {
@@ -144,12 +149,34 @@ int main(int argc, char* argv[]){
 
   if (!arguments.blind){
     Log::log("Spawning Frame Analyzer Actor...");
-    frameAnalyzerActor = new FrameAnalyzerActor(framework, arguments.drawLine, vision, imageReceiver.GetAddress(), multimodalActor->GetAddress());
-    Log::log("Spawning VideoReceiver Interface...");
-    if (arguments.videoFilename == ""){
-      videoReceiverInterface = new VideoReceiverInterface(framework,frameAnalyzerActor->GetAddress());
+    frameAnalyzerActor = new FrameAnalyzerActor(
+        framework,
+        arguments.drawLine,
+        vision,
+        imageReceiver.GetAddress(),
+        multimodalActor->GetAddress()
+        );
+    if (arguments.imageFilename == ""){
+      Log::log("Spawning VideoReceiver Interface...");
+      if (arguments.videoFilename == ""){
+        videoReceiverInterface = new VideoReceiverInterface(
+            framework,
+            frameAnalyzerActor->GetAddress()
+            );
+      } else {
+        videoReceiverInterface = new VideoReceiverInterface(
+            framework,
+            arguments.videoFilename,
+            frameAnalyzerActor->GetAddress()
+            );
+      }
     } else {
-      videoReceiverInterface = new VideoReceiverInterface(framework, arguments.videoFilename, frameAnalyzerActor->GetAddress());
+      IplImage* image = cvLoadImage(arguments.imageFilename.c_str());
+      framework.Send(
+          ImageMessage(image),
+          imageReceiver.GetAddress(),
+          frameAnalyzerActor->GetAddress()
+          );
     }
   } else {
     Log::log("Not using video input");

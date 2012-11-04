@@ -31,6 +31,7 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
     pan = dx / data.result->width * CAMERA_H_FOV;
     tilt = dy / data.result->height * CAMERA_V_FOV;
     if (drawLine) {
+      Log::debug("Drawing line");
       CvPoint origin = cvPoint(centerX,centerY);
       CvPoint destination =  cvPoint(centerX+dx,centerY+dy);
       CvScalar color = cvScalar(0,0,255);
