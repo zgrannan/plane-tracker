@@ -190,6 +190,7 @@ int main(int argc, char* argv[]){
     if (arguments.recordDirectory != "") {
       string frame = (boost::format("%06d") % currentFrame).str();
       string filename = arguments.recordDirectory + "/" + frame + ".jpg";
+      Log::debug("Saving current frame to: " + filename);
       cvSaveImage(filename.c_str(), message.result);
     }
     cvReleaseImage(&message.result);
