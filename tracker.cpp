@@ -29,14 +29,29 @@ void showImage(string name, IplImage* image, float scale){
   cvReleaseImage(&newImage);
 }
 
+int baudRate(string baudRate){
+  if (baudRate == "4800") return B4800;
+  if (baudRate == "9600") return B9600;
+  if (baudRate == "19200") return B19200;
+  if (baudRate == "38400") return B38400;
+  if (baudRate == "57600") return B57600;
+  if (baudRate == "76800") return B76800;
+  if (baudRate == "115200") return B115200;
+  Log::error("Invalid baudrate: " + baudRate);
+  exit(1);
+  return -1;
+}
+
 int main(int argc, char* argv[]){
   struct arguments{
     double scale; 
     double lat; 
     double lon; 
     double alt; 
-    string gpsSerial; 
-    string arduinoSerial; 
+    int gpsBaud;
+    int arduinoBaud;
+    string gpsPort; 
+    string arduinoPort; 
     string videoFilename;
     string recordDirectory;
     string imageFilename;
@@ -59,8 +74,10 @@ int main(int argc, char* argv[]){
     ("lon",po::value<double>(&aDouble)->default_value(117.0),"Set tracker longitude (GPS Degrees)")
     ("alt",po::value<double>(&aDouble)->default_value(0.0),"Set tracker altitude (Meters)")
     ("scale",po::value<double>(&aDouble)->default_value(0.25),"Video scale")
-    ("gps",po::value<string>(&aString)->default_value("/dev/tty0"),"Specify GPS serial port")
-    ("arduino",po::value<string>(&aString)->default_value("/dev/tty1"),"Specify arduino serial port")
+    ("gps-port",po::value<string>(&aString)->default_value("/dev/tty0"),"Specify GPS serial port")
+    ("arduino-port",po::value<string>(&aString)->default_value("/dev/tty1"),"Specify arduino serial port")
+    ("gps-baud",po::value<string>(&aString)->default_value("9600"),"Specify GPS serial baud rate")
+    ("arduino-baud",po::value<string>(&aString)->default_value("57600"),"Specify arduino serial baud rate")
     ("video", po::value<string>(&aString)->default_value(""),"Simulate using video file [arg]")
     ("image", po::value<string>(&aString)->default_value(""), "Analyze a single image [arg]")
     ("blind","Do not use visual input")
@@ -85,8 +102,10 @@ int main(int argc, char* argv[]){
   arguments.lon = vm["lon"].as<double>();
   arguments.alt = vm["alt"].as<double>();
   arguments.scale = vm["scale"].as<double>();
-  arguments.gpsSerial = vm["gps"].as<string>();
-  arguments.arduinoSerial = vm["arduino"].as<string>();
+  arguments.gpsBaud = baudRate(vm["gps-baud"].as<string>());
+  arguments.arduinoBaud= baudRate(vm["arduino-baud"].as<string>());
+  arguments.gpsPort= vm["gps-port"].as<string>();
+  arguments.arduinoPort= vm["arduino-port"].as<string>();
   arguments.videoFilename = vm["video"].as<string>();
   arguments.imageFilename = vm["image"].as<string>();
   arguments.recordDirectory = vm["record"].as<string>();
@@ -107,8 +126,9 @@ int main(int argc, char* argv[]){
   cout << "\tTracker Latitude: \t" << KMAG << arguments.lat << KNRM << endl;
   cout << "\tTracker Longitude: \t" << KMAG << arguments.lon << KNRM << endl;
   cout << "\tTracker Altitude: \t" << KMAG << arguments.alt << KNRM << endl;
-  cout << "\tGPS Serial Device: \t" << KMAG << arguments.gpsSerial << KNRM << endl;
-  cout << "\tArduino Serial Device: \t" << KMAG << arguments.arduinoSerial << KNRM << endl << endl;
+  cout << "\tGPS Serial Device: \t" << KMAG << arguments.gpsBaud << KNRM << endl;
+  cout << "\tGPS Serial Device: \t" << KMAG << arguments.gpsBaud << KNRM << endl;
+  cout << "\tArduino Serial Device: \t" << KMAG << arguments.arduinoBaud << KNRM << endl << endl;
 
   if (arguments.videoFilename != ""){
     Log::log("\tSimulating flight using " + arguments.videoFilename);
@@ -144,7 +164,7 @@ int main(int argc, char* argv[]){
   Theron::Framework framework;
 
   Log::log("Spawning Multimodal Actor...");
-  multimodalActor = new MultimodalActor(framework,arguments.arduinoSerial);
+  multimodalActor = new MultimodalActor(framework,arguments.arduinoPort, B57600);
 
 
   if (!arguments.blind){
@@ -186,7 +206,7 @@ int main(int argc, char* argv[]){
     Log::log("Spawning Georeferencing Actor...");
     georeferencingActor = new GeoreferencingActor(framework,arguments.lat,arguments.lon,arguments.alt,multimodalActor->GetAddress());
     Log::log("Spawning GPSReceiver Interface..."); 
-    gpsReceiverInterface = new GPSReceiverInterface(framework, arguments.gpsSerial, georeferencingActor->GetAddress());
+    gpsReceiverInterface = new GPSReceiverInterface(framework, arguments.gpsPort, georeferencingActor->GetAddress());
   } else {
     Log::log("Not using GPS");
   }

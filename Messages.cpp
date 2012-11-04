@@ -15,7 +15,7 @@ vector<char> RelativePositionMessage::toBytes() const {
   string panS = (boost::format("%04d") % _pan).str();
   string tiltS = (boost::format("%04d") % _tilt).str();
   if (!positionLost){
-    byteString = "#1 " + panS + " " + tiltS + "\n";
+    byteString = "#0 " + panS + " " + tiltS + "\n";
   } else {
     byteString = "";
   }
