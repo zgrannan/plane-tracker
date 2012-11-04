@@ -15,7 +15,7 @@ vector<char> RelativePositionMessage::toBytes() const {
   string panS = (boost::format("%04d") % _pan).str();
   string tiltS = (boost::format("%04d") % _tilt).str();
   if (!positionLost){
-    byteString = "#2 " + panS + " " + tiltS + "\n";
+    byteString = "#1 " + panS + " " + tiltS + "\n";
   } else {
     byteString = "";
   }
@@ -30,11 +30,16 @@ vector<char> AbsolutePositionMessage::toBytes() const{
   string panS = (boost::format("%04d") % _pan).str();
   string tiltS = (boost::format("%04d") % _tilt).str();
   if (!positionLost){
-    byteString = "#1 " + panS + " " + tiltS + "\n";
+    byteString = "#0 " + panS + " " + tiltS + "\n";
   } else {
     byteString = "";
   }
   return vector<char>(byteString.begin(),byteString.end()); 
+}
+
+vector<char> UseRSSIMessage::toBytes() const{
+  string byteString = "#2 0000 0000\n";
+  return vector<char>(byteString.begin(),byteString.end());
 }
 
 vector<int> PlaneVisionMessage::getDisplacement(){

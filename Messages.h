@@ -77,6 +77,11 @@ namespace Messages{
       AbsolutePositionMessage(): PositionMessage(){}
       vector<char> toBytes() const;
   };
+
+  class UseRSSIMessage: public PositionMessage{
+    public:
+      vector<char> toBytes() const;
+  };
 }
 
 #endif
