@@ -7,8 +7,6 @@
 
 #include "Messages.h"
 
-#define DEFAULT_SCALE 0.75
-
 using namespace std;
 using namespace cvb;
 using namespace Messages;

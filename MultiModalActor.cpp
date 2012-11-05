@@ -64,5 +64,5 @@ MultimodalActor::MultimodalActor(Theron::Framework &framework, string serialPort
       const char* bytePtr = &bytes[0];
       Log::debug(string("Writing message: ") + bytePtr);
       write(fd, bytePtr, bytes.size());
-      usleep(250);
+      usleep(2500);
     }

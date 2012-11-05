@@ -42,13 +42,13 @@ SOURCES += ui.cpp
   `pkg-config opencv cvblob --cflags --libs` \
 
 LIBS = \
-  -lopencv_core \
-  -lboost_system-mt \
-  -lboost_iostreams-mt \
-  -ltherond \
-  -lboost_thread-mt \
-  -lboost_program_options-mt \
-  -lopencv_highgui \
+LIBS += -lopencv_core
+LIBS += -lboost_system-mt 
+LIBS += -lboost_iostreams-mt
+LIBS += -ltherond 
+LIBS += -lboost_thread-mt 
+LIBS += -lboost_program_options-mt 
+LIBS += -lopencv_highgui \
   -lopencv_imgproc \
   -lm \
   -lpthread \

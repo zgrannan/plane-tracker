@@ -13,7 +13,7 @@ using namespace std;
 using namespace Messages;
 
 void VideoReceiverInterface::sendImage(IplImage* image){
-  const ImageMessage message(cvCloneImage(image));
+  const ImageMessage message(image);
   Log::debug("Sending message");
   framework.Send(message,receiver.GetAddress(),frameAnalyzerActor);
 }
@@ -50,6 +50,7 @@ class VideoCallback : public IDeckLinkInputCallback {
         image->imageData[i+3] = 1.0*y + 1.772*(u-128) + 0;
       }
       vInterface->sendImage(image);
+      //videoFrame->Release();
       Log::debug("Image received");
       return S_OK;
     }
@@ -119,7 +120,7 @@ void VideoReceiverInterface::videoFunction(string videoFilename){
     capture >> temp;
     IplImage tempIpl = temp;
     image = new IplImage(tempIpl); 
-    sendImage(image);
+    sendImage(cvCloneImage(image));
     usleep(30000);
   }
 }

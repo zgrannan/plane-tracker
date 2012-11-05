@@ -36,7 +36,6 @@ vector<double> Vision::getVelocityVector(CvBlob currentBlob, CvBlob lastBlob) {
  */
 IplImage* Vision::fullColorToBW (IplImage* image, int conversionMethod, vector<ImageMessage> &extras){
   IplImage* binaryImage = cvCreateImage(cvGetSize(image),8,1);
-
   /**
    * Uses adaptive threshholding to yield a black and white image. This gets the best results
    * so far
@@ -51,7 +50,6 @@ IplImage* Vision::fullColorToBW (IplImage* image, int conversionMethod, vector<I
     cvSplit(hsvImage,binaryImage,NULL,NULL,NULL);
 
     cvReleaseImage(&hsvImage);
-
     if (intermediateSteps)
       extras.push_back(ImageMessage("Hue channel isolated",cvCloneImage(binaryImage)));
 
@@ -79,16 +77,18 @@ CvBlobs Vision::findCandidates(IplImage *image, vector<int> skyHSV, vector<Image
   if (skyHSV.size() == 3){
     return CvBlobs();
   } else {
+    CvBlobs blobs;
     IplImage* bwImage = fullColorToBW(image,ADAPTIVE_THRESHHOLD,extras);
     IplImage* label= cvCreateImage(cvGetSize(image),IPL_DEPTH_LABEL,1);
-    IplImage* output = cvCreateImage(cvGetSize(image),image->depth,image->nChannels);
-    CvBlobs blobs;
     unsigned int result = cvLabel(bwImage,label,blobs);
-    if (intermediateSteps)
+    if (intermediateSteps) {
+      IplImage* output = cvCreateImage(cvGetSize(image),image->depth,image->nChannels);
       extras.push_back(ImageMessage("Black and White image",bwImage));
-    cvRenderBlobs(label,blobs,image,output);
-    if (intermediateSteps)
       extras.push_back(ImageMessage("Labeled image",output));
+      cvRenderBlobs(label,blobs,image,output);
+    } else {
+      cvReleaseImage(&bwImage);
+    }
     cvReleaseImage(&label);
     return blobs;
   }
@@ -111,7 +111,6 @@ PlaneVisionMessage Vision::findPlane(IplImage* image, vector<PlaneVisionMessage>
 
   Log::debug("Frame: " + frame);
   CvBlobs candidates = findCandidates(image,skyHSV,extras);
-
   Log::debug("Found candidates");
   if (Log::debugMode){
     for (CvBlobs::const_iterator it=candidates.begin(); it!=candidates.end(); ++it){
@@ -119,7 +118,7 @@ PlaneVisionMessage Vision::findPlane(IplImage* image, vector<PlaneVisionMessage>
       cout << ", Centroid=(" << it->second->centroid.x << ", " << it->second->centroid.y << ")\n";
     }
   }
-
+  
   if (candidates.size() > 0){
     return PlaneVisionMessage(*candidates.begin()->second,image,extras);
   } else {

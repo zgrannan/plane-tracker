@@ -26,7 +26,7 @@ void showImage(string name, IplImage* image, float scale){
   IplImage* newImage = cvCreateImage(newSize,image->depth,image->nChannels);
   cvResize(image,newImage); 
   imshow(name,Mat(newImage));
-  cvReleaseImage(&newImage);
+  cvReleaseImage(&newImage); 
 }
 
 int baudRate(string baudRate){
@@ -75,7 +75,7 @@ int main(int argc, char* argv[]){
     ("alt",po::value<double>(&aDouble)->default_value(0.0),"Set tracker altitude (Meters)")
     ("scale",po::value<double>(&aDouble)->default_value(0.25),"Video scale")
     ("gps-port",po::value<string>(&aString)->default_value("/dev/tty0"),"Specify GPS serial port")
-    ("arduino-port",po::value<string>(&aString)->default_value("/dev/tty1"),"Specify arduino serial port")
+    ("arduino-port",po::value<string>(&aString)->default_value("/dev/tty.usbmodem1411"),"Specify arduino serial port")
     ("gps-baud",po::value<string>(&aString)->default_value("9600"),"Specify GPS serial baud rate")
     ("arduino-baud",po::value<string>(&aString)->default_value("57600"),"Specify arduino serial baud rate")
     ("video", po::value<string>(&aString)->default_value(""),"Simulate using video file [arg]")
@@ -126,9 +126,10 @@ int main(int argc, char* argv[]){
   cout << "\tTracker Latitude: \t" << KMAG << arguments.lat << KNRM << endl;
   cout << "\tTracker Longitude: \t" << KMAG << arguments.lon << KNRM << endl;
   cout << "\tTracker Altitude: \t" << KMAG << arguments.alt << KNRM << endl;
-  cout << "\tGPS Serial Device: \t" << KMAG << arguments.gpsBaud << KNRM << endl;
-  cout << "\tGPS Serial Device: \t" << KMAG << arguments.gpsBaud << KNRM << endl;
-  cout << "\tArduino Serial Device: \t" << KMAG << arguments.arduinoBaud << KNRM << endl << endl;
+  cout << "\tGPS Serial Device: \t" << KMAG << arguments.gpsPort << KNRM << endl;
+  cout << "\tGPS Baud Rate: \t\t" << KMAG << arguments.gpsBaud << KNRM << endl;
+  cout << "\tArduino Serial Device: \t" << KMAG << arguments.arduinoPort << KNRM << endl;
+  cout << "\tArduino Baud Rate: \t" << KMAG << arguments.arduinoBaud << KNRM << endl << endl;
 
   if (arguments.videoFilename != ""){
     Log::log("\tSimulating flight using " + arguments.videoFilename);
@@ -226,11 +227,12 @@ int main(int argc, char* argv[]){
     imageReceiver.Consume(UINT_MAX);
     while (!imageCatcher.Empty()){
       imageCatcher.Pop(message,from);
+      if (!imageCatcher.Empty()){
+        cvReleaseImage(&message.result);
+      }
     }
     for (int i = 0; i < message.extras.size(); i++){
-      if (arguments.showExtras){
-        showImage(message.extras[i].name,message.extras[i].image, arguments.scale);
-      }
+      showImage(message.extras[i].name,message.extras[i].image, arguments.scale);
       cvReleaseImage(&message.extras[i].image);
     }
     showImage("Display window", message.result, arguments.scale);

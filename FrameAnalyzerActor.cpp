@@ -4,11 +4,15 @@
 #include "Messages.h"
 #include "Log.h"
 
-#define CAMERA_H_FOV 60.0
-#define CAMERA_V_FOV 45.0
+#define CAMERA_H_FOV 160//12.8
+#define CAMERA_V_FOV 145//8.6
 
 void FrameAnalyzerActor::Handler(const ImageMessage& message, const Theron::Address from){
-  if (GetNumQueuedMessages() > 1) return;
+  if (GetNumQueuedMessages() > 1){
+    IplImage* image = message.image;
+    cvReleaseImage(&image);
+    return;
+  }
   const RelativePositionMessage positionMessage = calculateRelativePosition(message);
   Log::debug("Relative position calculated");
   Send(positionMessage, multimodalActor);
@@ -23,7 +27,7 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
   PlaneVisionMessage data = vision->findPlane(message.image,previousPlanes,skyHSV,planeHSV);
   double pan,tilt;
   if (data.hasPlane){
-    previousPlanes.push_back(data);
+    //previousPlanes.push_back(data);
     double dx = data.getDisplacement()[0];
     double dy = data.getDisplacement()[1];
     double centerX = data.result->width / 2;
