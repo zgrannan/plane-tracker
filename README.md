@@ -1,8 +1,73 @@
 UAV Tracker Readme
 ------------------
 
-
 ***Usage***
+
+**Overview**
+
+This software uses video and GPS information to instruct the tracker hardware. By default,
+this program will analyze video from the HDMI input to a connected Decklink capture card. GPS
+information will be received using a USB-serial connection to any GPS transmitter that
+implements the NMEA protocol. Tracker commands are sent via a USB-serial connection to the 
+Arduino microcontroller connected to the tracker hardware.
+
+In addition to live tracking, the software has some additional features. For example, the 
+tracker can record the video input, saving the result as a sequence of JPEGs that can later
+be encoded into a movie if desired. It is also possible to analyze a video or still image for
+debugging purposes. It is also possible to draw a line from the center of the image to the 
+plane, to ensure that CV is working properly.
+
+To run this software, first ensure that the serial connections to the GPS receiver and the 
+Arduino are established, and that the Decklink capture card is plugged into the computer. Then
+run the `tracker` executable from the command line (e.g `./tracker`). A video window should 
+appear on the screen mirroring the camera's output. For more information on how to set 
+the configuration for the tracker, read the section on _Options_ below, or run 
+`./tracker --help`
+
+
+**Options**
+
+--debug: Enables debug output. This outputs LOTS of information to the terminal window,
+         including blobs that were detected, GPS information coming in, and commands that
+         are being sent to the Arduino. It is advisable to pipe the output to grep if you want
+         specific information.
+
+--extras: Displays the image at each step of visual processing. Note that enabling this option
+          could degrade performance. Useful for debugging CV.
+
+--line: Draws a red line from the center of the frame to the plane when the plane is
+        detected.
+
+--record: Records the video output to the specified directory. Each frame in the video gets 
+          saved as a JPEG image. Because performance requirements may mandate frame-skipping,
+          be aware that skipped frames will not be recorded.
+
+--lat: Specifies that latitude of the tracker in GPS degrees.
+
+--lon: Specifies the longitude of the tracker in GPS degrees.
+
+--alt: Specifies the altitude of the tracker in meters.
+
+--gps-port: Specifies the serial port that the GPS receiver is connected to
+
+--arduino-port: Specifies the serial port that the Arduino is connected to
+
+--gps-baud: Specifies the baud rate for the serial connection to the GPS receiver
+
+--arduino-baud: Specifies the baud rate for the serial connection to the arduino
+
+--video: Uses the specified video file for computer vision instead of the Decklink interface.
+         Useful for testing purposes. 
+
+--image: Uses the specified image file for computer vision instead of the Decklink interface.
+         Useful for testing purposes.
+
+--blind: Do not use computer vision. Use this mode if there is no camera attached or you do not
+         have the Decklink drivers installed.
+
+--no-gps: Do not use GPS.
+
+--help: Display a help message.
 
 ***Architecture***
 
