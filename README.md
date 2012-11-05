@@ -1,11 +1,9 @@
-UAV Tracker Readme
-------------------
-
-***Usage***
+Usage
+-----
 
 **Overview**
 
-This software uses video and GPS information to instruct the tracker hardware. By default,
+This software uses video and GPS data to instruct the UAV tracker hardware. By default,
 this program will analyze video from the HDMI input to a connected Decklink capture card. GPS
 information will be received using a USB-serial connection to any GPS transmitter that
 implements the NMEA protocol. Tracker commands are sent via a USB-serial connection to the 
@@ -69,7 +67,8 @@ the configuration for the tracker, read the section on _Options_ below, or run
 
 --help: Display a help message.
 
-***Architecture***
+Architecture
+------------
 
 **Vision Components**
 
