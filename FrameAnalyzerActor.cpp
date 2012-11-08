@@ -7,8 +7,8 @@
 #define CAMERA_H_FOV 160//12.8
 #define CAMERA_V_FOV 145//8.6
 
-void FrameAnalyzerActor::Handler(const ImageMessage& message, const Theron::Address from){
-  if (GetNumQueuedMessages() > 1){
+void FrameAnalyzerActor::Handler(const ImageMessage& message, const __attribute__ ((unused)) Theron::Address from){
+  if (GetNumQueuedMessages() > 1 || disabled){
     IplImage* image = message.image;
     cvReleaseImage(&image);
     return;
@@ -25,7 +25,7 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
   vector<int> planeHSV;
 
   PlaneVisionMessage data = vision->findPlane(message.image,previousPlanes,skyHSV,planeHSV);
-  double pan,tilt;
+  double pan = 0,tilt = 0;
   if (data.hasPlane){
     //previousPlanes.push_back(data);
     double dx = data.getDisplacement()[0];

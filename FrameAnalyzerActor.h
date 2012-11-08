@@ -25,9 +25,12 @@ class FrameAnalyzerActor : public Theron::Actor {
         multimodalActor(multimodalActor){
           RegisterHandler(this, &FrameAnalyzerActor::Handler);
         }
+      void disable(){ disabled = true; }
+      void enable(){ disabled = false; }
   private:
     Vision* vision;
     bool drawLine;
+    bool disabled = false;
     RelativePositionMessage calculateRelativePosition(const ImageMessage& message);
     void Handler(const ImageMessage& message, const Theron::Address from);
     Theron::Address multimodalActor;
