@@ -30,49 +30,50 @@ vector<double> Vision::getVelocityVector(CvBlob currentBlob, CvBlob lastBlob) {
   return result;
 }
 
+IplImage* Vision::canny(IplImage* grayImage, vector<ImageMessage> &extras){
+  int lowThreshold = 50;
+  int ratio = 3;
+  int kernelSize =3;
+  Mat edges, dest;
+  blur(Mat(grayImage), edges, Size(3,3));
+  Canny(edges, edges, lowThreshold,lowThreshold * ratio, kernelSize);
+  dest = Scalar::all(0);
+  Mat(grayImage).copyTo(dest, edges);
+  IplImage* result = cvCreateImage(cvGetSize(grayImage),8,1);
+  cvThreshold(new IplImage(dest),result,1,255,CV_THRESH_BINARY);
+  if (intermediateSteps)
+    extras.push_back(ImageMessage("Edge detection", cvCloneImage(result)));
+  
+  return result;
+}
+
 /**
  * Converts a full-color image to a black and white image that can be used
  * for blob detection.
  */
 IplImage* Vision::fullColorToBW (IplImage* image, int conversionMethod, vector<ImageMessage> &extras){
-  IplImage* binaryImage = cvCreateImage(cvGetSize(image),8,1);
-  /**
-   * Uses adaptive threshholding to yield a black and white image. This gets the best results
-   * so far
-   */
-  if (conversionMethod == ADAPTIVE_THRESHHOLD){
+    IplImage* grayscaleImage= cvCreateImage(cvGetSize(image),8,1);
     IplImage *hsvImage = cvCreateImage(cvGetSize(image),image->depth,image->nChannels);
 
     // Create a hue-saturation-value version of this image
     cvCvtColor(image,hsvImage,CV_BGR2HSV);
 
     // Isolate the hue channel
-    cvSplit(hsvImage,binaryImage,NULL,NULL,NULL);
+    cvSplit(hsvImage,grayscaleImage,NULL,NULL,NULL);
 
     cvReleaseImage(&hsvImage);
     if (intermediateSteps)
-      extras.push_back(ImageMessage("Hue channel isolated",cvCloneImage(binaryImage)));
+      extras.push_back(ImageMessage("Hue channel isolated",cvCloneImage(grayscaleImage)));
 
-    // Apply adaptive threshholding
-    cvAdaptiveThreshold(binaryImage,binaryImage,255,ADAPTIVE_THRESH_MEAN_C,THRESH_BINARY,41,20);
-    if (intermediateSteps)
-      extras.push_back(ImageMessage("Thresholding applied", cvCloneImage(binaryImage)));
+    IplImage* binaryImage = canny(grayscaleImage, extras);
 
-    // Erode the image to increase the saliency of the plane	
-    cvErode(binaryImage,binaryImage,0,4);
-    if (intermediateSteps)
-      extras.push_back(ImageMessage("Erosion applied", cvCloneImage(binaryImage)));
-
-    // Invert the colors for blob detection to work
-    cvNot(binaryImage,binaryImage);
-
-  }
   return binaryImage;
 }
 
 CvBlobs Vision::findCandidates(IplImage *image, vector<int> skyHSV, vector<ImageMessage> &extras){
   Log::debug("Looking for images");
-  assert(image != NULL);
+  assert(image->nChannels = 3 );
+  assert(image->depth = IPL_DEPTH_8U);
 
   if (skyHSV.size() == 3){
     return CvBlobs();
@@ -82,10 +83,11 @@ CvBlobs Vision::findCandidates(IplImage *image, vector<int> skyHSV, vector<Image
     IplImage* label= cvCreateImage(cvGetSize(image),IPL_DEPTH_LABEL,1);
     unsigned int result = cvLabel(bwImage,label,blobs);
     if (intermediateSteps) {
-      IplImage* output = cvCreateImage(cvGetSize(image),image->depth,image->nChannels);
       extras.push_back(ImageMessage("Black and White image",bwImage));
-      extras.push_back(ImageMessage("Labeled image",output));
+      IplImage* output = cvCreateImage(cvGetSize(image),IPL_DEPTH_8U,3);
+      cvZero(output);
       cvRenderBlobs(label,blobs,image,output);
+      extras.push_back(ImageMessage("Labeled image",output));
     } else {
       cvReleaseImage(&bwImage);
     }
@@ -114,14 +116,14 @@ PlaneVisionMessage Vision::findPlane(IplImage* image, vector<PlaneVisionMessage>
   Log::debug("Found candidates");
   if (Log::debugMode){
     for (CvBlobs::const_iterator it=candidates.begin(); it!=candidates.end(); ++it){
-      cout << "Blob #" << it->second->label << ": Area=" << it->second->area;
-      cout << ", Centroid=(" << it->second->centroid.x << ", " << it->second->centroid.y << ")\n";
+      //cout << "Blob #" << it->second->label << ": Area=" << it->second->area;
+      //cout << ", Centroid=(" << it->second->centroid.x << ", " << it->second->centroid.y << ")\n";
     }
   }
   
   if (candidates.size() > 0){
     return PlaneVisionMessage(*candidates.begin()->second,image,extras);
   } else {
-    return PlaneVisionMessage(image);
+    return PlaneVisionMessage(image,extras);
   }
 }

@@ -39,10 +39,10 @@ namespace Messages{
         result(0),
         extras(vector<ImageMessage>()),
         hasPlane(false){}
-      PlaneVisionMessage(IplImage* image): 
+      PlaneVisionMessage(IplImage* image, vector<ImageMessage> extras): 
         planeBlob(CvBlob()),
         result(image),
-        extras(vector<ImageMessage>()),
+        extras(extras),
         hasPlane(false){}
   };
 

@@ -54,5 +54,7 @@ class Vision {
     vector<double> getDisplacement(CvBlob* currentBlob, CvBlob* lastBlob);
 
     vector<double> getVelocityVector(CvBlob currentBlob, CvBlob lastBlob);
+
+    IplImage* canny(IplImage* grayImage, vector<ImageMessage> &extras);
 };
 #endif

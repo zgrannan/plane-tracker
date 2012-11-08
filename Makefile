@@ -1,4 +1,4 @@
-CC=g++ -O3
+CC=g++ -std=c++11
 LDFLAGS= -ggdb
 CFLAGS= -c -Wall
 MISC_FLAGS= -DTHERON_BOOST

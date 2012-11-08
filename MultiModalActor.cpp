@@ -62,7 +62,6 @@ MultimodalActor::MultimodalActor(Theron::Framework &framework, string serialPort
     void MultimodalActor::instructGimbal(const PositionMessage &message){
       const vector<char> bytes = message.toBytes();
       const char* bytePtr = &bytes[0];
-      Log::debug(string("Writing message: ") + bytePtr);
+      Log::debug(string("Writing message: ") + string(bytes.begin(),bytes.end()));
       write(fd, bytePtr, bytes.size());
-      usleep(2500);
     }
