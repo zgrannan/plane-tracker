@@ -30,7 +30,7 @@ class VideoCallback : public IDeckLinkInputCallback {
         Log::debug("No input source connected\n");
         return S_OK;
       }
-      IplImage* image= cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,3);
+      IplImage* image = cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,3);
       void* _buffer;
       videoFrame->GetBytes(&_buffer);
       unsigned char* buffer = (unsigned char*) _buffer;
@@ -114,9 +114,10 @@ void VideoReceiverInterface::cameraFunction(){
 
 void VideoReceiverInterface::videoFunction(string videoFilename){
   VideoCapture capture(videoFilename);
+  auto numFrames = capture.get(CV_CAP_PROP_FRAME_COUNT);
   Mat temp;
   IplImage* image;
-  while (true) {
+  for(int i = 0; i < numFrames; i++) {
     capture >> temp;
     IplImage tempIpl = temp;
     image = new IplImage(tempIpl); 

@@ -19,8 +19,6 @@ using namespace cvb;
 using namespace std;
 using namespace cv;
 
-
-
 vector<double> Vision::getVelocityVector(CvBlob currentBlob, CvBlob lastBlob) {
   double dx = currentBlob.centroid.x - lastBlob.centroid.x;
   double dy = currentBlob.centroid.y - lastBlob.centroid.y;
@@ -52,8 +50,9 @@ IplImage* Vision::canny(IplImage* grayImage, vector<ImageMessage> &extras){
  * for blob detection.
  */
 IplImage* Vision::fullColorToBW (IplImage* image, int conversionMethod, vector<ImageMessage> &extras){
-    IplImage* grayscaleImage= cvCreateImage(cvGetSize(image),8,1);
-    IplImage *hsvImage = cvCreateImage(cvGetSize(image),image->depth,image->nChannels);
+    assert(image != nullptr);
+    IplImage* grayscaleImage = cvCreateImage(cvGetSize(image),8,1);
+    IplImage* hsvImage = cvCreateImage(cvGetSize(image),image->depth,image->nChannels);
 
     // Create a hue-saturation-value version of this image
     cvCvtColor(image,hsvImage,CV_BGR2HSV);
@@ -116,8 +115,8 @@ PlaneVisionMessage Vision::findPlane(IplImage* image, vector<PlaneVisionMessage>
   Log::debug("Found candidates");
   if (Log::debugMode){
     for (CvBlobs::const_iterator it=candidates.begin(); it!=candidates.end(); ++it){
-      //cout << "Blob #" << it->second->label << ": Area=" << it->second->area;
-      //cout << ", Centroid=(" << it->second->centroid.x << ", " << it->second->centroid.y << ")\n";
+      cout << "Blob #" << it->second->label << ": Area=" << it->second->area;
+      cout << ", Centroid=(" << it->second->centroid.x << ", " << it->second->centroid.y << ")\n";
     }
   }
   

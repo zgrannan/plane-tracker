@@ -5,12 +5,14 @@
 #include "MultiModalActor.h"
 #include "Vision.h"
 #include "Log.h"
+#include "ui.h"
 #include <Theron/Theron.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 #include <boost/program_options.hpp>
 #include <boost/format.hpp>
+#include <QtGui/QApplication>
 
 using namespace cv;
 using namespace std;
@@ -42,7 +44,11 @@ int baudRate(string baudRate){
   return -1;
 }
 
+
 int main(int argc, char* argv[]){
+  QApplication a(argc,argv);
+  UI ui;
+  ui.show();
   struct arguments{
     double scale; 
     double lat; 
@@ -112,15 +118,17 @@ int main(int argc, char* argv[]){
 
   /* Initialize variables */
   Theron::Receiver                          imageReceiver;
-  Theron::Catcher<PlaneVisionMessage>       imageCatcher;
-  Theron::Address                           from;
-  PlaneVisionMessage                        message;
   Vision*                                   vision;
   MultimodalActor*                          multimodalActor;
   FrameAnalyzerActor*                       frameAnalyzerActor;
   VideoReceiverInterface*                   videoReceiverInterface;
   GeoreferencingActor*                      georeferencingActor;
   GPSReceiverInterface*                     gpsReceiverInterface;
+  Theron::Catcher<PlaneVisionMessage>       imageCatcher;
+  Theron::Address                           from;
+  PlaneVisionMessage                        message;
+
+  imageReceiver.RegisterHandler(&imageCatcher,&Theron::Catcher<PlaneVisionMessage>::Push);
 
   Log::log("Initializing tracker with the following settings: ");
   cout << "\tTracker Latitude: \t" << KMAG << arguments.lat << KNRM << endl;
@@ -159,7 +167,6 @@ int main(int argc, char* argv[]){
 
   cout << endl;
 
-  imageReceiver.RegisterHandler(&imageCatcher,&Theron::Catcher<PlaneVisionMessage>::Push);
 
   Log::log("Creating Theron Framework...");
   Theron::Framework framework;
@@ -245,4 +252,9 @@ int main(int argc, char* argv[]){
     cvReleaseImage(&message.result);
     cvWaitKey(1);
   }
+
+  a.exec();
+  cout << "Done\n";
+  return 0 ;
 }
+

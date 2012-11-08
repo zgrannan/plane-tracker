@@ -6,14 +6,28 @@
 
 QT       += core gui
 
+CONFIG += console
 TARGET = PlaneTracker
 TEMPLATE = app
-CFLAGS = -c -Wall
-DEFINES += -DTHERON_BOOST
+
+DEFINES += THERON_BOOST
 
 INCLUDEPATH += /usr/local/include/External 
 INCLUDEPATH += /usr/local/Cellar/opencv/2.4.2/include/opencv
-INCLUDEPATH += /usr/local/include/decklink
+INCLUDEPATH += -isystem /usr/local/include/decklink
+
+LIBS +=  `pkg-config opencv cvblob --cflags --libs` \
+  -lopencv_core \
+  -lboost_system-mt \
+  -lboost_iostreams-mt \
+  -ltherond \
+  -lboost_thread-mt \
+  -lboost_program_options-mt \
+  -lopencv_highgui \
+  -lopencv_imgproc \
+  -lm \
+  -lpthread \
+  -framework CoreFoundation
 
 HEADERS += Log.h
 HEADERS += FrameAnalyzerActor.h
@@ -39,20 +53,5 @@ SOURCES += VideoReceiverInterface.cpp
 SOURCES += Vision.cpp
 SOURCES += tracker.cpp
 SOURCES += ui.cpp
-
-  
-
-LFLAGS = `pkg-config opencv cvblob --cflags --libs` 
-LFLAGS += -lopencv_core
-LFLAGS += -lboost_system-mt 
-LFLAGS += -lboost_iostreams-mt
-LFLAGS += -ltherond 
-LFLAGS += -lboost_thread-mt 
-LFLAGS += -lboost_program_options-mt 
-LFLAGS += -lopencv_highgui 
-LFLAGS += -lopencv_imgproc 
-LFLAGS += -lm
-LFLAGS += -lpthread 
-LFLAGS += -framework CoreFoundation
 
 FORMS   += ui.ui
