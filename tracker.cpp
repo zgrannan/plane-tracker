@@ -10,6 +10,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
+#include <thread>
 #include <boost/program_options.hpp>
 #include <boost/format.hpp>
 #include <QtGui/QApplication>
@@ -43,7 +44,6 @@ int baudRate(string baudRate){
   exit(1);
   return -1;
 }
-
 
 int main(int argc, char* argv[]){
   QApplication a(argc,argv);
@@ -227,34 +227,35 @@ int main(int argc, char* argv[]){
 
   Log::success("Tracker Initialization Complete");
 
-  int currentFrame = 0;
-  while (true){
-    currentFrame++;
-    imageReceiver.Wait();
-    imageReceiver.Consume(UINT_MAX);
-    while (!imageCatcher.Empty()){
-      imageCatcher.Pop(message,from);
-      if (!imageCatcher.Empty()){
-        cvReleaseImage(&message.result);
+  auto threadFunct = [&](){
+    int currentFrame = 0;
+    while (true){
+      currentFrame++;
+      imageReceiver.Wait();
+      imageReceiver.Consume(UINT_MAX);
+      while (!imageCatcher.Empty()){
+        imageCatcher.Pop(message,from);
+        if (!imageCatcher.Empty()){
+          cvReleaseImage(&message.result);
+        }
       }
-    }
-    for (int i = 0; i < message.extras.size(); i++){
-      showImage(message.extras[i].name,message.extras[i].image, arguments.scale);
-      cvReleaseImage(&message.extras[i].image);
-    }
-    showImage("Display window", message.result, arguments.scale);
-    if (arguments.recordDirectory != "") {
-      string frame = (boost::format("%06d") % currentFrame).str();
-      string filename = arguments.recordDirectory + "/" + frame + ".jpg";
-      Log::debug("Saving current frame to: " + filename);
-      cvSaveImage(filename.c_str(), message.result);
-    }
-    cvReleaseImage(&message.result);
-    cvWaitKey(1);
-  }
+      for (int i = 0; i < message.extras.size(); i++){
+        showImage(message.extras[i].name,message.extras[i].image, arguments.scale);
+        cvReleaseImage(&message.extras[i].image);
+      }
+      showImage("Display window", message.result, arguments.scale);
+      if (arguments.recordDirectory != "") {
+        string frame = (boost::format("%06d") % currentFrame).str();
+        string filename = arguments.recordDirectory + "/" + frame + ".jpg";
+        Log::debug("Saving current frame to: " + filename);
+        cvSaveImage(filename.c_str(), message.result);
+      }
+      cvReleaseImage(&message.result);
+      cvWaitKey(1);
+    } 
+  };
+  auto t = thread(threadFunct);
 
-  a.exec();
-  cout << "Done\n";
-  return 0 ;
+  return a.exec();
 }
 
