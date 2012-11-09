@@ -2,7 +2,7 @@
 #define GEOREFERENCING_ACTOR_H
 
 #include <Theron/Theron.h>
-#include "Messages.h"
+#include "src/util/Messages.h"
 
 using namespace Messages;
 

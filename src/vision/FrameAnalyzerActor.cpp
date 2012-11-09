@@ -1,22 +1,24 @@
 #include <Theron/Theron.h>
-#include "FrameAnalyzerActor.h"
-#include "Vision.h"
-#include "Messages.h"
-#include "Log.h"
+#include "src/vision/FrameAnalyzerActor.h"
+#include "src/vision/Vision.h"
+#include "src/util/Messages.h"
+#include "src/util/Log.h"
 
 #define CAMERA_H_FOV 160//12.8
 #define CAMERA_V_FOV 145//8.6
 
 void FrameAnalyzerActor::Handler(const ImageMessage& message, const Theron::Address){
-  if (GetNumQueuedMessages() > 1 || disabled){
+  if (GetNumQueuedMessages() > 1){
     IplImage* image = message.image;
     cvReleaseImage(&image);
     return;
   }
   const RelativePositionMessage positionMessage = calculateRelativePosition(message);
   Log::debug("Relative position calculated");
-  Send(positionMessage, multimodalActor);
-  Log::debug("Position message sent");
+  if (!disabled){
+    Send(positionMessage, multimodalActor);
+    Log::debug("Position message sent");
+  }
 }
 
 RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const ImageMessage& message){
@@ -35,7 +37,7 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
     if (drawLine) {
       Log::debug("Drawing line");
       CvPoint origin = cvPoint(centerX,centerY);
-      CvPoint destination =  cvPoint(centerX+dx,centerY+dy);
+      CvPoint destination =  cvPoint(centerX+dx,centerY-dy);
       CvScalar color = cvScalar(0,0,255);
       cvLine(message.image,origin,destination,color,2);
     }

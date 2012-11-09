@@ -16,6 +16,10 @@ INCLUDEPATH += /usr/local/include/External
 INCLUDEPATH += /usr/local/Cellar/opencv/2.4.2/include/opencv
 QMAKE_CXXFLAGS += -isystem /usr/local/include/decklink
 
+OBJECTS_DIR = ./obj
+MOC_DIR = .moc
+# UI_DIR = /src/ui
+
 LIBS +=  `pkg-config opencv cvblob --cflags --libs` \
   -lopencv_core \
   -lboost_system-mt \
@@ -29,29 +33,29 @@ LIBS +=  `pkg-config opencv cvblob --cflags --libs` \
   -lpthread \
   -framework CoreFoundation
 
-HEADERS += Log.h
-HEADERS += FrameAnalyzerActor.h
-HEADERS += GPSReceiverInterface.h
-HEADERS += GeoReference.h
-HEADERS += GeoreferencingActor.h
-HEADERS += Messages.h
-HEADERS += MultimodalActor.h
-HEADERS += Protocol.h
-HEADERS += VideoReceiverInterface.h
-HEADERS += Vision.h
-HEADERS += ui.h
+HEADERS += src/util/Log.h
+HEADERS += src/vision/FrameAnalyzerActor.h
+HEADERS += src/gps/GPSReceiverInterface.h
+HEADERS += src/gps/GeoReference.h
+HEADERS += src/gps/GeoreferencingActor.h
+HEADERS += src/util/Messages.h
+HEADERS += src/main/MultimodalActor.h
+HEADERS += src/gps/Protocol.h
+HEADERS += src/vision/VideoReceiverInterface.h
+HEADERS += src/vision/Vision.h
+HEADERS += src/ui/ui.h
 
-SOURCES += Log.cpp
-SOURCES += FrameAnalyzerActor.cpp
-SOURCES += GPSReceiverInterface.cpp
-SOURCES += GeoReference.cpp
-SOURCES += GeoreferencingActor.cpp
-SOURCES += Messages.cpp
-SOURCES += MultimodalActor.cpp
-SOURCES += Protocol.cpp
-SOURCES += VideoReceiverInterface.cpp
-SOURCES += Vision.cpp
-SOURCES += tracker.cpp
-SOURCES += ui.cpp
+SOURCES += src/util/Log.cpp
+SOURCES += src/vision/FrameAnalyzerActor.cpp
+SOURCES += src/gps/GPSReceiverInterface.cpp
+SOURCES += src/gps/GeoReference.cpp
+SOURCES += src/gps/GeoreferencingActor.cpp
+SOURCES += src/util/Messages.cpp
+SOURCES += src/main/MultimodalActor.cpp
+SOURCES += src/gps/Protocol.cpp
+SOURCES += src/vision/VideoReceiverInterface.cpp
+SOURCES += src/vision/Vision.cpp
+SOURCES += src/ui/ui.cpp
+SOURCES += src/main/tracker.cpp
 
-FORMS   += ui.ui
+FORMS   += src/ui/ui.ui

@@ -4,9 +4,9 @@
 #include <boost/thread.hpp>
 #include <highgui.h>
 #include <iostream>
-#include "VideoReceiverInterface.h"
-#include "Messages.h"
-#include "Log.h"
+#include "src/vision/VideoReceiverInterface.h"
+#include "src/util/Messages.h"
+#include "src/util/Log.h"
 
 using namespace cv;
 using namespace std;
@@ -14,7 +14,7 @@ using namespace Messages;
 
 void VideoReceiverInterface::sendImage(IplImage* image){
   const ImageMessage message(image);
-  Log::debug("Sending message");
+  Log::debug("Sending imageMessage to FrameAnalyzerActor");
   framework.Send(message,receiver.GetAddress(),frameAnalyzerActor);
 }
 

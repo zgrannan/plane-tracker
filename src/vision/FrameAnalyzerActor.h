@@ -2,8 +2,8 @@
 #define FRAME_ANALYZER_ACTOR_H
 
 #include <Theron/Theron.h>
-#include "Messages.h"
-#include "Vision.h"
+#include "src/util/Messages.h"
+#include "src/vision/Vision.h"
 #include <cv.h>
 #include <highgui.h>
 

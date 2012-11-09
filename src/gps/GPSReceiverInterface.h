@@ -3,7 +3,7 @@
 
 #include <boost/asio.hpp>
 #include <Theron/Theron.h>
-#include "Messages.h"
+#include "src/util/Messages.h"
 
 class GPSReceiverInterface {
 public:

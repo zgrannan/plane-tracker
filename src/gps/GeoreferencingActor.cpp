@@ -1,6 +1,6 @@
-#include "GeoreferencingActor.h"
-#include "Georeference.h"
-#include "Messages.h"
+#include "src/gps/GeoreferencingActor.h"
+#include "src/gps/Georeference.h"
+#include "src/util/Messages.h"
 #include <cmath>
 
 void GeoreferencingActor::Handler(const GPSDataMessage& message, const Theron::Address){

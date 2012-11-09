@@ -4,8 +4,8 @@
 #include <Theron/Theron.h>
 #include <iostream>
 #include <boost/asio.hpp>
-#include "Messages.h"
-#include "Log.h"
+#include "src/util/Messages.h"
+#include "src/util/Log.h"
 
 using namespace std;
 using namespace Messages;

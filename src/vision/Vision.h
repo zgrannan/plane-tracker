@@ -5,7 +5,7 @@
 #include <cv.h>
 #include <cvblob.h>
 
-#include "Messages.h"
+#include "src/util/Messages.h"
 
 using namespace std;
 using namespace cvb;

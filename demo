@@ -1,1 +1,1 @@
-PlaneTracker.app/Contents/MacOS/PlaneTracker --extras --video=/Users/zgrannan/PlaneTracker/sample_video/MVI_0334.AVI --scale=1.2 --line --debug
+PlaneTracker.app/Contents/MacOS/PlaneTracker --extras --video=/Users/zgrannan/PlaneTracker/sample_video/MVI_0266.AVI --scale=1.2 --line --debug

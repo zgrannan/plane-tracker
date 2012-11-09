@@ -2,15 +2,14 @@
 #include <cv.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <vector>
-#include "Vision.h"
-#include "Log.h"
+#include "src/vision/Vision.h"
+#include "src/util/Log.h"
+#include <boost/lexical_cast.hpp>
 
 /* Plane detection flags */
-#define USE_VELOCITY true
 #define USE_POSITION true
 #define USE_PLANE_SIZE true
-#define USE_SKY_COLOR true
-#define USE_PLANE_COLOR true
+#define USE_RATIO true
 
 /* Color -> Black and White conversion technique */
 #define ADAPTIVE_THRESHHOLD 0
@@ -100,15 +99,17 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
   (void)usePosition;
   (void)usePlaneSize;
 
-  Log::debug("Frame: " + frame);
+  Log::debug("Frame: " + boost::lexical_cast<string>(frame));
   CvBlobs candidates = findCandidates(image,extras);
   Log::debug("Found candidates");
+  /**
   if (Log::debugMode){
     for (CvBlobs::const_iterator it=candidates.begin(); it!=candidates.end(); ++it){
       cout << "Blob #" << it->second->label << ": Area=" << it->second->area;
       cout << ", Centroid=(" << it->second->centroid.x << ", " << it->second->centroid.y << ")\n";
     }
   }
+  **/
 
   if (candidates.size() > 0){
     return PlaneVisionMessage(*candidates.begin()->second,image,extras);

@@ -1,11 +1,11 @@
-#include "VideoReceiverInterface.h"
-#include "GPSReceiverInterface.h"
-#include "FrameAnalyzerActor.h"
-#include "GeoreferencingActor.h"
-#include "MultiModalActor.h"
-#include "Vision.h"
-#include "Log.h"
-#include "ui.h"
+#include "src/vision/VideoReceiverInterface.h"
+#include "src/gps/GPSReceiverInterface.h"
+#include "src/vision/FrameAnalyzerActor.h"
+#include "src/gps/GeoreferencingActor.h"
+#include "src/main/MultiModalActor.h"
+#include "src/vision/Vision.h"
+#include "src/util/Log.h"
+#include "src/ui/ui.h"
 #include <Theron/Theron.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -169,16 +169,16 @@ int main(int argc, char* argv[]){
   Log::log("Spawning Multimodal Actor...");
   multimodalActor = new MultimodalActor(framework,arguments.arduinoPort, B57600);
 
-
-  if (!arguments.blind){
-    Log::log("Spawning Frame Analyzer Actor...");
-    frameAnalyzerActor = new FrameAnalyzerActor(
+  Log::log("Spawning Frame Analyzer Actor...");
+  frameAnalyzerActor = new FrameAnalyzerActor(
         framework,
         arguments.drawLine,
         vision,
         imageReceiver.GetAddress(),
         multimodalActor->GetAddress()
-        );
+  );
+
+  if (!arguments.blind){
     if (arguments.imageFilename == ""){
       Log::log("Spawning VideoReceiver Interface...");
       if (arguments.videoFilename == ""){
@@ -205,9 +205,9 @@ int main(int argc, char* argv[]){
     Log::log("Not using video input");
   }
 
+  Log::log("Spawning Georeferencing Actor...");
+  georeferencingActor = new GeoreferencingActor(framework,arguments.lat,arguments.lon,arguments.alt,multimodalActor->GetAddress());
   if (!arguments.noGPS){
-    Log::log("Spawning Georeferencing Actor...");
-    georeferencingActor = new GeoreferencingActor(framework,arguments.lat,arguments.lon,arguments.alt,multimodalActor->GetAddress());
     Log::log("Spawning GPSReceiver Interface..."); 
     new GPSReceiverInterface(framework, arguments.gpsPort, georeferencingActor->GetAddress());
   } else {

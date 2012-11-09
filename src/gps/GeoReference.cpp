@@ -1,4 +1,4 @@
-#include "GeoReference.h"
+#include "src/gps/GeoReference.h"
 #include <vector>
 #include <cmath>
 using namespace std;

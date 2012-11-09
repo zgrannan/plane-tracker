@@ -1,5 +1,5 @@
-#include "Messages.h"
-#include "Log.h"
+#include "src/util/Messages.h"
+#include "src/util/Log.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 
@@ -10,12 +10,12 @@ using namespace boost;
 vector<char> RelativePositionMessage::toBytes() const {
   vector<char> byteVector;
   string byteString;
-  int _pan = -(int)this->pan;
-  int _tilt= -(int)this->tilt;
+  int _pan = (int)this->pan;
+  int _tilt= (int)this->tilt;
   string panS = (boost::format("%04d") % _pan).str();
   string tiltS = (boost::format("%04d") % _tilt).str();
   if (!positionLost){
-    byteString = "#0 " + panS + " " + tiltS + "\n";
+    byteString = "#1 " + panS + " " + tiltS + "\n";
   } else {
     byteString = "";
   }
@@ -25,8 +25,8 @@ vector<char> RelativePositionMessage::toBytes() const {
 vector<char> AbsolutePositionMessage::toBytes() const{
   vector<char> byteVector;
   string byteString;
-  int _pan = -(int)this->pan;
-  int _tilt= -(int)this->tilt;
+  int _pan = (int)this->pan;
+  int _tilt= (int)this->tilt;
   string panS = (boost::format("%04d") % _pan).str();
   string tiltS = (boost::format("%04d") % _tilt).str();
   if (!positionLost){
@@ -54,7 +54,7 @@ vector<int> PlaneVisionMessage::getDisplacement(){
   double planeX = planeBlob.centroid.x;
   double planeY = planeBlob.centroid.y;
   int dx = planeX - imageCenterX;
-  int dy = planeY - imageCenterY;
+  int dy = imageCenterY - planeY;
   resultVector.push_back(dx);
   resultVector.push_back(dy);
   return resultVector;

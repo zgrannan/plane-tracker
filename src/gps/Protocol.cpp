@@ -1,6 +1,6 @@
-#include "Protocol.h"
-#include "Messages.h"
-#include "Log.h"
+#include "src/gps/Protocol.h"
+#include "src/util/Messages.h"
+#include "src/util/Log.h"
 #include <string>
 #include <cstdlib>
 #include <boost/algorithm/string.hpp>

@@ -2,10 +2,10 @@
 #include <iostream>
 #include <boost/thread.hpp>
 #include <termios.h>
-#include "GPSReceiverInterface.h"
-#include "Messages.h"
-#include "Protocol.h"
-#include "Log.h"
+#include "src/gps/GPSReceiverInterface.h"
+#include "src/util/Messages.h"
+#include "src/gps/Protocol.h"
+#include "src/util/Log.h"
 
 
 using namespace std;

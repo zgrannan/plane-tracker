@@ -1,8 +1,8 @@
 #include <boost/lexical_cast.hpp>
-#include "MultimodalActor.h"
-#include "Protocol.h"
-#include "Messages.h"
-#include "Log.h"
+#include "src/main/MultimodalActor.h"
+#include "src/gps/Protocol.h"
+#include "src/util/Messages.h"
+#include "src/util/Log.h"
 
 using namespace boost;
 

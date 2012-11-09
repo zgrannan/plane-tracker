@@ -1,10 +1,10 @@
-#include "ui.h"
+#include "src/ui/ui.h"
 #include "ui_ui.h"
-#include "Log.h"
-#include "Messages.h"
-#include "FrameAnalyzerActor.h"
-#include "GeoreferencingActor.h"
-#include "MultimodalActor.h"
+#include "src/util/Log.h"
+#include "src/util/Messages.h"
+#include "src/vision/FrameAnalyzerActor.h"
+#include "src/gps/GeoreferencingActor.h"
+#include "src/main/MultimodalActor.h"
 #include <boost/lexical_cast.hpp>
 #include <Theron/Theron.h>
 
@@ -33,7 +33,7 @@ void UI::toggleVideo(bool disabled){
     frameAnalyzerActor->disable();
     Log::log("Video disabled.\n");
   } else {
-    frameAnalyzerActor->disable();
+    frameAnalyzerActor->enable();
     Log::log("Video enabled.\n");
   }
 }
