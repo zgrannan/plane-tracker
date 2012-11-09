@@ -18,7 +18,7 @@ QMAKE_CXXFLAGS += -isystem /usr/local/include/decklink
 
 OBJECTS_DIR = ./obj
 MOC_DIR = .moc
-# UI_DIR = /src/ui
+UI_DIR = src/ui
 
 LIBS +=  `pkg-config opencv cvblob --cflags --libs` \
   -lopencv_core \
