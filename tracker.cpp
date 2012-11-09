@@ -46,9 +46,6 @@ int baudRate(string baudRate){
 }
 
 int main(int argc, char* argv[]){
-  QApplication a(argc,argv);
-  UI ui;
-  ui.show();
   struct arguments{
     double scale; 
     double lat; 
@@ -223,6 +220,10 @@ int main(int argc, char* argv[]){
     Log::log("Recording to: " +  arguments.recordDirectory);
   }
 
+  QApplication a(argc,argv);
+  UI ui(nullptr,frameAnalyzerActor,georeferencingActor,multimodalActor);
+  ui.show();
+  
   Log::success("Tracker Initialization Complete");
 
   auto threadFunct = [&](){

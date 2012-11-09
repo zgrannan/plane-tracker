@@ -7,34 +7,36 @@
 
 using namespace std;
 
+class FrameAnalyzerActor;
+class MultimodalActor;
+class GeoreferencingActor;
+
 namespace Ui {
-class UI;
+  class UI;
 }
 
 
 class UI : public QMainWindow
 {
-    Q_OBJECT
-    
-public:
+  Q_OBJECT
+
+  public:
     explicit UI(QWidget *parent,
-                Theron::Framework& framework,
-                Theron::Address frameAnalyzerActor,
-                Theron::Address georeferencerActor,
-                Theron::Address mulitimodalActor);
+        FrameAnalyzerActor* frameAnalyzerActor,
+        GeoreferencingActor* georeferencingActor,
+        MultimodalActor* mulitimodalActor);
     ~UI();
-public slots:
-  void toggleVideo(bool enabled);
-  void toggleGPS(bool enabled);
-  void updatePan(int pan);
-  void updateTilt(int tilt);
-  void updateAmplification(int amplification);
-    
-private:
-    Theron::Framework& framework;
-    Theron::Actor frameAnalyzerActor;
-    Theron::Actor georeferencerActor;
-    Theron::Actor multimodalActor;
+    public slots:
+      void toggleVideo(bool enabled);
+    void toggleGPS(bool enabled);
+    void updatePan(int pan);
+    void updateTilt(int tilt);
+    void updateAmplification(int amplification);
+
+  private:
+    FrameAnalyzerActor* frameAnalyzerActor;
+    GeoreferencingActor* georeferencingActor;
+    MultimodalActor* multimodalActor;
     Ui::UI *ui;
     int pan = 0, tilt = 0;
 };

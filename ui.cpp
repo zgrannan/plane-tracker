@@ -2,18 +2,20 @@
 #include "ui_ui.h"
 #include "Log.h"
 #include "Messages.h"
+#include "FrameAnalyzerActor.h"
+#include "GeoreferencingActor.h"
+#include "MultimodalActor.h"
 #include <boost/lexical_cast.hpp>
 #include <Theron/Theron.h>
 
 using namespace Messages;
 
 UI::UI( QWidget *parent,
-        Theron::Address frameAnalyzerActor,
-        Theron::Address georeferencingActor,
-        Theeron::Address mulitimodalActor):
+        FrameAnalyzerActor* frameAnalyzerActor,
+        GeoreferencingActor* georeferencingActor,
+        MultimodalActor* multimodalActor):
     QMainWindow(parent),
-    framework(framework),
-    frameAnalyzerActorActor(frameAnalyzer),
+    frameAnalyzerActor(frameAnalyzerActor),
     georeferencingActor(georeferencingActor),
     multimodalActor(multimodalActor),
     ui(new Ui::UI) {
@@ -28,38 +30,37 @@ UI::UI( QWidget *parent,
 
 void UI::toggleVideo(bool disabled){
   if (disabled){
-    framework.Send(DisableMessage(), receiver.getAddress(), frameAnalyzerActor);
+    frameAnalyzerActor->disable();
     Log::log("Video disabled.\n");
   } else {
-    framework.Send(EnableMessage(), receiver.getAddress(), frameAnalyzerActor);
+    frameAnalyzerActor->disable();
     Log::log("Video enabled.\n");
   }
 }
 
 void UI::toggleGPS(bool disabled) {
   if (disabled){
-    framework.Send(DisableMessage(), receiver.getAddress(), georeferencingActor);
+    georeferencingActor->disable();
     Log::log("GPS disabled.\n");
   } else {
-    framework.Send(EnableMessage(), receiver.getAddress(), georeferencingActor);
+    georeferencingActor->enable();
     Log::log("GPS enabled.\n");
   }
 }
 
 void UI::updatePan(int pan){
   this->pan = pan;
-  framework.Send(AbsolutePositionMessage(pan,tilt), receiver.getAddress(), multimodalActor);
+  multimodalActor->instructGimbal(AbsolutePositionMessage(pan,tilt));
   Log::debug("Changing pan to: "+ boost::lexical_cast<string>(pan));
 }
 
 void UI::updateTilt(int tilt){
   this->tilt = tilt;
-  framework.Send(AbsolutePositionMessage(pan,tilt), receiver.getAddress(), multimodalActor);
+  multimodalActor->instructGimbal(AbsolutePositionMessage(pan,tilt));
   Log::debug("Changing tilt to: " + boost::lexical_cast<string>(tilt));
 }
 
 void UI::updateAmplification(int amplification){
-  framework.Send(AmplificationMessage(amplification), receiver.getAddress(), multimodalActor);
   Log::debug("Changing amplification to: "+ boost::lexical_cast<string>(amplification));
 }
 
