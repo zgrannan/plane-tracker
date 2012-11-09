@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ui.ui'
 **
-** Created: Wed Nov 7 21:31:52 2012
+** Created: Thu Nov 8 18:32:33 2012
 **      by: Qt User Interface Compiler version 4.8.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -14,13 +14,15 @@
 #include <QtGui/QAction>
 #include <QtGui/QApplication>
 #include <QtGui/QButtonGroup>
+#include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
+#include <QtGui/QLabel>
 #include <QtGui/QMainWindow>
 #include <QtGui/QMenuBar>
 #include <QtGui/QPushButton>
 #include <QtGui/QSlider>
 #include <QtGui/QStatusBar>
-#include <QtGui/QToolBar>
+#include <QtGui/QVBoxLayout>
 #include <QtGui/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -29,50 +31,114 @@ class Ui_UI
 {
 public:
     QWidget *centralWidget;
-    QPushButton *pushButton;
-    QPushButton *pushButton_2;
-    QSlider *verticalSlider;
-    QSlider *horizontalSlider;
-    QSlider *verticalSlider_2;
+    QHBoxLayout *horizontalLayout_2;
+    QVBoxLayout *verticalLayout;
+    QHBoxLayout *controls;
+    QVBoxLayout *panTiltLayout;
+    QLabel *panTiltLabel;
+    QSlider *panSlider;
+    QSlider *tiltSlider;
+    QLabel *amplificationLabel;
+    QSlider *amplificationSlider;
+    QHBoxLayout *horizontalLayout;
+    QPushButton *toggleVideoButton;
+    QPushButton *toggleGPSButton;
     QMenuBar *menuBar;
-    QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *UI)
     {
         if (UI->objectName().isEmpty())
             UI->setObjectName(QString::fromUtf8("UI"));
-        UI->resize(458, 450);
+        UI->resize(446, 373);
         centralWidget = new QWidget(UI);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
-        pushButton = new QPushButton(centralWidget);
-        pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(80, 90, 121, 111));
-        pushButton_2 = new QPushButton(centralWidget);
-        pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-        pushButton_2->setGeometry(QRect(230, 90, 121, 111));
-        verticalSlider = new QSlider(centralWidget);
-        verticalSlider->setObjectName(QString::fromUtf8("verticalSlider"));
-        verticalSlider->setGeometry(QRect(10, 249, 22, 111));
-        verticalSlider->setValue(50);
-        verticalSlider->setOrientation(Qt::Vertical);
-        horizontalSlider = new QSlider(centralWidget);
-        horizontalSlider->setObjectName(QString::fromUtf8("horizontalSlider"));
-        horizontalSlider->setGeometry(QRect(20, 360, 121, 22));
-        horizontalSlider->setValue(50);
-        horizontalSlider->setOrientation(Qt::Horizontal);
-        verticalSlider_2 = new QSlider(centralWidget);
-        verticalSlider_2->setObjectName(QString::fromUtf8("verticalSlider_2"));
-        verticalSlider_2->setGeometry(QRect(400, 220, 22, 160));
-        verticalSlider_2->setOrientation(Qt::Vertical);
+        horizontalLayout_2 = new QHBoxLayout(centralWidget);
+        horizontalLayout_2->setSpacing(6);
+        horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        verticalLayout = new QVBoxLayout();
+        verticalLayout->setSpacing(6);
+        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        controls = new QHBoxLayout();
+        controls->setSpacing(6);
+        controls->setObjectName(QString::fromUtf8("controls"));
+        panTiltLayout = new QVBoxLayout();
+        panTiltLayout->setSpacing(6);
+        panTiltLayout->setObjectName(QString::fromUtf8("panTiltLayout"));
+        panTiltLabel = new QLabel(centralWidget);
+        panTiltLabel->setObjectName(QString::fromUtf8("panTiltLabel"));
+
+        panTiltLayout->addWidget(panTiltLabel);
+
+        panSlider = new QSlider(centralWidget);
+        panSlider->setObjectName(QString::fromUtf8("panSlider"));
+        panSlider->setMinimum(-90);
+        panSlider->setMaximum(90);
+        panSlider->setValue(0);
+        panSlider->setOrientation(Qt::Horizontal);
+
+        panTiltLayout->addWidget(panSlider);
+
+
+        controls->addLayout(panTiltLayout);
+
+        tiltSlider = new QSlider(centralWidget);
+        tiltSlider->setObjectName(QString::fromUtf8("tiltSlider"));
+        tiltSlider->setMinimum(-45);
+        tiltSlider->setMaximum(90);
+        tiltSlider->setValue(0);
+        tiltSlider->setOrientation(Qt::Vertical);
+
+        controls->addWidget(tiltSlider);
+
+        amplificationLabel = new QLabel(centralWidget);
+        amplificationLabel->setObjectName(QString::fromUtf8("amplificationLabel"));
+
+        controls->addWidget(amplificationLabel);
+
+        amplificationSlider = new QSlider(centralWidget);
+        amplificationSlider->setObjectName(QString::fromUtf8("amplificationSlider"));
+        amplificationSlider->setMinimum(-10);
+        amplificationSlider->setMaximum(10);
+        amplificationSlider->setSingleStep(2);
+        amplificationSlider->setOrientation(Qt::Vertical);
+
+        controls->addWidget(amplificationSlider);
+
+
+        verticalLayout->addLayout(controls);
+
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setSpacing(6);
+        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        toggleVideoButton = new QPushButton(centralWidget);
+        toggleVideoButton->setObjectName(QString::fromUtf8("toggleVideoButton"));
+        toggleVideoButton->setMinimumSize(QSize(0, 100));
+        toggleVideoButton->setCheckable(true);
+
+        horizontalLayout->addWidget(toggleVideoButton);
+
+        toggleGPSButton = new QPushButton(centralWidget);
+        toggleGPSButton->setObjectName(QString::fromUtf8("toggleGPSButton"));
+        toggleGPSButton->setMinimumSize(QSize(0, 100));
+        toggleGPSButton->setCheckable(true);
+
+        horizontalLayout->addWidget(toggleGPSButton);
+
+
+        verticalLayout->addLayout(horizontalLayout);
+
+
+        horizontalLayout_2->addLayout(verticalLayout);
+
         UI->setCentralWidget(centralWidget);
+        amplificationLabel->raise();
+        amplificationLabel->raise();
         menuBar = new QMenuBar(UI);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 458, 22));
+        menuBar->setGeometry(QRect(0, 0, 446, 22));
         UI->setMenuBar(menuBar);
-        mainToolBar = new QToolBar(UI);
-        mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
-        UI->addToolBar(Qt::TopToolBarArea, mainToolBar);
         statusBar = new QStatusBar(UI);
         statusBar->setObjectName(QString::fromUtf8("statusBar"));
         UI->setStatusBar(statusBar);
@@ -85,8 +151,10 @@ public:
     void retranslateUi(QMainWindow *UI)
     {
         UI->setWindowTitle(QApplication::translate("UI", "UI", 0, QApplication::UnicodeUTF8));
-        pushButton->setText(QApplication::translate("UI", "Disable GPS", 0, QApplication::UnicodeUTF8));
-        pushButton_2->setText(QApplication::translate("UI", "Disable Video", 0, QApplication::UnicodeUTF8));
+        panTiltLabel->setText(QApplication::translate("UI", "Tracker Pan/Tilt", 0, QApplication::UnicodeUTF8));
+        amplificationLabel->setText(QApplication::translate("UI", "Tracker Amplification", 0, QApplication::UnicodeUTF8));
+        toggleVideoButton->setText(QApplication::translate("UI", "Disable Video", 0, QApplication::UnicodeUTF8));
+        toggleGPSButton->setText(QApplication::translate("UI", "Disable GPS", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

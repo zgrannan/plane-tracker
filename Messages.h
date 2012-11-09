@@ -8,6 +8,14 @@ using namespace cvb;
 
 namespace Messages{
 
+  class DisableMessage;
+  class EnableMessage;
+
+  class AmplificationMessage{
+    public:
+      AmplificationMessage(int amplification): amplification(amplification){}
+      int amplification;
+  };
 
   class ImageMessage{
     public:
@@ -31,8 +39,8 @@ namespace Messages{
       bool hasPlane;
       PlaneVisionMessage(CvBlob planeBlob, IplImage* result, vector<ImageMessage> extras):
         planeBlob(planeBlob),
-        extras(extras),
         result(result),
+        extras(extras),
         hasPlane(true){}
       PlaneVisionMessage(): 
         planeBlob(CvBlob()),

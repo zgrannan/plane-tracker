@@ -28,13 +28,14 @@ class FrameAnalyzerActor : public Theron::Actor {
       void disable(){ disabled = true; }
       void enable(){ disabled = false; }
   private:
-    Vision* vision;
     bool drawLine;
-    bool disabled = false;
-    RelativePositionMessage calculateRelativePosition(const ImageMessage& message);
-    void Handler(const ImageMessage& message, const Theron::Address from);
-    Theron::Address multimodalActor;
+    Vision* vision;
     Theron::Address imageViewer;
+    Theron::Address multimodalActor;
+    bool disabled = false;
+
+    void Handler(const ImageMessage& message, const Theron::Address from);
+    RelativePositionMessage calculateRelativePosition(const ImageMessage& message);
 };
 
 #endif

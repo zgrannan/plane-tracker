@@ -11,8 +11,14 @@
 using namespace std;
 using namespace Messages;
 
-GPSReceiverInterface::GPSReceiverInterface(Theron::Framework& framework, string serialPort, Theron::Address georeferencingActor): serialPort(serialPort), georeferencingActor(georeferencingActor), framework(framework){ 
-  boost::thread workerThread(&GPSReceiverInterface::workerFunction,this);
+GPSReceiverInterface::GPSReceiverInterface(Theron::Framework& framework,
+                                           string serialPort,
+                                           Theron::Address georeferencingActor):
+  framework(framework),
+  serialPort(serialPort),
+  georeferencingActor(georeferencingActor) { 
+    Log::debug("Starting GPS Receiver worker thread");
+    boost::thread workerThread(&GPSReceiverInterface::workerFunction,this);
 }
 
 

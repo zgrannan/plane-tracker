@@ -20,13 +20,13 @@ void VideoReceiverInterface::sendImage(IplImage* image){
 
 class VideoCallback : public IDeckLinkInputCallback {
   public:
-    VideoCallback(VideoReceiverInterface* vInterface): vInterface(vInterface), IDeckLinkInputCallback(){};
+    VideoCallback(VideoReceiverInterface* vInterface): IDeckLinkInputCallback(),vInterface(vInterface){};
     virtual HRESULT VideoInputFrameArrived(IDeckLinkVideoInputFrame * videoFrame,
-        IDeckLinkAudioInputPacket * audioPacket) {
+                                           IDeckLinkAudioInputPacket*) {
       long width = videoFrame->GetWidth();
       long height = videoFrame->GetHeight();
       BMDFrameFlags flags = videoFrame->GetFlags();
-      if (flags == bmdFrameHasNoInputSource){
+      if (flags == (unsigned int)bmdFrameHasNoInputSource){
         Log::debug("No input source connected\n");
         return S_OK;
       }
@@ -55,12 +55,12 @@ class VideoCallback : public IDeckLinkInputCallback {
       return S_OK;
     }
 
-    virtual HRESULT VideoInputFormatChanged(BMDVideoInputFormatChangedEvents notifactionEvents,
-        IDeckLinkDisplayMode * newDisplayMode,
-        BMDDetectedVideoInputFormatFlags detectedSignalFlags){
+    virtual HRESULT VideoInputFormatChanged(BMDVideoInputFormatChangedEvents,
+        IDeckLinkDisplayMode*,
+        BMDDetectedVideoInputFormatFlags){
       return S_OK;
     }
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, LPVOID *ppv) { return E_NOINTERFACE; }
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID,LPVOID*) { return E_NOINTERFACE; }
     virtual ULONG STDMETHODCALLTYPE AddRef(void){return 0;};
     virtual ULONG STDMETHODCALLTYPE  Release(void){return 0;};
   private:

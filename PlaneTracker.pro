@@ -14,7 +14,7 @@ DEFINES += THERON_BOOST
 
 INCLUDEPATH += /usr/local/include/External 
 INCLUDEPATH += /usr/local/Cellar/opencv/2.4.2/include/opencv
-INCLUDEPATH += -isystem /usr/local/include/decklink
+QMAKE_CXXFLAGS += -isystem /usr/local/include/decklink
 
 LIBS +=  `pkg-config opencv cvblob --cflags --libs` \
   -lopencv_core \

@@ -14,10 +14,10 @@ using namespace boost::posix_time;
 class MultimodalActor : public Theron::Actor {
   public:
     explicit MultimodalActor(Theron::Framework &framework, string serialPort, int baudrate); 
+    void instructGimbal(const PositionMessage &message);
   private:
     void GPSHandler(const AbsolutePositionMessage &message, const Theron::Address from);
     void VisionHandler(const RelativePositionMessage &message, const Theron::Address from);
-    void instructGimbal(const PositionMessage &message);
     int fd;
     bool useRSSI;
     bool videoLost;

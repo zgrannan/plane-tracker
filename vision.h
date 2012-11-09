@@ -18,19 +18,17 @@ class Vision {
      * This function attempts to find the plane from the image, and uses CV along with some
      * heurestics to determine the plane's location.
      */
-    PlaneVisionMessage findPlane(IplImage* image, vector<PlaneVisionMessage> previousPlanes, vector<int> skyHSV, vector<int> planeHSV);
+    PlaneVisionMessage findPlane(IplImage* image, vector<PlaneVisionMessage> previousPlanes);
   private:
     bool intermediateSteps;
     class BlobScore {
       public: 
         float ratioScore; 		// The score given based on the blobs width/height ratio
-        float velocityScore; 	// Score based on current velocity vs expected velocity
         float positionScore; 	// Score based on current position vs expected position
-        float colorScore; 		// Plane color vs Expected color
         float sizeScore; 		// Plane size vs Expected size
         float gpsScore; 		// Visual plane position vs GPS plane position
-        float computeScore();	// Computes a weighted some of the scores to determine a confidence
-        // level for this blob
+        float computeScore();	// Computes a weighted some of the scores to
+                                // determine a confidence level for this blob
     };
 
     /**
@@ -38,13 +36,13 @@ class Vision {
      * the image, taking only the sky color into account. Later filtering will 
      * be performed on this data to reduce the number of blobs found
      */
-    CvBlobs findCandidates(IplImage *image, vector<int> skyHSV, vector<ImageMessage> &extras);
+    CvBlobs findCandidates(IplImage *image, vector<ImageMessage> &extras);
 
     /**
      * Converts the image into a binary image that is suitable for blob detection, using 
      * a given conversion method. This does most of the CV work.
      */
-    IplImage* fullColorToBW (IplImage* image, int conversionMethod, vector<ImageMessage> &extras);
+    IplImage* fullColorToBW (IplImage* image, vector<ImageMessage> &extras);
 
 
     /**
@@ -52,8 +50,6 @@ class Vision {
      * velocity calculation
      */
     vector<double> getDisplacement(CvBlob* currentBlob, CvBlob* lastBlob);
-
-    vector<double> getVelocityVector(CvBlob currentBlob, CvBlob lastBlob);
 
     IplImage* canny(IplImage* grayImage, vector<ImageMessage> &extras);
 };

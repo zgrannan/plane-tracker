@@ -12,7 +12,7 @@ using namespace boost;
 GPSDataMessage Protocol::parseSerialInputForGPS(string input, string& extra) {
   vector<string> lines;
   boost::split(lines,input,is_any_of("\n"));
-  for (int i = 0; i < lines.size(); i++){
+  for (unsigned int i = 0; i < lines.size(); i++){
     vector<string> chunks;
     boost::split(chunks,lines[i],is_any_of(","));
     string lastChunk = chunks[chunks.size()-1];

@@ -20,8 +20,8 @@ public:
       multiModalActor(multiModalActor){
 		RegisterHandler(this, &GeoreferencingActor::Handler);
 	}
-    bool disable(){disabled = true; }
-    bool enable(){disabled = false; }
+    void disable(){disabled = true; }
+    void enable(){disabled = false; }
     void setPosition(double lat, double lon, double alt){
       this->trackerLatitude = lat;
       this->trackerLongitude = lon;

@@ -121,9 +121,7 @@ int main(int argc, char* argv[]){
   Vision*                                   vision;
   MultimodalActor*                          multimodalActor;
   FrameAnalyzerActor*                       frameAnalyzerActor;
-  VideoReceiverInterface*                   videoReceiverInterface;
   GeoreferencingActor*                      georeferencingActor;
-  GPSReceiverInterface*                     gpsReceiverInterface;
   Theron::Catcher<PlaneVisionMessage>       imageCatcher;
   Theron::Address                           from;
   PlaneVisionMessage                        message;
@@ -187,12 +185,12 @@ int main(int argc, char* argv[]){
     if (arguments.imageFilename == ""){
       Log::log("Spawning VideoReceiver Interface...");
       if (arguments.videoFilename == ""){
-        videoReceiverInterface = new VideoReceiverInterface(
+        new VideoReceiverInterface(
             framework,
             frameAnalyzerActor->GetAddress()
             );
       } else {
-        videoReceiverInterface = new VideoReceiverInterface(
+        new VideoReceiverInterface(
             framework,
             arguments.videoFilename,
             frameAnalyzerActor->GetAddress()
@@ -214,7 +212,7 @@ int main(int argc, char* argv[]){
     Log::log("Spawning Georeferencing Actor...");
     georeferencingActor = new GeoreferencingActor(framework,arguments.lat,arguments.lon,arguments.alt,multimodalActor->GetAddress());
     Log::log("Spawning GPSReceiver Interface..."); 
-    gpsReceiverInterface = new GPSReceiverInterface(framework, arguments.gpsPort, georeferencingActor->GetAddress());
+    new GPSReceiverInterface(framework, arguments.gpsPort, georeferencingActor->GetAddress());
   } else {
     Log::log("Not using GPS");
   }
@@ -228,7 +226,7 @@ int main(int argc, char* argv[]){
   Log::success("Tracker Initialization Complete");
 
   auto threadFunct = [&](){
-    int currentFrame = 0;
+    unsigned int currentFrame = 0;
     while (true){
       currentFrame++;
       imageReceiver.Wait();
@@ -239,7 +237,7 @@ int main(int argc, char* argv[]){
           cvReleaseImage(&message.result);
         }
       }
-      for (int i = 0; i < message.extras.size(); i++){
+      for (unsigned int i = 0; i < message.extras.size(); i++){
         showImage(message.extras[i].name,message.extras[i].image, arguments.scale);
         cvReleaseImage(&message.extras[i].image);
       }

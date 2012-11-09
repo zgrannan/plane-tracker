@@ -11,10 +11,11 @@ public:
 private: 
   void workerFunction();
   void sendGPSData(Messages::GPSDataMessage message);
-  Theron::Address georeferencingActor;
+
   Theron::Framework& framework;
-  Theron::Receiver receiver;
   string serialPort;
+  Theron::Address georeferencingActor;
+  Theron::Receiver receiver;
 };
 
 #endif

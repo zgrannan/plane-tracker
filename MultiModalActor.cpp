@@ -7,10 +7,10 @@
 using namespace boost;
 
 MultimodalActor::MultimodalActor(Theron::Framework &framework, string serialPort, int baudRate) : 
+  Theron::Actor(framework),
   useRSSI(true),
   videoLost(true),
-  gpsLost(true),
-  Theron::Actor(framework) {
+  gpsLost(true){
     Log::debug("Multimodal actor opening serial port: " +serialPort);
     fd = open(serialPort.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
     termios options;
@@ -22,7 +22,8 @@ MultimodalActor::MultimodalActor(Theron::Framework &framework, string serialPort
     RegisterHandler(this, &MultimodalActor::GPSHandler);
     RegisterHandler(this, &MultimodalActor::VisionHandler);
   }
-    void MultimodalActor::GPSHandler(const AbsolutePositionMessage &message, const Theron::Address from){
+    void MultimodalActor::GPSHandler(const AbsolutePositionMessage &message,
+                                     const Theron::Address){
       Log::debug("AbsolutePositionMessage received");
       if (!message.positionLost){
         gpsLost = false;
@@ -41,7 +42,9 @@ MultimodalActor::MultimodalActor(Theron::Framework &framework, string serialPort
       }
     }
 
-    void MultimodalActor::VisionHandler(const RelativePositionMessage &message, const Theron::Address from){
+    
+    void MultimodalActor::VisionHandler(const RelativePositionMessage &message,
+                                        const Theron::Address){
       Log::debug("RelativePositionMessage received");
       if (!message.positionLost){
         videoLost = false;

@@ -1,0 +1,8 @@
+PlaneTracker.app
+moc_ui.cpp
+PlaneTracker.pro.user
+*.o
+*.swp
+.DS_STORE
+sample_images
+sample_video
