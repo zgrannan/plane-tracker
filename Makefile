@@ -11,8 +11,8 @@
 CC            = gcc
 CXX           = g++
 DEFINES       = -DTHERON_BOOST -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
-CFLAGS        = -pipe -O2 -Wall -W $(DEFINES)
-CXXFLAGS      = -pipe -isystem /usr/local/include/decklink -O2 -std=c++11 -Wall -W $(DEFINES)
+CFLAGS        = -pipe -Wall -W $(DEFINES)
+CXXFLAGS      = -pipe -isystem /usr/local/include/decklink -std=c++11 -Wall -W $(DEFINES)
 INCPATH       = -I/usr/local/Cellar/qt/4.8.3/mkspecs/macx-g++ -I. -I/usr/local/Cellar/qt/4.8.3/lib/QtCore.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.3/lib/QtCore.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.3/lib/QtGui.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.3/lib/QtGui.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.3/include -I/usr/local/include/External -I/usr/local/Cellar/opencv/2.4.2/include/opencv -I.moc -Isrc/ui -F/usr/local/Cellar/qt/4.8.3/lib
 LINK          = g++
 LFLAGS        = -headerpad_max_install_names

@@ -6,22 +6,22 @@ using namespace std;
 bool Log::debugMode = false;
 
 void Log::log(string s) {
-  cout << KNRM <<  s << endl;
+  cout << KNRM <<  s << KNRM << endl;
 }
 
 void Log::error(string s) {
-  cerr << KRED << s << endl;
+  cerr << KRED << s << KNRM << endl;
 }
 
 void Log::warn(string s) {
-  cerr << KYEL << s << endl;
+  cerr << KYEL << s << KNRM << endl;
 }
 
 void Log::debug(string s) {
   if (debugMode)
-    cout << KBLU << s << endl;
+    cout << KBLU << s << KNRM << endl;
 }
 
 void Log::success(string s) {
-  cout << KGRN << s << endl;
+  cout << KGRN << s << KNRM << endl;
 }

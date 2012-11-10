@@ -1,19 +1,20 @@
-#include "src/vision/VideoReceiverInterface.h"
-#include "src/gps/GPSReceiverInterface.h"
-#include "src/vision/FrameAnalyzerActor.h"
-#include "src/gps/GeoreferencingActor.h"
-#include "src/main/MultiModalActor.h"
-#include "src/vision/Vision.h"
-#include "src/util/Log.h"
-#include "src/ui/ui.h"
+#include <QtGui/QApplication>
 #include <Theron/Theron.h>
+#include <boost/format.hpp>
+#include <boost/program_options.hpp>
+#include <boost/program_options/parsers.hpp>
+#include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include <iostream>
 #include <thread>
-#include <boost/program_options.hpp>
-#include <boost/format.hpp>
-#include <QtGui/QApplication>
+#include "src/gps/GPSReceiverInterface.h"
+#include "src/gps/GeoreferencingActor.h"
+#include "src/main/MultiModalActor.h"
+#include "src/ui/ui.h"
+#include "src/util/Log.h"
+#include "src/vision/FrameAnalyzerActor.h"
+#include "src/vision/VideoReceiverInterface.h"
+#include "src/vision/Vision.h"
 
 using namespace cv;
 using namespace std;
@@ -47,71 +48,79 @@ int baudRate(string baudRate){
 
 int main(int argc, char* argv[]){
   struct arguments{
-    double scale; 
+    bool blind;
+    bool debug;
+    bool drawLine;
+    bool noGPS;
+    bool noGUI;
+    bool showExtras;
+    double alt; 
     double lat; 
     double lon; 
-    double alt; 
-    int gpsBaud;
-    int arduinoBaud;
-    string gpsPort; 
+    double scale; 
+    string arduinoBaud;
+    string gpsBaud;
     string arduinoPort; 
-    string videoFilename;
-    string recordDirectory;
+    string gpsPort; 
     string imageFilename;
-    bool showExtras;
-    bool drawLine;
-    bool blind;
-    bool noGPS;
-    bool debug;
+    string recordDirectory;
+    string videoFilename;
   } arguments;
 
-  double aDouble;
-  string aString;
   po::options_description desc("Allowed options");
   desc.add_options()
+    ("alt",po::value<double>(&arguments.alt)->default_value(0.0),"Set tracker altitude (Meters)")
+    ("arduino-baud",po::value<string>(&arguments.arduinoBaud)->default_value("57600"),"Specify arduino serial baud rate")
+    ("arduino-port",po::value<string>(&arguments.arduinoPort)->default_value("/dev/tty.usbmodem1411"),"Specify arduino serial port")
+    ("blind","Do not use visual input")
     ("debug", "Display debug output")
     ("extras","Display intermediate steps")
+    ("gps-baud",po::value<string>(&arguments.gpsBaud)->default_value("9600"),"Specify GPS serial baud rate")
+    ("gps-port",po::value<string>(&arguments.gpsPort)->default_value("/dev/tty0"),"Specify GPS serial port")
+    ("help", "Display help message")
+    ("image", po::value<string>(&arguments.imageFilename)->default_value(""), "Analyze a single image [arg]")
+    ("lat",po::value<double>(&arguments.lat)->default_value(-32.0),"Set tracker latitude (GPS Degrees)")
     ("line", "Draw a line to the plane")
-    ("record",po::value<string>(&aString)->default_value(""),"Record to directory [arg]")
-    ("lat",po::value<double>(&aDouble)->default_value(-32.0),"Set tracker latitude (GPS Degrees)")
-    ("lon",po::value<double>(&aDouble)->default_value(117.0),"Set tracker longitude (GPS Degrees)")
-    ("alt",po::value<double>(&aDouble)->default_value(0.0),"Set tracker altitude (Meters)")
-    ("scale",po::value<double>(&aDouble)->default_value(0.25),"Video scale")
-    ("gps-port",po::value<string>(&aString)->default_value("/dev/tty0"),"Specify GPS serial port")
-    ("arduino-port",po::value<string>(&aString)->default_value("/dev/tty.usbmodem1411"),"Specify arduino serial port")
-    ("gps-baud",po::value<string>(&aString)->default_value("9600"),"Specify GPS serial baud rate")
-    ("arduino-baud",po::value<string>(&aString)->default_value("57600"),"Specify arduino serial baud rate")
-    ("video", po::value<string>(&aString)->default_value(""),"Simulate using video file [arg]")
-    ("image", po::value<string>(&aString)->default_value(""), "Analyze a single image [arg]")
-    ("blind","Do not use visual input")
+    ("lon",po::value<double>(&arguments.lon)->default_value(117.0),"Set tracker longitude (GPS Degrees)")
     ("no-gps", "Do not use GPS")
-    ("help", "Display help message");
-
+    ("no-gui", "Do not use GUI")
+    ("record",po::value<string>(&arguments.recordDirectory)->default_value(""),"Record to directory [arg]")
+    ("scale",po::value<double>(&arguments.scale)->default_value(0.25),"Video scale")
+    ("video", po::value<string>(&arguments.videoFilename)->default_value(""),"Simulate using video file [arg]");
   po::variables_map vm;
-  po::store(po::command_line_parser(argc,argv).options(desc).run(),vm);
+  auto parsedOptions = po::command_line_parser(argc,argv).options(desc).allow_unregistered().run();
+  auto invalidOptions = collect_unrecognized(parsedOptions.options,po::include_positional);
+  if (invalidOptions.size() > 0){
+    Log::error("Invalid Option: " + invalidOptions[0]);
+    cout << endl << desc << endl;
+    return 0;
+  }
+  po::store(parsedOptions,vm);
   po::notify(vm);
+  cerr << "done\n";
 
   if (vm.count("help")) {
     cout << desc << endl;
     return 0;
   }
 
-  arguments.showExtras = vm.count("extras");
-  arguments.drawLine = vm.count("line");
+  arguments.alt = vm["alt"].as<double>();
+  arguments.arduinoBaud= vm["arduino-baud"].as<string>();
+  arguments.arduinoPort= vm["arduino-port"].as<string>();
   arguments.blind = vm.count("blind");
-  arguments.noGPS = vm.count("no-gps");
   arguments.debug = vm.count("debug");
+  arguments.drawLine = vm.count("line");
+  arguments.gpsBaud = vm["gps-baud"].as<string>();
+  arguments.gpsPort= vm["gps-port"].as<string>();
+  arguments.imageFilename = vm["image"].as<string>();
   arguments.lat = vm["lat"].as<double>();
   arguments.lon = vm["lon"].as<double>();
-  arguments.alt = vm["alt"].as<double>();
-  arguments.scale = vm["scale"].as<double>();
-  arguments.gpsBaud = baudRate(vm["gps-baud"].as<string>());
-  arguments.arduinoBaud= baudRate(vm["arduino-baud"].as<string>());
-  arguments.gpsPort= vm["gps-port"].as<string>();
-  arguments.arduinoPort= vm["arduino-port"].as<string>();
-  arguments.videoFilename = vm["video"].as<string>();
-  arguments.imageFilename = vm["image"].as<string>();
+  arguments.noGPS = vm.count("no-gps");
+  arguments.noGUI = vm.count("no-gui");
   arguments.recordDirectory = vm["record"].as<string>();
+  arguments.scale = vm["scale"].as<double>();
+  arguments.showExtras = vm.count("extras");
+  arguments.videoFilename = vm["video"].as<string>();
 
   /* Initialize variables */
   Theron::Receiver                          imageReceiver;
@@ -171,12 +180,12 @@ int main(int argc, char* argv[]){
 
   Log::log("Spawning Frame Analyzer Actor...");
   frameAnalyzerActor = new FrameAnalyzerActor(
-        framework,
-        arguments.drawLine,
-        vision,
-        imageReceiver.GetAddress(),
-        multimodalActor->GetAddress()
-  );
+      framework,
+      arguments.drawLine,
+      vision,
+      imageReceiver.GetAddress(),
+      multimodalActor->GetAddress()
+      );
 
   if (!arguments.blind){
     if (arguments.imageFilename == ""){
@@ -220,10 +229,7 @@ int main(int argc, char* argv[]){
     Log::log("Recording to: " +  arguments.recordDirectory);
   }
 
-  QApplication a(argc,argv);
-  UI ui(nullptr,frameAnalyzerActor,georeferencingActor,multimodalActor);
-  ui.show();
-  
+
   Log::success("Tracker Initialization Complete");
 
   auto threadFunct = [&](){
@@ -255,6 +261,15 @@ int main(int argc, char* argv[]){
   };
   auto t = thread(threadFunct);
 
-  return a.exec();
+  if (!arguments.noGUI){
+    QApplication a(argc,argv);
+    UI ui(nullptr,frameAnalyzerActor,georeferencingActor,multimodalActor);
+    ui.show();
+    return a.exec();
+  } else {
+    Log::log("Press any key to quit");
+    getchar();
+    return 0;
+  }
 }
 
