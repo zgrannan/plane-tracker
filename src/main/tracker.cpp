@@ -176,7 +176,7 @@ int main(int argc, char* argv[]){
   Theron::Framework framework;
 
   Log::log("Spawning Multimodal Actor...");
-  multimodalActor = new MultimodalActor(framework,arguments.arduinoPort, B57600);
+  multimodalActor = new MultimodalActor(framework,arguments.arduinoPort, baudRate(arguments.arduinoBaud));
 
   Log::log("Spawning Frame Analyzer Actor...");
   frameAnalyzerActor = new FrameAnalyzerActor(
@@ -218,7 +218,7 @@ int main(int argc, char* argv[]){
   georeferencingActor = new GeoreferencingActor(framework,arguments.lat,arguments.lon,arguments.alt,multimodalActor->GetAddress());
   if (!arguments.noGPS){
     Log::log("Spawning GPSReceiver Interface..."); 
-    new GPSReceiverInterface(framework, arguments.gpsPort, georeferencingActor->GetAddress());
+    new GPSReceiverInterface(framework, arguments.gpsPort, baudRate(arguments.gpsBaud), georeferencingActor->GetAddress());
   } else {
     Log::log("Not using GPS");
   }

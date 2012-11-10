@@ -7,13 +7,17 @@
 
 class GPSReceiverInterface {
 public:
-  GPSReceiverInterface(Theron::Framework& framework, string serialPort, Theron::Address georeferencingActor);
+  GPSReceiverInterface(Theron::Framework& framework,
+                       string serialPort,
+                       int baudRate,
+                       Theron::Address georeferencingActor);
 private: 
   void workerFunction();
   void sendGPSData(Messages::GPSDataMessage message);
 
   Theron::Framework& framework;
   string serialPort;
+  int baudRate;
   Theron::Address georeferencingActor;
   Theron::Receiver receiver;
 };

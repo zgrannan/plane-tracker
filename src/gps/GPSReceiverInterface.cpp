@@ -13,9 +13,11 @@ using namespace Messages;
 
 GPSReceiverInterface::GPSReceiverInterface(Theron::Framework& framework,
                                            string serialPort,
+                                           int baudRate,
                                            Theron::Address georeferencingActor):
   framework(framework),
   serialPort(serialPort),
+  baudRate(baudRate),
   georeferencingActor(georeferencingActor) { 
     Log::debug("Starting GPS Receiver worker thread");
     boost::thread workerThread(&GPSReceiverInterface::workerFunction,this);
@@ -26,6 +28,8 @@ void GPSReceiverInterface::workerFunction(){
   int fd = open(serialPort.c_str(),O_RDONLY | O_NOCTTY | O_NDELAY);
   termios options;
   tcgetattr(fd, &options);
+  cfsetispeed(&options,baudRate);
+  cfsetospeed(&options,baudRate);
   options.c_cflag |= (CLOCAL | CREAD);
   tcsetattr(fd,TCSANOW, &options);
   char* buffer = (char*)malloc(1024);
