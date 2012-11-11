@@ -50,7 +50,13 @@ MultimodalActor::MultimodalActor(Theron::Framework &framework, string serialPort
         videoLost = false;
         useRSSI = false;
         Log::debug("Pan: " + lexical_cast<string>(message.pan) + " Tilt: " + lexical_cast<string>(message.tilt));
-        instructGimbal(message);
+        if (amplification != 1.0) {
+          auto amplifiedMessage = RelativePositionMessage(message.pan * amplification,
+                                                          message.tilt * amplification);
+          instructGimbal(amplifiedMessage);
+        } else {
+          instructGimbal(message);
+        }
       } else {
         Log::debug("Video Lost");
         videoLost = true;
@@ -67,4 +73,8 @@ MultimodalActor::MultimodalActor(Theron::Framework &framework, string serialPort
       const char* bytePtr = &bytes[0];
       Log::debug(string("Writing message: ") + string(bytes.begin(),bytes.end()));
       write(fd, bytePtr, bytes.size());
+    }
+
+    void MultimodalActor::setAmplification(double amplification){
+      this->amplification = amplification;
     }

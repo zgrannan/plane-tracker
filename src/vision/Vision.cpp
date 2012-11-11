@@ -55,7 +55,7 @@ IplImage* Vision::fullColorToBW (IplImage* image,  vector<ImageMessage> &extras)
     extras.push_back(ImageMessage("Hue channel isolated",cvCloneImage(grayscaleImage)));
 
   IplImage* binaryImage = canny(grayscaleImage, extras);
-
+  cvReleaseImage(&grayscaleImage);
   return binaryImage;
 }
 

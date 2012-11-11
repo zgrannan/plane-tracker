@@ -4,8 +4,8 @@
 #include "src/util/Messages.h"
 #include "src/util/Log.h"
 
-#define CAMERA_H_FOV 160//12.8
-#define CAMERA_V_FOV 145//8.6
+#define CAMERA_H_FOV 12.8
+#define CAMERA_V_FOV 8.6
 
 void FrameAnalyzerActor::Handler(const ImageMessage& message, const Theron::Address){
   if (GetNumQueuedMessages() > 1){

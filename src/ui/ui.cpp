@@ -62,6 +62,7 @@ void UI::updateTilt(int tilt){
 
 void UI::updateAmplification(int amplification){
   Log::debug("Changing amplification to: "+ boost::lexical_cast<string>(amplification));
+  multimodalActor->setAmplification((double)(amplification/10.0) + 1.0 );
 }
 
 UI::~UI()

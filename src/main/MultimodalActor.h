@@ -15,6 +15,7 @@ class MultimodalActor : public Theron::Actor {
   public:
     explicit MultimodalActor(Theron::Framework &framework, string serialPort, int baudrate); 
     void instructGimbal(const PositionMessage &message);
+    void setAmplification(double amplification);
   private:
     void GPSHandler(const AbsolutePositionMessage &message, const Theron::Address from);
     void VisionHandler(const RelativePositionMessage &message, const Theron::Address from);
@@ -22,6 +23,7 @@ class MultimodalActor : public Theron::Actor {
     bool useRSSI;
     bool videoLost;
     bool gpsLost;
+    double amplification = 1.0;
 };
 
 #endif

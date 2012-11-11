@@ -237,16 +237,18 @@ int main(int argc, char* argv[]){
     while (true){
       currentFrame++;
       imageReceiver.Wait();
-      imageReceiver.Consume(UINT_MAX);
       while (!imageCatcher.Empty()){
         imageCatcher.Pop(message,from);
         if (!imageCatcher.Empty()){
           cvReleaseImage(&message.result);
+          for (auto extra : message.extras ){
+            cvReleaseImage(&extra.image);
+          }
         }
       }
-      for (unsigned int i = 0; i < message.extras.size(); i++){
-        showImage(message.extras[i].name,message.extras[i].image, arguments.scale);
-        cvReleaseImage(&message.extras[i].image);
+      for (auto extra : message.extras){
+        showImage(extra.name,extra.image, arguments.scale);
+        cvReleaseImage(&extra.image);
       }
       showImage("Display window", message.result, arguments.scale);
       if (arguments.recordDirectory != "") {
