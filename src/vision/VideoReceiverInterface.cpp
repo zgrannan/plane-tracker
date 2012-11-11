@@ -51,7 +51,7 @@ class VideoCallback : public IDeckLinkInputCallback {
       }
       vInterface->sendImage(image);
       //videoFrame->Release();
-      Log::debug("Image received");
+      Log::debug("Decklink Image received");
       return S_OK;
     }
 

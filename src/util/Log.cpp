@@ -1,4 +1,7 @@
 #include "src/util/Log.h"
+#include <boost/thread.hpp>
+#include <boost/lexical_cast.hpp>
+#include "boost/date_time/posix_time/posix_time.hpp"
 #include <iostream>
 
 using namespace std;
@@ -18,8 +21,10 @@ void Log::warn(string s) {
 }
 
 void Log::debug(string s) {
-  if (debugMode)
-    cout << KBLU << s << KNRM << endl;
+  if (debugMode) {
+    boost::posix_time::ptime mst1 = boost::posix_time::microsec_clock::local_time();
+    cout << boost::posix_time::to_simple_string(mst1) << ": "<< KBLU << s << KNRM << endl;
+    }
 }
 
 void Log::success(string s) {

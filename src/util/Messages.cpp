@@ -10,8 +10,8 @@ using namespace boost;
 vector<char> RelativePositionMessage::toBytes() const {
   vector<char> byteVector;
   string byteString;
-  int _pan = (int)this->pan;
-  int _tilt= (int)this->tilt;
+  int _pan = -(int)this->pan;
+  int _tilt= -(int)this->tilt;
   string panS = (boost::format("%04d") % _pan).str();
   string tiltS = (boost::format("%04d") % _tilt).str();
   if (!positionLost){
@@ -25,8 +25,8 @@ vector<char> RelativePositionMessage::toBytes() const {
 vector<char> AbsolutePositionMessage::toBytes() const{
   vector<char> byteVector;
   string byteString;
-  int _pan = (int)this->pan;
-  int _tilt= (int)this->tilt;
+  int _pan = -(int)this->pan;
+  int _tilt= -(int)this->tilt;
   string panS = (boost::format("%04d") % _pan).str();
   string tiltS = (boost::format("%04d") % _tilt).str();
   if (!positionLost){

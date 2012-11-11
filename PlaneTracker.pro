@@ -25,6 +25,7 @@ LIBS +=  `pkg-config opencv cvblob --cflags --libs` \
   -lboost_system-mt \
   -lboost_iostreams-mt \
   -ltherond \
+  -lboost_date_time-mt \
   -lboost_thread-mt \
   -lboost_program_options-mt \
   -lopencv_highgui \

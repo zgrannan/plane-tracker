@@ -27,6 +27,7 @@ class FrameAnalyzerActor : public Theron::Actor {
         }
       void disable(){ disabled = true; }
       void enable(){ disabled = false; }
+      void setEdgeThresholding(int thresholding){ vision->edgeThresholding = thresholding; }
   private:
     bool drawLine;
     Vision* vision;

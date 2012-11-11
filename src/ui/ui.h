@@ -27,11 +27,12 @@ class UI : public QMainWindow
         MultimodalActor* mulitimodalActor);
     ~UI();
     public slots:
-      void toggleVideo(bool enabled);
+    void toggleVideo(bool enabled);
     void toggleGPS(bool enabled);
     void updatePan(int pan);
     void updateTilt(int tilt);
     void updateAmplification(int amplification);
+    void updateEdgeThresholding(int edgeThresholding);
 
   private:
     FrameAnalyzerActor* frameAnalyzerActor;

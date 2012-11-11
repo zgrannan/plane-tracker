@@ -25,6 +25,7 @@ UI::UI( QWidget *parent,
       QObject::connect(ui->panSlider, SIGNAL(valueChanged(int)),this,SLOT(updatePan(int)));
       QObject::connect(ui->tiltSlider, SIGNAL(valueChanged(int)),this,SLOT(updateTilt(int)));
       QObject::connect(ui->amplificationSlider, SIGNAL(valueChanged(int)),this,SLOT(updateAmplification(int)));
+      QObject::connect(ui->edgeThresholdingSlider, SIGNAL(valueChanged(int)),this,SLOT(updateEdgeThresholding(int)));
 }
 
 
@@ -63,6 +64,11 @@ void UI::updateTilt(int tilt){
 void UI::updateAmplification(int amplification){
   Log::debug("Changing amplification to: "+ boost::lexical_cast<string>(amplification));
   multimodalActor->setAmplification((double)(amplification/10.0) + 1.0 );
+}
+
+void UI::updateEdgeThresholding(int thresholding){
+  Log::debug("Changing edge thresholding to: " + boost::lexical_cast<string>(thresholding));
+  frameAnalyzerActor->setEdgeThresholding(thresholding);
 }
 
 UI::~UI()

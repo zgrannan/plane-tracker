@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>446</width>
-    <height>373</height>
+    <width>593</width>
+    <height>388</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -56,6 +56,26 @@
           </property>
           <property name="value">
            <number>0</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="thresholdingLabel">
+          <property name="text">
+           <string>Edge Thresholding</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="edgeThresholdingSlider">
+          <property name="maximum">
+           <number>300</number>
+          </property>
+          <property name="value">
+           <number>50</number>
           </property>
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -126,18 +146,14 @@
      </layout>
     </item>
    </layout>
-   <zorder>verticalLayoutWidget</zorder>
-   <zorder>amplificationLabel</zorder>
-   <zorder>amplificationLabel</zorder>
    <zorder></zorder>
-   <zorder>verticalLayoutWidget</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>446</width>
+     <width>593</width>
      <height>22</height>
     </rect>
    </property>

@@ -1,5 +1,6 @@
 #include <QtGui/QApplication>
 #include <Theron/Theron.h>
+#include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 #include <boost/program_options.hpp>
 #include <boost/program_options/parsers.hpp>
@@ -269,6 +270,8 @@ int main(int argc, char* argv[]){
     ui.show();
     return a.exec();
   } else {
+    QApplication a(argc,argv);
+    return a.exec();
     Log::log("Press any key to quit");
     getchar();
     return 0;

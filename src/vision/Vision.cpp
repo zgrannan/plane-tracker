@@ -19,12 +19,12 @@ using namespace std;
 using namespace cv;
 
 IplImage* Vision::canny(IplImage* grayImage, vector<ImageMessage> &extras){
-  int lowThreshold = 50;
   int ratio = 3;
   int kernelSize =3;
   Mat edges, dest;
   blur(Mat(grayImage), edges, Size(3,3));
-  Canny(edges, edges, lowThreshold,lowThreshold * ratio, kernelSize);
+  Log::debug("Edge thresholding is: "+ boost::lexical_cast<string>(edgeThresholding));
+  Canny(edges, edges, edgeThresholding ,edgeThresholding * ratio, kernelSize);
   dest = Scalar::all(0);
   Mat(grayImage).copyTo(dest, edges);
   IplImage* result = cvCreateImage(cvGetSize(grayImage),8,1);
@@ -101,6 +101,7 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
 
   Log::debug("Frame: " + boost::lexical_cast<string>(frame));
   CvBlobs candidates = findCandidates(image,extras);
+  cvFilterByArea(candidates,50,500000000);
   Log::debug("Found candidates");
   /**
   if (Log::debugMode){

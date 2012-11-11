@@ -19,6 +19,7 @@ class Vision {
      * heurestics to determine the plane's location.
      */
     PlaneVisionMessage findPlane(IplImage* image, vector<PlaneVisionMessage> previousPlanes);
+    int edgeThresholding = 50;
   private:
     bool intermediateSteps;
     class BlobScore {
