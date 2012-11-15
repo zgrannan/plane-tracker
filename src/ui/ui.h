@@ -33,6 +33,8 @@ class UI : public QMainWindow
     void updateTilt(int tilt);
     void updateAmplification(int amplification);
     void updateEdgeThresholding(int edgeThresholding);
+    void updateMinBlobSize(int blobSize);
+    void updateMaxBlobSize(int blobSize);
 
   private:
     FrameAnalyzerActor* frameAnalyzerActor;

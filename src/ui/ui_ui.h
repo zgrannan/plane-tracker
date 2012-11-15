@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ui.ui'
 **
-** Created: Sat Nov 10 19:47:11 2012
+** Created: Mon Nov 12 12:38:20 2012
 **      by: Qt User Interface Compiler version 4.8.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -21,6 +21,7 @@
 #include <QtGui/QMenuBar>
 #include <QtGui/QPushButton>
 #include <QtGui/QSlider>
+#include <QtGui/QSpacerItem>
 #include <QtGui/QStatusBar>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QWidget>
@@ -38,10 +39,15 @@ public:
     QLabel *panTiltLabel;
     QSlider *panSlider;
     QSlider *tiltSlider;
-    QLabel *thresholdingLabel;
+    QSpacerItem *horizontalSpacer;
+    QSlider *minBlobSlider;
+    QLabel *label;
+    QSlider *maxBlobSlider;
+    QLabel *label_2;
     QSlider *edgeThresholdingSlider;
-    QLabel *amplificationLabel;
+    QLabel *thresholdingLabel;
     QSlider *amplificationSlider;
+    QLabel *amplificationLabel;
     QHBoxLayout *horizontalLayout;
     QPushButton *toggleVideoButton;
     QPushButton *toggleGPSButton;
@@ -52,7 +58,7 @@ public:
     {
         if (UI->objectName().isEmpty())
             UI->setObjectName(QString::fromUtf8("UI"));
-        UI->resize(593, 388);
+        UI->resize(820, 352);
         centralWidget = new QWidget(UI);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         horizontalLayout_2 = new QHBoxLayout(centralWidget);
@@ -94,10 +100,33 @@ public:
 
         controls->addWidget(tiltSlider);
 
-        thresholdingLabel = new QLabel(centralWidget);
-        thresholdingLabel->setObjectName(QString::fromUtf8("thresholdingLabel"));
+        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        controls->addWidget(thresholdingLabel);
+        controls->addItem(horizontalSpacer);
+
+        minBlobSlider = new QSlider(centralWidget);
+        minBlobSlider->setObjectName(QString::fromUtf8("minBlobSlider"));
+        minBlobSlider->setValue(50);
+        minBlobSlider->setOrientation(Qt::Vertical);
+
+        controls->addWidget(minBlobSlider);
+
+        label = new QLabel(centralWidget);
+        label->setObjectName(QString::fromUtf8("label"));
+
+        controls->addWidget(label);
+
+        maxBlobSlider = new QSlider(centralWidget);
+        maxBlobSlider->setObjectName(QString::fromUtf8("maxBlobSlider"));
+        maxBlobSlider->setValue(50);
+        maxBlobSlider->setOrientation(Qt::Vertical);
+
+        controls->addWidget(maxBlobSlider);
+
+        label_2 = new QLabel(centralWidget);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+
+        controls->addWidget(label_2);
 
         edgeThresholdingSlider = new QSlider(centralWidget);
         edgeThresholdingSlider->setObjectName(QString::fromUtf8("edgeThresholdingSlider"));
@@ -107,10 +136,10 @@ public:
 
         controls->addWidget(edgeThresholdingSlider);
 
-        amplificationLabel = new QLabel(centralWidget);
-        amplificationLabel->setObjectName(QString::fromUtf8("amplificationLabel"));
+        thresholdingLabel = new QLabel(centralWidget);
+        thresholdingLabel->setObjectName(QString::fromUtf8("thresholdingLabel"));
 
-        controls->addWidget(amplificationLabel);
+        controls->addWidget(thresholdingLabel);
 
         amplificationSlider = new QSlider(centralWidget);
         amplificationSlider->setObjectName(QString::fromUtf8("amplificationSlider"));
@@ -120,6 +149,11 @@ public:
         amplificationSlider->setOrientation(Qt::Vertical);
 
         controls->addWidget(amplificationSlider);
+
+        amplificationLabel = new QLabel(centralWidget);
+        amplificationLabel->setObjectName(QString::fromUtf8("amplificationLabel"));
+
+        controls->addWidget(amplificationLabel);
 
 
         verticalLayout->addLayout(controls);
@@ -150,7 +184,7 @@ public:
         UI->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(UI);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 593, 22));
+        menuBar->setGeometry(QRect(0, 0, 820, 22));
         UI->setMenuBar(menuBar);
         statusBar = new QStatusBar(UI);
         statusBar->setObjectName(QString::fromUtf8("statusBar"));
@@ -164,7 +198,9 @@ public:
     void retranslateUi(QMainWindow *UI)
     {
         UI->setWindowTitle(QApplication::translate("UI", "UI", 0, QApplication::UnicodeUTF8));
-        panTiltLabel->setText(QApplication::translate("UI", "Tracker Pan/Tilt", 0, QApplication::UnicodeUTF8));
+        panTiltLabel->setText(QApplication::translate("UI", "Pan / Tilt", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("UI", "Minimum Blob Size", 0, QApplication::UnicodeUTF8));
+        label_2->setText(QApplication::translate("UI", "Maximum Blob Size", 0, QApplication::UnicodeUTF8));
         thresholdingLabel->setText(QApplication::translate("UI", "Edge Thresholding", 0, QApplication::UnicodeUTF8));
         amplificationLabel->setText(QApplication::translate("UI", "Tracker Amplification", 0, QApplication::UnicodeUTF8));
         toggleVideoButton->setText(QApplication::translate("UI", "Disable Video", 0, QApplication::UnicodeUTF8));

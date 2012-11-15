@@ -9,8 +9,7 @@
 
 void FrameAnalyzerActor::Handler(const ImageMessage& message, const Theron::Address){
   if (GetNumQueuedMessages() > 1){
-    IplImage* image = message.image;
-    cvReleaseImage(&image);
+    cvReleaseImage((IplImage**)&(message.image));
     return;
   }
   const RelativePositionMessage positionMessage = calculateRelativePosition(message);

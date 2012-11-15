@@ -19,13 +19,16 @@ UI::UI( QWidget *parent,
     georeferencingActor(georeferencingActor),
     multimodalActor(multimodalActor),
     ui(new Ui::UI) {
-    ui->setupUi(this);
+
+      ui->setupUi(this);
       QObject::connect(ui->toggleVideoButton,SIGNAL(clicked(bool)),this,SLOT(toggleVideo(bool)));
       QObject::connect(ui->toggleGPSButton,SIGNAL(clicked(bool)),this,SLOT(toggleGPS(bool)));
       QObject::connect(ui->panSlider, SIGNAL(valueChanged(int)),this,SLOT(updatePan(int)));
       QObject::connect(ui->tiltSlider, SIGNAL(valueChanged(int)),this,SLOT(updateTilt(int)));
       QObject::connect(ui->amplificationSlider, SIGNAL(valueChanged(int)),this,SLOT(updateAmplification(int)));
       QObject::connect(ui->edgeThresholdingSlider, SIGNAL(valueChanged(int)),this,SLOT(updateEdgeThresholding(int)));
+      QObject::connect(ui->maxBlobSlider, SIGNAL(valueChanged(int)),this,SLOT(updateMaxBlobSize(int)));
+      QObject::connect(ui->minBlobSlider, SIGNAL(valueChanged(int)),this,SLOT(updateMinBlobSize(int)));
 }
 
 
@@ -69,6 +72,16 @@ void UI::updateAmplification(int amplification){
 void UI::updateEdgeThresholding(int thresholding){
   Log::debug("Changing edge thresholding to: " + boost::lexical_cast<string>(thresholding));
   frameAnalyzerActor->setEdgeThresholding(thresholding);
+}
+
+void UI::updateMinBlobSize(int blobSize){
+  Log::debug("Changing minimum blob size to : " + boost::lexical_cast<string>(blobSize));
+  frameAnalyzerActor->setMinBlobSize(blobSize);
+}
+
+void UI::updateMaxBlobSize(int blobSize){
+  Log::debug("Changing maximum blob size to : " + boost::lexical_cast<string>(blobSize));
+  frameAnalyzerActor->setMaxBlobSize(blobSize);
 }
 
 UI::~UI()

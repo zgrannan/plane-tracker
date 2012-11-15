@@ -19,15 +19,30 @@ class Vision {
      * heurestics to determine the plane's location.
      */
     PlaneVisionMessage findPlane(IplImage* image, vector<PlaneVisionMessage> previousPlanes);
-    int edgeThresholding = 50;
+
+    void setEdgeThresholding(int thresholding){ this->edgeThresholding = thresholding; }
+    void setMinBlobSize(int blobSize){ this->minBlobSize = blobSize; }
+    void setMaxBlobSize(int blobSize){ this->maxBlobSize = blobSize; }
+    void setUseSize(bool useSize) { this->useSize = useSize; }
+    void setUsePosition(bool usePosition) { this->usePosition= usePosition; }
+    void setUseRatio(bool useRatio) { this->useRatio= useRatio; }
+
   private:
     bool intermediateSteps;
+
+    bool usePosition = true;
+    bool useSize = true;
+    bool useRatio = true;
+
+    int edgeThresholding = 50;
+    int minBlobSize = 5;
+    int maxBlobSize = 40;
+
     class BlobScore {
       public: 
         float ratioScore; 		// The score given based on the blobs width/height ratio
         float positionScore; 	// Score based on current position vs expected position
         float sizeScore; 		// Plane size vs Expected size
-        float gpsScore; 		// Visual plane position vs GPS plane position
         float computeScore();	// Computes a weighted some of the scores to
                                 // determine a confidence level for this blob
     };

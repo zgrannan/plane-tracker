@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>593</width>
-    <height>388</height>
+    <width>820</width>
+    <height>352</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
           <item>
            <widget class="QLabel" name="panTiltLabel">
             <property name="text">
-             <string>Tracker Pan/Tilt</string>
+             <string>Pan / Tilt</string>
             </property>
            </widget>
           </item>
@@ -63,9 +63,49 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="thresholdingLabel">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QSlider" name="minBlobSlider">
+          <property name="value">
+           <number>50</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
           <property name="text">
-           <string>Edge Thresholding</string>
+           <string>Minimum Blob Size</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="maxBlobSlider">
+          <property name="value">
+           <number>50</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Maximum Blob Size</string>
           </property>
          </widget>
         </item>
@@ -83,9 +123,9 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="amplificationLabel">
+         <widget class="QLabel" name="thresholdingLabel">
           <property name="text">
-           <string>Tracker Amplification</string>
+           <string>Edge Thresholding</string>
           </property>
          </widget>
         </item>
@@ -102,6 +142,13 @@
           </property>
           <property name="orientation">
            <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="amplificationLabel">
+          <property name="text">
+           <string>Tracker Amplification</string>
           </property>
          </widget>
         </item>
@@ -153,7 +200,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>593</width>
+     <width>820</width>
      <height>22</height>
     </rect>
    </property>

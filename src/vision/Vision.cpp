@@ -29,7 +29,7 @@ IplImage* Vision::canny(IplImage* grayImage, vector<ImageMessage> &extras){
   Mat(grayImage).copyTo(dest, edges);
   IplImage* result = cvCreateImage(cvGetSize(grayImage),8,1);
   cvThreshold(new IplImage(dest),result,1,255,CV_THRESH_BINARY);
-  if (intermediateSteps)
+   if (intermediateSteps)
     extras.push_back(ImageMessage("Edge detection", cvCloneImage(result)));
 
   return result;
@@ -51,7 +51,7 @@ IplImage* Vision::fullColorToBW (IplImage* image,  vector<ImageMessage> &extras)
   cvSplit(hsvImage,grayscaleImage,NULL,NULL,NULL);
 
   cvReleaseImage(&hsvImage);
-  if (intermediateSteps)
+   if (intermediateSteps)
     extras.push_back(ImageMessage("Hue channel isolated",cvCloneImage(grayscaleImage)));
 
   IplImage* binaryImage = canny(grayscaleImage, extras);
@@ -69,11 +69,11 @@ CvBlobs Vision::findCandidates(IplImage *image, vector<ImageMessage> &extras){
   IplImage* label= cvCreateImage(cvGetSize(image),IPL_DEPTH_LABEL,1);
   cvLabel(bwImage,label,blobs);
   if (intermediateSteps) {
-    extras.push_back(ImageMessage("Black and White image",bwImage));
+     extras.push_back(ImageMessage("Black and White image",bwImage));
     IplImage* output = cvCreateImage(cvGetSize(image),IPL_DEPTH_8U,3);
     cvZero(output);
     cvRenderBlobs(label,blobs,image,output);
-    extras.push_back(ImageMessage("Labeled image",output));
+     extras.push_back(ImageMessage("Labeled image",output));
   } else {
     cvReleaseImage(&bwImage);
   }
@@ -101,7 +101,10 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
 
   Log::debug("Frame: " + boost::lexical_cast<string>(frame));
   CvBlobs candidates = findCandidates(image,extras);
-  cvFilterByArea(candidates,50,500000000);
+
+  int minBlobPX = ( pow(minBlobSize,2.0) / 10000.0 ) * (image->height * image->width);
+  int maxBlobPX = ( pow(maxBlobSize,2.0) / 10000.0 ) * (image->height * image->width);
+  cvFilterByArea(candidates,minBlobPX,maxBlobPX);
   Log::debug("Found candidates");
   /**
   if (Log::debugMode){

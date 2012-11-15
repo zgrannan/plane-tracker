@@ -122,7 +122,7 @@ void VideoReceiverInterface::videoFunction(string videoFilename){
     IplImage tempIpl = temp;
     image = new IplImage(tempIpl); 
     sendImage(cvCloneImage(image));
-    usleep(30000);
+    usleep(41666);
   }
 }
 

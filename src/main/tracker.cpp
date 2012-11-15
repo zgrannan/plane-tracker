@@ -4,6 +4,9 @@
 #include <boost/format.hpp>
 #include <boost/program_options.hpp>
 #include <boost/program_options/parsers.hpp>
+#include <gl.h>
+#include <glu.h>
+#include <glut.h>
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -30,7 +33,7 @@ void showImage(string name, IplImage* image, float scale){
   CvSize newSize = cvSize((int)(image->width * scale),(int)(image->height * scale));
   IplImage* newImage = cvCreateImage(newSize,image->depth,image->nChannels);
   cvResize(image,newImage); 
-  imshow(name,Mat(newImage));
+  cvShowImage(name.c_str(),newImage);
   cvReleaseImage(&newImage); 
 }
 
@@ -48,6 +51,7 @@ int baudRate(string baudRate){
 }
 
 int main(int argc, char* argv[]){
+
   struct arguments{
     bool blind;
     bool debug;
@@ -241,16 +245,19 @@ int main(int argc, char* argv[]){
       while (!imageCatcher.Empty()){
         imageCatcher.Pop(message,from);
         if (!imageCatcher.Empty()){
-          cvReleaseImage(&message.result);
+           cvReleaseImage(&message.result);
           for (auto extra : message.extras ){
             cvReleaseImage(&extra.image);
           }
         }
       }
+
       for (auto extra : message.extras){
         showImage(extra.name,extra.image, arguments.scale);
         cvReleaseImage(&extra.image);
       }
+      cvWaitKey(1);
+
       showImage("Display window", message.result, arguments.scale);
       if (arguments.recordDirectory != "") {
         string frame = (boost::format("%06d") % currentFrame).str();
@@ -258,8 +265,8 @@ int main(int argc, char* argv[]){
         Log::debug("Saving current frame to: " + filename);
         cvSaveImage(filename.c_str(), message.result);
       }
-      cvReleaseImage(&message.result);
       cvWaitKey(1);
+      cvReleaseImage(&message.result);
     } 
   };
   auto t = thread(threadFunct);
@@ -269,12 +276,6 @@ int main(int argc, char* argv[]){
     UI ui(nullptr,frameAnalyzerActor,georeferencingActor,multimodalActor);
     ui.show();
     return a.exec();
-  } else {
-    QApplication a(argc,argv);
-    return a.exec();
-    Log::log("Press any key to quit");
-    getchar();
-    return 0;
   }
 }
 

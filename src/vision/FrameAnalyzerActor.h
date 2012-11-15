@@ -27,7 +27,10 @@ class FrameAnalyzerActor : public Theron::Actor {
         }
       void disable(){ disabled = true; }
       void enable(){ disabled = false; }
-      void setEdgeThresholding(int thresholding){ vision->edgeThresholding = thresholding; }
+      void setEdgeThresholding(int thresholding){ vision->setEdgeThresholding(thresholding); }
+      void setMinBlobSize(int blobSize){ vision->setMinBlobSize(blobSize); }
+      void setMaxBlobSize(int blobSize){ vision->setMaxBlobSize(blobSize); }
+
   private:
     bool drawLine;
     Vision* vision;

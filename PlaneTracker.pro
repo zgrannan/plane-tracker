@@ -14,6 +14,8 @@ DEFINES += THERON_BOOST
 
 INCLUDEPATH += /usr/local/include/External 
 INCLUDEPATH += /usr/local/Cellar/opencv/2.4.2/include/opencv
+INCLUDEPATH += /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers
+INCLUDEPATH += /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/GLUT.framework/Versions/A/Headers
 QMAKE_CXXFLAGS += -isystem /usr/local/include/decklink
 
 OBJECTS_DIR = ./obj
@@ -32,7 +34,9 @@ LIBS +=  `pkg-config opencv cvblob --cflags --libs` \
   -lopencv_imgproc \
   -lm \
   -lpthread \
-  -framework CoreFoundation
+  -framework OpenGL \ 
+  -framework CoreFoundation \
+  -framework GLUT
 
 HEADERS += src/util/Log.h
 HEADERS += src/vision/FrameAnalyzerActor.h
