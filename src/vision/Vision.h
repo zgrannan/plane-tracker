@@ -35,7 +35,7 @@ class Vision {
     bool useRatio = true;
 
     int edgeThresholding = 50;
-    int minBlobSize = 5;
+    int minBlobSize = 0;
     int maxBlobSize = 40;
 
     class BlobScore {

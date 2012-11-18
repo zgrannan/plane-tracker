@@ -269,6 +269,7 @@ int main(int argc, char* argv[]){
       cvReleaseImage(&message.result);
     } 
   };
+
   auto t = thread(threadFunct);
 
   if (!arguments.noGUI){
