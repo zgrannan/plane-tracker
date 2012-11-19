@@ -50,9 +50,6 @@ class Vision {
         double dRatio = 0; 		// The change in the plane's width/height ratio
         double dPosition = 0; 	// The change in the plane's position 
         double dSize = 0; 		// The change in the plane's size
-        static constexpr double positionWeight = 1.0;
-        static constexpr double ratioWeight = 0.0;
-        static constexpr double sizeWeight = 0.0;
     };
 
     /**
@@ -76,5 +73,7 @@ class Vision {
     vector<double> getDisplacement(CvBlob* currentBlob, CvBlob* lastBlob);
 
     IplImage* canny(IplImage* grayImage, vector<ImageMessage> &extras);
+
+    double computeRatio(CvBlob* blob);
 };
 #endif

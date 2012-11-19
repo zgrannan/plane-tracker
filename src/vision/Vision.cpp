@@ -50,17 +50,9 @@ IplImage* Vision::canny(IplImage* grayImage, vector<ImageMessage> &extras){
 IplImage* Vision::fullColorToBW (IplImage* image,  vector<ImageMessage> &extras){
   assert(image != nullptr);
   IplImage* grayscaleImage = cvCreateImage(cvGetSize(image),8,1);
-  IplImage* hsvImage = cvCreateImage(cvGetSize(image),image->depth,image->nChannels);
-
-  // Create a hue-saturation-value version of this image
-  cvCvtColor(image,hsvImage,CV_BGR2HSV);
-
-  // Isolate the hue channel
-  cvSplit(hsvImage,grayscaleImage,NULL,NULL,NULL);
-
-  cvReleaseImage(&hsvImage);
+  cvCvtColor(image,grayscaleImage,CV_BGR2GRAY);
   if (intermediateSteps)
-    extras.push_back(ImageMessage("Hue channel isolated",cvCloneImage(grayscaleImage)));
+    extras.push_back(ImageMessage("Converted to grayscale",cvCloneImage(grayscaleImage)));
 
   IplImage* binaryImage = canny(grayscaleImage, extras);
   cvReleaseImage(&grayscaleImage);
@@ -87,6 +79,12 @@ CvBlobs Vision::findCandidates(IplImage *image, vector<ImageMessage> &extras){
   }
   cvReleaseImage(&label);
   return blobs;
+}
+
+double Vision::computeRatio(CvBlob* blob){
+  double dx = blob->maxx - blob->minx;
+  double dy = blob->maxy - blob->miny;
+  return dy / dx;
 }
 
 PlaneVisionMessage Vision::findPlane( IplImage* image,
@@ -117,9 +115,9 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
         auto displacementVector = getDisplacement(blob,lastBlob);
         dPosition = sqrt(pow(displacementVector[0],2)+ pow(displacementVector[1],2));
         dSize = fabs(blob->area-lastBlob->area);
-        double oldRatio = lastBlob->centroid.y / lastBlob->centroid.x;
-        double ratio = blob->centroid.y / blob->centroid.x;
-        dRatio = fabs(ratio-oldRatio);
+        double oldRatio = computeRatio(lastBlob);
+        double ratio = computeRatio(blob);
+        dRatio = fabs(ratio/oldRatio);
         score += BlobScore(dRatio,dPosition,dSize).computeScore();
       }
       if ( score > maxScore ){
@@ -146,8 +144,20 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
 
 double Vision::BlobScore::computeScore(){
   function<double(double)>_fabs = (double(*)(double))fabs;
+  double positionWeight = 1.0;
+  double sizeWeight = 0.0; 
+  double ratioWeight = 0.0;
   double positionScore = -(pow(dPosition,2));
-  double ratioScore = -(pow(dRatio,2));
-  double sizeScore = -(pow(dSize,2));
+  double ratioScore = -(pow(dRatio-1,2)) * 1000.0;
+  double sizeScore = -dSize / 50000.0;
+  Log::debug("Position Difference: " + boost::lexical_cast<string>(dPosition));
+  Log::debug("Position Score: " + boost::lexical_cast<string>(positionScore));
+  Log::debug("Weighted Position Score: "  + boost::lexical_cast<string>(positionScore * positionWeight));
+  Log::debug("Ratio Difference: " + boost::lexical_cast<string>(dRatio));
+  Log::debug("Ratio Score: " + boost::lexical_cast<string>(ratioScore));
+  Log::debug("Weighted Ratio Score: "  + boost::lexical_cast<string>(ratioScore * ratioWeight));
+  Log::debug("Size Difference: " + boost::lexical_cast<string>(dRatio));
+  Log::debug("Size Score: " + boost::lexical_cast<string>(sizeScore));
+  Log::debug("Weighted Size Score: "  + boost::lexical_cast<string>(sizeScore * sizeWeight));
   return positionScore * positionWeight + ratioScore * ratioWeight + sizeScore * sizeWeight;
 }  
