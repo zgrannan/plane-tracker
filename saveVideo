@@ -1,0 +1,1 @@
+mencoder "mf://output/\*.jpg" -mf fps=24 -o test.avi -ovc lavc -lavcopts vcodec=mpeg4
