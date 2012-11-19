@@ -21,12 +21,13 @@ void FrameAnalyzerActor::Handler(const ImageMessage& message, const Theron::Addr
 }
 
 RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const ImageMessage& message){
-  vector<PlaneVisionMessage> previousPlanes;
-
   PlaneVisionMessage data = vision->findPlane(message.image,previousPlanes);
   double pan = 0,tilt = 0;
   if (data.hasPlane){
-    //previousPlanes.push_back(data);
+    previousPlanes.push_front(data);
+    if ( previousPlanes.size() > 5 ) {
+      previousPlanes.pop_back();
+    }
     double dx = data.getDisplacement()[0];
     double dy = data.getDisplacement()[1];
     double centerX = data.result->width / 2;
@@ -40,7 +41,12 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
       CvScalar color = cvScalar(0,0,255);
       cvLine(message.image,origin,destination,color,2);
     }
-  }
+  } else {
+    if (previousPlanes.size() > 0){
+      previousPlanes.pop_back();
+    }
+  } 
+  
   Send(data,imageViewer);
   if (data.hasPlane){
     return RelativePositionMessage(pan,tilt);

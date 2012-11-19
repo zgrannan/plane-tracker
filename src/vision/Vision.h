@@ -2,6 +2,7 @@
 #define VISION_H 
 
 #include <vector>
+#include <list>
 #include <cv.h>
 #include <cvblob.h>
 
@@ -18,7 +19,7 @@ class Vision {
      * This function attempts to find the plane from the image, and uses CV along with some
      * heurestics to determine the plane's location.
      */
-    PlaneVisionMessage findPlane(IplImage* image, vector<PlaneVisionMessage> previousPlanes);
+    PlaneVisionMessage findPlane(IplImage* image, list<PlaneVisionMessage> previousPlanes);
 
     void setEdgeThresholding(int thresholding){ this->edgeThresholding = thresholding; }
     void setMinBlobSize(int blobSize){ this->minBlobSize = blobSize; }
@@ -40,11 +41,18 @@ class Vision {
 
     class BlobScore {
       public: 
-        float ratioScore; 		// The score given based on the blobs width/height ratio
-        float positionScore; 	// Score based on current position vs expected position
-        float sizeScore; 		// Plane size vs Expected size
-        float computeScore();	// Computes a weighted some of the scores to
-                                // determine a confidence level for this blob
+        BlobScore(double dRatio, double dPosition, double dSize): dRatio(dRatio),
+                                                       dPosition(dPosition),
+                                                       dSize(dSize) {}
+        BlobScore(){}
+        double computeScore();	// Uses these displacements to compute the plane score   
+      private:
+        double dRatio = 0; 		// The change in the plane's width/height ratio
+        double dPosition = 0; 	// The change in the plane's position 
+        double dSize = 0; 		// The change in the plane's size
+        static constexpr double positionWeight = 1.0;
+        static constexpr double ratioWeight = 0.0;
+        static constexpr double sizeWeight = 0.0;
     };
 
     /**

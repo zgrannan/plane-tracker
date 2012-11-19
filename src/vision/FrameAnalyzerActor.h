@@ -37,6 +37,7 @@ class FrameAnalyzerActor : public Theron::Actor {
     Theron::Address imageViewer;
     Theron::Address multimodalActor;
     bool disabled = false;
+    list<PlaneVisionMessage> previousPlanes;
 
     void Handler(const ImageMessage& message, const Theron::Address from);
     RelativePositionMessage calculateRelativePosition(const ImageMessage& message);

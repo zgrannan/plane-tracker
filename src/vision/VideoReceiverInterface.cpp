@@ -113,16 +113,21 @@ void VideoReceiverInterface::cameraFunction(){
 }
 
 void VideoReceiverInterface::videoFunction(string videoFilename){
+  int startFrame = 0;
+  int framerate = 10;
   VideoCapture capture(videoFilename);
   auto numFrames = capture.get(CV_CAP_PROP_FRAME_COUNT);
   Mat temp;
   IplImage* image;
+  usleep(1000000); // Let other things start
   for(int i = 0; i < numFrames; i++) {
     capture >> temp;
     IplImage tempIpl = temp;
-    image = new IplImage(tempIpl); 
-    sendImage(cvCloneImage(image));
-    usleep(41666);
+    if ( i > startFrame) {
+      image = new IplImage(tempIpl); 
+      sendImage(cvCloneImage(image));
+      usleep(1000000 / framerate);
+    }
   }
 }
 
