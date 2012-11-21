@@ -6,7 +6,8 @@
 void GeoreferencingActor::Handler(const GPSDataMessage& message, const Theron::Address){
   if (message.hasData){
     const AbsolutePositionMessage positionMessage = calculateAbsolutePosition(message);
-    Send(positionMessage,multiModalActor);
+    if (!disabled)
+      Send(positionMessage,multiModalActor);
   }
 }
 

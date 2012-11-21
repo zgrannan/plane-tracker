@@ -17,6 +17,8 @@ void FrameAnalyzerActor::Handler(const ImageMessage& message, const Theron::Addr
   if (!disabled){
     Send(positionMessage, multimodalActor);
     Log::debug("Position message sent");
+  } else {
+    Send(RelativePositionMessage(),multimodalActor);
   }
 }
 
