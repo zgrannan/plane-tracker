@@ -13,7 +13,7 @@ TEMPLATE = app
 DEFINES += THERON_BOOST
 
 INCLUDEPATH += /usr/local/include/External 
-INCLUDEPATH += /usr/local/Cellar/opencv/2.4.2/include/opencv
+INCLUDEPATH += /usr/local/include/opencv
 INCLUDEPATH += /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers
 INCLUDEPATH += /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/GLUT.framework/Versions/A/Headers
 QMAKE_CXXFLAGS += -isystem /usr/local/include/decklink

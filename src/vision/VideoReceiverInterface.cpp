@@ -72,7 +72,7 @@ void VideoReceiverInterface::cameraFunction(){
   IDeckLink *deckLink;
   IDeckLinkInput *deckLinkInput;
   BMDVideoInputFlags inputFlags = 0;
-  BMDDisplayMode displayMode = bmdModeHD1080i5994;
+  BMDDisplayMode displayMode = bmdModeNTSC; // bmdModeHD1080i5994;
   BMDPixelFormat pixelFormat = bmdFormat8BitYUV;
   IDeckLinkIterator *deckLinkIterator = CreateDeckLinkIteratorInstance();
   Log::debug("Creating decklink iterator...");
