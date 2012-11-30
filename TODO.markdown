@@ -3,9 +3,9 @@
 Todo
 ----
 
-- _Fix YUV to RGB conversion_
+- __Fix YUV to RGB conversion__ [Code](https://github.com/UCSD-AUVSI/Skynet/blob/7e8bf32b8b7c9a7cd2997ba50237ab6537137497/DecklinkCallback.cpp)
 - Test Georef
-- _Fix memory leaks_
+- __Fix memory leaks__
 - Color matching
-- _Fix segfaults_
+- __Fix segfaults__
 - Adjust slider sensitivity for min blob size
