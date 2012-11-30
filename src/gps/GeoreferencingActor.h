@@ -28,7 +28,7 @@ public:
       this->trackerAltitude = alt;
     }
 private:
-    bool disabled = false;
+    bool disabled = true;
 	void Handler(const GPSDataMessage& message, const Theron::Address from);
 	AbsolutePositionMessage calculateAbsolutePosition(const GPSDataMessage& gpsData);
     double trackerLatitude,trackerLongitude,trackerAltitude;

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ui.ui'
 **
-** Created: Fri Nov 30 10:56:01 2012
+** Created: Fri Nov 30 11:10:03 2012
 **      by: Qt User Interface Compiler version 4.8.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -168,6 +168,7 @@ public:
         toggleVideoButton->setObjectName(QString::fromUtf8("toggleVideoButton"));
         toggleVideoButton->setMinimumSize(QSize(0, 100));
         toggleVideoButton->setCheckable(true);
+        toggleVideoButton->setChecked(true);
 
         horizontalLayout->addWidget(toggleVideoButton);
 
@@ -175,6 +176,7 @@ public:
         toggleGPSButton->setObjectName(QString::fromUtf8("toggleGPSButton"));
         toggleGPSButton->setMinimumSize(QSize(0, 100));
         toggleGPSButton->setCheckable(true);
+        toggleGPSButton->setChecked(true);
 
         horizontalLayout->addWidget(toggleGPSButton);
 

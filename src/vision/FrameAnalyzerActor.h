@@ -36,7 +36,7 @@ class FrameAnalyzerActor : public Theron::Actor {
     Vision* vision;
     Theron::Address imageViewer;
     Theron::Address multimodalActor;
-    bool disabled = false;
+    bool disabled = true;
     list<PlaneVisionMessage> previousPlanes;
 
     void Handler(const ImageMessage& message, const Theron::Address from);
