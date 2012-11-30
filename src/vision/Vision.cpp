@@ -35,10 +35,13 @@ IplImage* Vision::canny(IplImage* grayImage, vector<ImageMessage> &extras){
   Canny(edges, edges, edgeThresholding ,edgeThresholding * ratio, kernelSize);
   dest = Scalar::all(0);
   Mat(grayImage).copyTo(dest, edges);
-  IplImage* result = cvCreateImage(cvGetSize(grayImage),8,1);
+  IplImage* result = cvCreateImage(cvGetSize(grayImage),IPL_DEPTH_8U,1);
   cvThreshold(new IplImage(dest),result,1,255,CV_THRESH_BINARY);
-  if (intermediateSteps)
-    extras.push_back(ImageMessage("Edge detection", cvCloneImage(result)));
+  if (intermediateSteps){
+    IplImage* toDisplay = cvCreateImage(cvGetSize(grayImage),IPL_DEPTH_8U,3);
+    cvCvtColor(result,toDisplay,CV_GRAY2RGB);
+    extras.push_back(ImageMessage("Edge detection", toDisplay));
+  }
 
   return result;
 }
@@ -49,10 +52,13 @@ IplImage* Vision::canny(IplImage* grayImage, vector<ImageMessage> &extras){
  */
 IplImage* Vision::fullColorToBW (IplImage* image,  vector<ImageMessage> &extras){
   assert(image != nullptr);
-  IplImage* grayscaleImage = cvCreateImage(cvGetSize(image),8,1);
+  IplImage* grayscaleImage = cvCreateImage(cvGetSize(image),IPL_DEPTH_8U,1);
   cvCvtColor(image,grayscaleImage,CV_BGR2GRAY);
-  if (intermediateSteps)
-    extras.push_back(ImageMessage("Converted to grayscale",cvCloneImage(grayscaleImage)));
+  if (intermediateSteps){
+    IplImage* toDisplay = cvCreateImage(cvGetSize(image),IPL_DEPTH_8U,3);
+    cvCvtColor(grayscaleImage,toDisplay,CV_GRAY2RGB);
+    extras.push_back(ImageMessage("Converted to grayscale",toDisplay));
+  }
 
   IplImage* binaryImage = canny(grayscaleImage, extras);
   cvReleaseImage(&grayscaleImage);
@@ -69,7 +75,6 @@ CvBlobs Vision::findCandidates(IplImage *image, vector<ImageMessage> &extras){
   IplImage* label= cvCreateImage(cvGetSize(image),IPL_DEPTH_LABEL,1);
   cvLabel(bwImage,label,blobs);
   if (intermediateSteps) {
-    extras.push_back(ImageMessage("Black and White image",bwImage));
     IplImage* output = cvCreateImage(cvGetSize(image),IPL_DEPTH_8U,3);
     cvZero(output);
     cvRenderBlobs(label,blobs,image,output);

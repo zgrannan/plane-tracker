@@ -4,9 +4,6 @@
 #include <boost/format.hpp>
 #include <boost/program_options.hpp>
 #include <boost/program_options/parsers.hpp>
-#include <gl.h>
-#include <glu.h>
-#include <glut.h>
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -15,6 +12,7 @@
 #include "src/gps/GeoreferencingActor.h"
 #include "src/main/MultiModalActor.h"
 #include "src/ui/ui.h"
+#include "src/ui/imageview.h"
 #include "src/util/Log.h"
 #include "src/vision/FrameAnalyzerActor.h"
 #include "src/vision/VideoReceiverInterface.h"
@@ -29,11 +27,11 @@ namespace po = boost::program_options;
 /**
  * Displays the image on the screen for debugging purposes
  */
-void showImage(string name, IplImage* image, float scale){
-  CvSize newSize = cvSize((int)(image->width * scale),(int)(image->height * scale));
+void showImage(ImageView* imageView, IplImage* image, float scale){
+  CvSize newSize = cvSize(720,405);
   IplImage* newImage = cvCreateImage(newSize,image->depth,image->nChannels);
   cvResize(image,newImage); 
-  cvShowImage(name.c_str(),newImage);
+  imageView->sendImage(image);
   cvReleaseImage(&newImage); 
 }
 
@@ -234,8 +232,18 @@ int main(int argc, char* argv[]){
     Log::log("Recording to: " +  arguments.recordDirectory);
   }
 
-
+  Log::log("Initializaing QApplication...");
+  QApplication a(argc,argv);
+  UI ui(nullptr,frameAnalyzerActor,georeferencingActor,multimodalActor);
   Log::success("Tracker Initialization Complete");
+  vector<ImageView*> extraViews;
+  for (int i = 0; i < 3; i ++){
+    extraViews.push_back(new ImageView(&ui));
+    extraViews[i]->show();
+  }
+  ImageView* imageView = new ImageView(&ui);
+  imageView->show();
+
 
   auto threadFunct = [&](){
     unsigned int currentFrame = 0;
@@ -252,29 +260,25 @@ int main(int argc, char* argv[]){
         }
       }
 
-      for (auto extra : message.extras){
-        showImage(extra.name,extra.image, arguments.scale);
-        cvReleaseImage(&extra.image);
+      for (unsigned int i = 0; i < message.extras.size(); i++){
+        auto extra = message.extras[i];
+        showImage(extraViews[i],extra.image, arguments.scale);
       }
-      cvWaitKey(1);
 
-      showImage("Display window", message.result, arguments.scale);
+      showImage(imageView, message.result, arguments.scale);
       if (arguments.recordDirectory != "") {
         string frame = (boost::format("%06d") % currentFrame).str();
         string filename = arguments.recordDirectory + "/" + frame + ".jpg";
         Log::debug("Saving current frame to: " + filename);
         cvSaveImage(filename.c_str(), message.result);
       }
-      cvWaitKey(1);
-      cvReleaseImage(&message.result);
     } 
   };
 
   auto t = thread(threadFunct);
 
+
   if (!arguments.noGUI){
-    QApplication a(argc,argv);
-    UI ui(nullptr,frameAnalyzerActor,georeferencingActor,multimodalActor);
     ui.show();
     return a.exec();
   }

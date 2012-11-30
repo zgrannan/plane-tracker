@@ -14,8 +14,6 @@ DEFINES += THERON_BOOST
 
 INCLUDEPATH += /usr/local/include/External 
 INCLUDEPATH += /usr/local/include/opencv
-INCLUDEPATH += /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers
-INCLUDEPATH += /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/GLUT.framework/Versions/A/Headers
 QMAKE_CXXFLAGS += -isystem /usr/local/include/decklink
 
 OBJECTS_DIR = ./obj
@@ -34,9 +32,7 @@ LIBS +=  `pkg-config opencv cvblob --cflags --libs` \
   -lopencv_imgproc \
   -lm \
   -lpthread \
-  -framework OpenGL \ 
   -framework CoreFoundation \
-  -framework GLUT
 
 HEADERS += src/util/Log.h
 HEADERS += src/vision/FrameAnalyzerActor.h
@@ -49,6 +45,7 @@ HEADERS += src/gps/Protocol.h
 HEADERS += src/vision/VideoReceiverInterface.h
 HEADERS += src/vision/Vision.h
 HEADERS += src/ui/ui.h
+HEADERS += src/ui/imageview.h
 
 SOURCES += src/util/Log.cpp
 SOURCES += src/vision/FrameAnalyzerActor.cpp
@@ -61,6 +58,8 @@ SOURCES += src/gps/Protocol.cpp
 SOURCES += src/vision/VideoReceiverInterface.cpp
 SOURCES += src/vision/Vision.cpp
 SOURCES += src/ui/ui.cpp
+SOURCES += src/ui/imageview.cpp
 SOURCES += src/main/tracker.cpp
 
 FORMS   += src/ui/ui.ui
+FORMS   += src/ui/imageview.ui
