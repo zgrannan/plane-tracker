@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ui.ui'
 **
-** Created: Fri Nov 30 01:15:06 2012
+** Created: Fri Nov 30 10:56:01 2012
 **      by: Qt User Interface Compiler version 4.8.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -106,6 +106,7 @@ public:
 
         minBlobSlider = new QSlider(centralWidget);
         minBlobSlider->setObjectName(QString::fromUtf8("minBlobSlider"));
+        minBlobSlider->setMaximum(100);
         minBlobSlider->setValue(50);
         minBlobSlider->setOrientation(Qt::Vertical);
 
@@ -118,6 +119,7 @@ public:
 
         maxBlobSlider = new QSlider(centralWidget);
         maxBlobSlider->setObjectName(QString::fromUtf8("maxBlobSlider"));
+        maxBlobSlider->setMaximum(100);
         maxBlobSlider->setValue(50);
         maxBlobSlider->setOrientation(Qt::Vertical);
 
@@ -130,6 +132,7 @@ public:
 
         edgeThresholdingSlider = new QSlider(centralWidget);
         edgeThresholdingSlider->setObjectName(QString::fromUtf8("edgeThresholdingSlider"));
+        edgeThresholdingSlider->setMinimum(10);
         edgeThresholdingSlider->setMaximum(300);
         edgeThresholdingSlider->setValue(50);
         edgeThresholdingSlider->setOrientation(Qt::Vertical);

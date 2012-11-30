@@ -104,8 +104,9 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
   Log::debug("Frame: " + boost::lexical_cast<string>(frame));
   CvBlobs candidates = findCandidates(image,extras);
 
-  int minBlobPX = ( pow(minBlobSize,2.0) / 10000.0 ) * (image->height * image->width);
-  int maxBlobPX = ( pow(maxBlobSize,2.0) / 10000.0 ) * (image->height * image->width);
+  int minBlobPX = ((double)minBlobSize / 20000.0) * (double)(image->height * image->width);
+  int maxBlobPX = ((double)maxBlobSize / 10000.0) * (double)(image->height * image->width);
+  Log::log("Min Blob Pixels: " + boost::lexical_cast<string>(minBlobPX));
   cvFilterByArea(candidates,minBlobPX,maxBlobPX);
   double maxScore = -DBL_MAX;
   Option<CvBlob> bestCandidate = None<CvBlob>();
