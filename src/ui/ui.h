@@ -27,6 +27,7 @@ class UI : public QMainWindow
         MultimodalActor* mulitimodalActor);
     ~UI();
     public slots:
+    void selectPlaneColor(bool enabled);
     void toggleVideo(bool enabled);
     void toggleGPS(bool enabled);
     void updatePan(int pan);
@@ -35,6 +36,10 @@ class UI : public QMainWindow
     void updateEdgeThresholding(int edgeThresholding);
     void updateMinBlobSize(int blobSize);
     void updateMaxBlobSize(int blobSize);
+    void updatePositionWeight(int weight);
+    void updateColorWeight(int weight);
+    void updateSizeWeight(int weight);
+    void updateRatioWeight(int weight);
 
   private:
     FrameAnalyzerActor* frameAnalyzerActor;

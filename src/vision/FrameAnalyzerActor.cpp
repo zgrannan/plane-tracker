@@ -7,6 +7,19 @@
 #define CAMERA_H_FOV 12.8
 #define CAMERA_V_FOV 8.6
 
+void FrameAnalyzerActor::selectColor(){
+  if (!hasLock){
+    Log::warn("Cannot select color: frameAnalyzer does not have a lock.");
+  } else{
+    vision->setUseColor(true);
+  }
+}
+
+void FrameAnalyzerActor::deselectColor(){
+  Log::debug("No longer using plane color");
+  vision->setUseColor(true);
+}
+
 void FrameAnalyzerActor::Handler(const ImageMessage& message, const Theron::Address){
   if (GetNumQueuedMessages() > 1){
     Log::debug("Skipped a frame before analysis");
@@ -52,8 +65,10 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
   
   Send(data,imageViewer);
   if (data.hasPlane){
+    hasLock = true;
     return RelativePositionMessage(pan,tilt);
   } else {
+    hasLock = false;
     return RelativePositionMessage();
   }
 }

@@ -20,6 +20,41 @@ using namespace cvb;
 using namespace std;
 using namespace cv;
 
+
+double Vision::f_cbrt(double r){
+	r/=65535.0;
+	return r>ep?pow(r,1/3.0):(ka*r+16)/116.0;
+}
+
+void Vision::rgbToCielab(uchar _r, uchar _g, uchar _b, double& l, double& a, double& b){
+  static double d50_white[3]={0.964220,1,0.825211};
+
+  double xyz[3] = {0,0,0};
+  double red = (double) _r / 255.0;
+  double green = (double) _g / 255.0;
+  double blue = (double) _b / 255.0;
+
+  static const double rgb_xyz[3][3] =
+	{ { 0.7976748465, 0.1351917082, 0.0313534088 },
+	  { 0.2880402025, 0.7118741325, 0.0000856651 },
+	  { 0.0000000000, 0.0000000000, 0.8252114389 } }; // From Jacques Desmis
+
+  for (int i = 0; i < 3; i++){
+    xyz[i] += rgb_xyz[i][0]*red;
+    xyz[i] += rgb_xyz[i][1]*green;
+    xyz[i] += rgb_xyz[i][2]*blue;
+  }
+
+  for (int i = 0; i < 3; i++){
+    xyz[i] = f_cbrt(xyz[i]/d50_white[i]);
+  }
+
+  l = 116.0 * xyz[1]-16.0;
+  a = 500.0 * (xyz[0]-xyz[1]);
+  b = 200.0 * (xyz[1]-xyz[2]);
+
+}
+
 vector<double> Vision::getDisplacement(CvBlob* blob1, CvBlob* blob2){
   double dx = blob2->centroid.x - blob1->centroid.x;
   double dy = blob2->centroid.y - blob1->centroid.y;
@@ -66,7 +101,7 @@ IplImage* Vision::fullColorToBW (IplImage* image,  vector<ImageMessage> &extras)
   return binaryImage;
 }
 
-CvBlobs Vision::findCandidates(IplImage *image, vector<ImageMessage> &extras){
+pair<CvBlobs,IplImage*> Vision::findCandidates(IplImage *image, vector<ImageMessage> &extras){
   Log::debug("Looking for images");
   assert(image->nChannels = 3 );
   assert(image->depth = IPL_DEPTH_8U);
@@ -82,8 +117,7 @@ CvBlobs Vision::findCandidates(IplImage *image, vector<ImageMessage> &extras){
     extras.push_back(ImageMessage("Labeled image",output));
   } 
   cvReleaseImage(&bwImage);
-  cvReleaseImage(&label);
-  return blobs;
+  return {blobs,label};
 }
 
 double Vision::computeRatio(CvBlob* blob){
@@ -100,9 +134,13 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
     return PlaneVisionMessage();
   }
 
+  bool canUseColor = true;
+
   vector<ImageMessage> extras;
   Log::debug("Frame: " + boost::lexical_cast<string>(frame));
-  CvBlobs candidates = findCandidates(image,extras);
+  pair<CvBlobs,IplImage*> candidatesWithLabel = findCandidates(image,extras);
+  auto candidates = candidatesWithLabel.first;
+  auto label = candidatesWithLabel.second;
   int minBlobPX = ((double)minBlobSize / 20000.0) * (double)(image->height * image->width);
   int maxBlobPX = ((double)maxBlobSize / 10000.0) * (double)(image->height * image->width);
   cvFilterByArea(candidates,minBlobPX,maxBlobPX);
@@ -121,8 +159,25 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
         dSize = fabs(blob->area-lastBlob->area);
         double oldRatio = computeRatio(lastBlob);
         double ratio = computeRatio(blob);
+        double dColor = 0;
+        if (useColor && hasColor){
+          CvScalar color = cvBlobMeanColor(blob,label,image);
+          double l,a,b;
+          rgbToCielab(color.val[0],color.val[1],color.val[2],l,a,b);
+          Log::debug("L: " + boost::lexical_cast<string>(l));
+          Log::debug("A: " + boost::lexical_cast<string>(a));
+          Log::debug("B: " + boost::lexical_cast<string>(b));
+          double dL2 = pow(l - goodL,2); 
+          double dA2 = pow(l - goodA,2); 
+          double dB2 = pow(l - goodB,2); 
+          dColor = sqrt(dL2 + dA2 + dB2);
+        } else if (!useColor) {
+          canUseColor = false;
+          cvReleaseImage(&label);
+        }
         dRatio = fabs(ratio/oldRatio);
-        score += BlobScore(dRatio,dPosition,dSize).computeScore();
+        score += BlobScore(dRatio,dPosition,dSize,dColor,
+                            ratioWeight,positionWeight,sizeWeight,colorWeight).computeScore();
       }
       if ( score > maxScore ){
         Log::debug("MaxScore: " + boost::lexical_cast<string>(score));
@@ -138,28 +193,58 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
   cvReleaseBlobs(candidates);
 
   if (bestCandidate.isDefined()) {
+    if (!hasColor && useColor && canUseColor){
+      auto candidate = bestCandidate.get();
+      CvScalar color = cvBlobMeanColor(&candidate,label,image);
+      rgbToCielab(color.val[0],color.val[1],color.val[2],goodL,goodA,goodB);
+      Log::log("Color found");
+      Log::log("GoodL: " + boost::lexical_cast<string>(goodL));
+      Log::log("GoodA: " + boost::lexical_cast<string>(goodA));
+      Log::log("GoodB: " + boost::lexical_cast<string>(goodB));
+      hasColor = true;
+    }
+    cvReleaseImage(&label);
     return PlaneVisionMessage(*bestCandidate,image,extras);
   } else {
     return PlaneVisionMessage(image,extras);
   }
 }
 
+double Vision::BlobScore::getScore(double diff, double& maxDiff){
+  if ( diff > maxDiff ){
+    maxDiff = diff;
+    return 0;
+  } else {
+    if ( maxDiff == 0 ) return 0;
+    return 1 - (diff / maxDiff);
+  }
+}
+
 double Vision::BlobScore::computeScore(){
-  function<double(double)>_fabs = (double(*)(double))fabs;
-  double positionWeight = 1.0;
-  double sizeWeight = 0.0; 
-  double ratioWeight = 0.0;
-  double positionScore = -(pow(dPosition,2));
-  double ratioScore = -(pow(dRatio-1,2)) * 1000.0;
-  double sizeScore = -dSize / 50000.0;
+  static double maxdRatio = 0;
+  static double maxdPosition = 0;
+  static double maxdSize = 0;
+  static double maxdColor = 0;
+  
+  double positionScore = getScore(dPosition,maxdPosition);
+  double ratioScore = getScore(dRatio,maxdRatio);
+  double sizeScore = getScore(dSize,maxdSize);
+  double colorScore = getScore(dColor,maxdColor);
+
   Log::debug("Position Difference: " + boost::lexical_cast<string>(dPosition));
   Log::debug("Position Score: " + boost::lexical_cast<string>(positionScore));
   Log::debug("Weighted Position Score: "  + boost::lexical_cast<string>(positionScore * positionWeight));
   Log::debug("Ratio Difference: " + boost::lexical_cast<string>(dRatio));
   Log::debug("Ratio Score: " + boost::lexical_cast<string>(ratioScore));
   Log::debug("Weighted Ratio Score: "  + boost::lexical_cast<string>(ratioScore * ratioWeight));
-  Log::debug("Size Difference: " + boost::lexical_cast<string>(dRatio));
+  Log::debug("Size Difference: " + boost::lexical_cast<string>(dColor));
   Log::debug("Size Score: " + boost::lexical_cast<string>(sizeScore));
   Log::debug("Weighted Size Score: "  + boost::lexical_cast<string>(sizeScore * sizeWeight));
-  return positionScore * positionWeight + ratioScore * ratioWeight + sizeScore * sizeWeight;
+  Log::debug("Color Difference: " + boost::lexical_cast<string>(dColor));
+  Log::debug("Color Score: " + boost::lexical_cast<string>(colorScore));
+  Log::debug("Weighted Color Score: "  + boost::lexical_cast<string>(colorScore * colorWeight));
+  return positionScore * positionWeight +
+         ratioScore * ratioWeight +
+         sizeScore * sizeWeight + 
+         colorScore * colorWeight;
 }  

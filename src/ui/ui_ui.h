@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ui.ui'
 **
-** Created: Fri Nov 30 11:10:03 2012
+** Created: Fri Nov 30 21:27:01 2012
 **      by: Qt User Interface Compiler version 4.8.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -36,9 +36,9 @@ public:
     QVBoxLayout *verticalLayout;
     QHBoxLayout *controls;
     QVBoxLayout *panTiltLayout;
+    QSlider *tiltSlider;
     QLabel *panTiltLabel;
     QSlider *panSlider;
-    QSlider *tiltSlider;
     QSpacerItem *horizontalSpacer;
     QSlider *minBlobSlider;
     QLabel *label;
@@ -48,6 +48,17 @@ public:
     QLabel *thresholdingLabel;
     QSlider *amplificationSlider;
     QLabel *amplificationLabel;
+    QVBoxLayout *verticalLayout_2;
+    QHBoxLayout *horizontalLayout_3;
+    QPushButton *planeColorButton;
+    QSlider *colorWeightSlider;
+    QLabel *label_3;
+    QSlider *ratioWeightSlider;
+    QLabel *label_4;
+    QSlider *sizeWeightSlider;
+    QLabel *label_5;
+    QSlider *positionWeightSlider;
+    QLabel *label_6;
     QHBoxLayout *horizontalLayout;
     QPushButton *toggleVideoButton;
     QPushButton *toggleGPSButton;
@@ -58,7 +69,7 @@ public:
     {
         if (UI->objectName().isEmpty())
             UI->setObjectName(QString::fromUtf8("UI"));
-        UI->resize(820, 352);
+        UI->resize(820, 430);
         centralWidget = new QWidget(UI);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         horizontalLayout_2 = new QHBoxLayout(centralWidget);
@@ -74,6 +85,15 @@ public:
         panTiltLayout = new QVBoxLayout();
         panTiltLayout->setSpacing(6);
         panTiltLayout->setObjectName(QString::fromUtf8("panTiltLayout"));
+        tiltSlider = new QSlider(centralWidget);
+        tiltSlider->setObjectName(QString::fromUtf8("tiltSlider"));
+        tiltSlider->setMinimum(-45);
+        tiltSlider->setMaximum(90);
+        tiltSlider->setValue(0);
+        tiltSlider->setOrientation(Qt::Vertical);
+
+        panTiltLayout->addWidget(tiltSlider);
+
         panTiltLabel = new QLabel(centralWidget);
         panTiltLabel->setObjectName(QString::fromUtf8("panTiltLabel"));
 
@@ -90,15 +110,6 @@ public:
 
 
         controls->addLayout(panTiltLayout);
-
-        tiltSlider = new QSlider(centralWidget);
-        tiltSlider->setObjectName(QString::fromUtf8("tiltSlider"));
-        tiltSlider->setMinimum(-45);
-        tiltSlider->setMaximum(90);
-        tiltSlider->setValue(0);
-        tiltSlider->setOrientation(Qt::Vertical);
-
-        controls->addWidget(tiltSlider);
 
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
@@ -161,6 +172,69 @@ public:
 
         verticalLayout->addLayout(controls);
 
+        verticalLayout_2 = new QVBoxLayout();
+        verticalLayout_2->setSpacing(6);
+        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+
+        verticalLayout->addLayout(verticalLayout_2);
+
+        horizontalLayout_3 = new QHBoxLayout();
+        horizontalLayout_3->setSpacing(6);
+        horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
+        horizontalLayout_3->setContentsMargins(-1, 0, -1, -1);
+        planeColorButton = new QPushButton(centralWidget);
+        planeColorButton->setObjectName(QString::fromUtf8("planeColorButton"));
+        planeColorButton->setCheckable(true);
+
+        horizontalLayout_3->addWidget(planeColorButton);
+
+        colorWeightSlider = new QSlider(centralWidget);
+        colorWeightSlider->setObjectName(QString::fromUtf8("colorWeightSlider"));
+        colorWeightSlider->setOrientation(Qt::Vertical);
+
+        horizontalLayout_3->addWidget(colorWeightSlider);
+
+        label_3 = new QLabel(centralWidget);
+        label_3->setObjectName(QString::fromUtf8("label_3"));
+
+        horizontalLayout_3->addWidget(label_3);
+
+        ratioWeightSlider = new QSlider(centralWidget);
+        ratioWeightSlider->setObjectName(QString::fromUtf8("ratioWeightSlider"));
+        ratioWeightSlider->setOrientation(Qt::Vertical);
+
+        horizontalLayout_3->addWidget(ratioWeightSlider);
+
+        label_4 = new QLabel(centralWidget);
+        label_4->setObjectName(QString::fromUtf8("label_4"));
+
+        horizontalLayout_3->addWidget(label_4);
+
+        sizeWeightSlider = new QSlider(centralWidget);
+        sizeWeightSlider->setObjectName(QString::fromUtf8("sizeWeightSlider"));
+        sizeWeightSlider->setOrientation(Qt::Vertical);
+
+        horizontalLayout_3->addWidget(sizeWeightSlider);
+
+        label_5 = new QLabel(centralWidget);
+        label_5->setObjectName(QString::fromUtf8("label_5"));
+
+        horizontalLayout_3->addWidget(label_5);
+
+        positionWeightSlider = new QSlider(centralWidget);
+        positionWeightSlider->setObjectName(QString::fromUtf8("positionWeightSlider"));
+        positionWeightSlider->setOrientation(Qt::Vertical);
+
+        horizontalLayout_3->addWidget(positionWeightSlider);
+
+        label_6 = new QLabel(centralWidget);
+        label_6->setObjectName(QString::fromUtf8("label_6"));
+
+        horizontalLayout_3->addWidget(label_6);
+
+
+        verticalLayout->addLayout(horizontalLayout_3);
+
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
@@ -208,6 +282,11 @@ public:
         label_2->setText(QApplication::translate("UI", "Maximum Blob Size", 0, QApplication::UnicodeUTF8));
         thresholdingLabel->setText(QApplication::translate("UI", "Edge Thresholding", 0, QApplication::UnicodeUTF8));
         amplificationLabel->setText(QApplication::translate("UI", "Tracker Amplification", 0, QApplication::UnicodeUTF8));
+        planeColorButton->setText(QApplication::translate("UI", "Use Current Plane Color", 0, QApplication::UnicodeUTF8));
+        label_3->setText(QApplication::translate("UI", "Color Weight", 0, QApplication::UnicodeUTF8));
+        label_4->setText(QApplication::translate("UI", "Ratio Weight", 0, QApplication::UnicodeUTF8));
+        label_5->setText(QApplication::translate("UI", "Size Weight", 0, QApplication::UnicodeUTF8));
+        label_6->setText(QApplication::translate("UI", "Position Weight", 0, QApplication::UnicodeUTF8));
         toggleVideoButton->setText(QApplication::translate("UI", "Disable Video", 0, QApplication::UnicodeUTF8));
         toggleGPSButton->setText(QApplication::translate("UI", "Disable GPS", 0, QApplication::UnicodeUTF8));
     } // retranslateUi

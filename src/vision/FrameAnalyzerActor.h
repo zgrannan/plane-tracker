@@ -25,11 +25,18 @@ class FrameAnalyzerActor : public Theron::Actor {
         multimodalActor(multimodalActor){
           RegisterHandler(this, &FrameAnalyzerActor::Handler);
         }
-      void disable(){ disabled = true; }
+      void disable(){ disabled = true; hasLock = false; }
       void enable(){ disabled = false; }
+      void selectColor();
+      void deselectColor();
+
       void setEdgeThresholding(int thresholding){ vision->setEdgeThresholding(thresholding); }
       void setMinBlobSize(int blobSize){ vision->setMinBlobSize(blobSize); }
       void setMaxBlobSize(int blobSize){ vision->setMaxBlobSize(blobSize); }
+      void setPositionWeight(int weight) { vision->setPositionWeight(weight); }
+      void setRatioWeight(int weight) { vision->setRatioWeight(weight); }
+      void setSizeWeight(int weight) { vision->setSizeWeight(weight); }
+      void setColorWeight(int weight) { vision->setColorWeight(weight); }
 
   private:
     bool drawLine;
@@ -37,6 +44,7 @@ class FrameAnalyzerActor : public Theron::Actor {
     Theron::Address imageViewer;
     Theron::Address multimodalActor;
     bool disabled = true;
+    bool hasLock = false;
     list<PlaneVisionMessage> previousPlanes;
 
     void Handler(const ImageMessage& message, const Theron::Address from);

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'imageview.ui'
 **
-** Created: Fri Nov 30 01:15:06 2012
+** Created: Fri Nov 30 21:22:19 2012
 **      by: Qt User Interface Compiler version 4.8.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!

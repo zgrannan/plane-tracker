@@ -25,12 +25,77 @@ UI::UI( QWidget *parent,
       QObject::connect(ui->toggleGPSButton,SIGNAL(clicked(bool)),this,SLOT(toggleGPS(bool)));
       QObject::connect(ui->panSlider, SIGNAL(valueChanged(int)),this,SLOT(updatePan(int)));
       QObject::connect(ui->tiltSlider, SIGNAL(valueChanged(int)),this,SLOT(updateTilt(int)));
-      QObject::connect(ui->amplificationSlider, SIGNAL(valueChanged(int)),this,SLOT(updateAmplification(int)));
-      QObject::connect(ui->edgeThresholdingSlider, SIGNAL(valueChanged(int)),this,SLOT(updateEdgeThresholding(int)));
-      QObject::connect(ui->maxBlobSlider, SIGNAL(valueChanged(int)),this,SLOT(updateMaxBlobSize(int)));
-      QObject::connect(ui->minBlobSlider, SIGNAL(valueChanged(int)),this,SLOT(updateMinBlobSize(int)));
+      QObject::connect(ui->amplificationSlider,
+                       SIGNAL(valueChanged(int)),
+                       this,
+                       SLOT(updateAmplification(int)));
+
+      QObject::connect(ui->edgeThresholdingSlider,
+                       SIGNAL(valueChanged(int)),
+                       this,
+                       SLOT(updateEdgeThresholding(int)));
+
+      QObject::connect(ui->maxBlobSlider,
+                       SIGNAL(valueChanged(int)),
+                       this,
+                       SLOT(updateMaxBlobSize(int)));
+                       
+      QObject::connect(ui->minBlobSlider,
+                      SIGNAL(valueChanged(int)),
+                      this,
+                      SLOT(updateMinBlobSize(int)));
+
+      QObject::connect(ui->planeColorButton,
+                       SIGNAL(clicked(bool)),
+                       this,
+                       SLOT(selectPlaneColor(bool)));
+
+      QObject::connect(ui->colorWeightSlider,
+                       SIGNAL(valueChanged(int)),
+                       this,
+                       SLOT(updateColorWeight(int)));
+
+      QObject::connect(ui->positionWeightSlider,
+                       SIGNAL(valueChanged(int)),
+                       this,
+                       SLOT(updatePositionWeight(int)));
+
+      QObject::connect(ui->sizeWeightSlider,
+                       SIGNAL(valueChanged(int)),
+                       this,
+                       SLOT(updateSizeWeight(int)));
+
+      QObject::connect(ui->ratioWeightSlider,
+                       SIGNAL(valueChanged(int)),
+                       this,
+                       SLOT(updateRatioWeight(int)));
 }
 
+void UI::updateSizeWeight(int weight){
+  frameAnalyzerActor->setSizeWeight(weight);
+}
+
+void UI::updatePositionWeight(int weight){
+  frameAnalyzerActor->setPositionWeight(weight);
+}
+
+void UI::updateRatioWeight(int weight){
+  frameAnalyzerActor->setRatioWeight(weight);
+}
+
+void UI::updateColorWeight(int weight){
+  frameAnalyzerActor->setColorWeight(weight);
+}
+
+void UI::selectPlaneColor(bool enabled){
+  if (enabled){
+    frameAnalyzerActor->selectColor();
+    Log::debug("Sent \"Select Color\" message");
+  } else {
+    frameAnalyzerActor->deselectColor();
+    Log::debug("Sent \"Deselect Color\" message");
+  }
+}
 
 void UI::toggleVideo(bool disabled){
   if (disabled){

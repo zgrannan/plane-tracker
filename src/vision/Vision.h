@@ -27,29 +27,68 @@ class Vision {
     void setUseSize(bool useSize) { this->useSize = useSize; }
     void setUsePosition(bool usePosition) { this->usePosition= usePosition; }
     void setUseRatio(bool useRatio) { this->useRatio= useRatio; }
+    void setUseColor(bool useColor) { this->useColor = useColor; this->hasColor = false; }
+
+    void setPositionWeight(int weight) {positionWeight = (double)weight / 100.0;};
+    void setRatioWeight(int weight) {ratioWeight = (double)weight / 100.0;}
+    void setSizeWeight(int weight) {sizeWeight = (double)weight / 100.0;}
+    void setColorWeight(int weight) {colorWeight = (double)weight / 100.0;}
 
   private:
-    bool intermediateSteps;
+    static constexpr double ep = 216.0/24389.0;
+    static constexpr double ka = 24389.0/27.0;
 
+    static double f_cbrt(double r);
+    static void rgbToCielab(uchar _r, uchar _g, uchar _b,
+                                    double& l, double& a, double& b);
+
+    double goodL, goodA, goodB;
+
+    bool intermediateSteps;
     bool usePosition = true;
     bool useSize = true;
     bool useRatio = true;
+    bool useColor = false;
+    bool hasColor = false;
 
     int edgeThresholding = 50;
     int minBlobSize = 0;
     int maxBlobSize = 40;
 
+    double ratioWeight = 0;
+    double positionWeight = 0;
+    double sizeWeight = 0;
+    double colorWeight = 0;
+
     class BlobScore {
       public: 
-        BlobScore(double dRatio, double dPosition, double dSize): dRatio(dRatio),
-                                                       dPosition(dPosition),
-                                                       dSize(dSize) {}
+        BlobScore(double dRatio, double dPosition, double dSize, double dColor,
+                  double ratioWeight, double positionWeight, double sizeWeight,
+                  double colorWeight): dRatio(dRatio),
+                                       dPosition(dPosition),
+                                       dSize(dSize),
+                                       dColor(dColor),
+                                       ratioWeight(ratioWeight),
+                                       positionWeight(positionWeight),
+                                       sizeWeight(sizeWeight),
+                                       colorWeight(colorWeight){}
+                                                       
         BlobScore(){}
         double computeScore();	// Uses these displacements to compute the plane score   
       private:
-        double dRatio = 0; 		// The change in the plane's width/height ratio
-        double dPosition = 0; 	// The change in the plane's position 
-        double dSize = 0; 		// The change in the plane's size
+
+        double getScore(double diff, double& maxdiff);
+
+
+
+        double dRatio; 		// The change in the plane's width/height ratio
+        double dPosition; 	// The change in the plane's position 
+        double dSize; 		// The change in the plane's size
+        double dColor;      // The change in the plane's color
+        double ratioWeight;
+        double positionWeight;
+        double sizeWeight;
+        double colorWeight;
     };
 
     /**
@@ -57,7 +96,7 @@ class Vision {
      * the image, taking only the sky color into account. Later filtering will 
      * be performed on this data to reduce the number of blobs found
      */
-    CvBlobs findCandidates(IplImage *image, vector<ImageMessage> &extras);
+    pair<CvBlobs,IplImage*> findCandidates(IplImage *image, vector<ImageMessage> &extras);
 
     /**
      * Converts the image into a binary image that is suitable for blob detection, using 
