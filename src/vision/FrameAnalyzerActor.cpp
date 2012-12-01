@@ -9,6 +9,7 @@
 
 void FrameAnalyzerActor::Handler(const ImageMessage& message, const Theron::Address){
   if (GetNumQueuedMessages() > 1){
+    Log::debug("Skipped a frame before analysis");
     cvReleaseImage((IplImage**)&(message.image));
     return;
   }

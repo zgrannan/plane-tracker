@@ -36,7 +36,8 @@ IplImage* Vision::canny(IplImage* grayImage, vector<ImageMessage> &extras){
   dest = Scalar::all(0);
   Mat(grayImage).copyTo(dest, edges);
   IplImage* result = cvCreateImage(cvGetSize(grayImage),IPL_DEPTH_8U,1);
-  cvThreshold(new IplImage(dest),result,1,255,CV_THRESH_BINARY);
+  IplImage* destIpl= new IplImage(dest);
+  cvThreshold(destIpl,result,1,255,CV_THRESH_BINARY);
   if (intermediateSteps){
     IplImage* toDisplay = cvCreateImage(cvGetSize(grayImage),IPL_DEPTH_8U,3);
     cvCvtColor(result,toDisplay,CV_GRAY2RGB);
@@ -79,9 +80,8 @@ CvBlobs Vision::findCandidates(IplImage *image, vector<ImageMessage> &extras){
     cvZero(output);
     cvRenderBlobs(label,blobs,image,output);
     extras.push_back(ImageMessage("Labeled image",output));
-  } else {
-    cvReleaseImage(&bwImage);
-  }
+  } 
+  cvReleaseImage(&bwImage);
   cvReleaseImage(&label);
   return blobs;
 }
@@ -96,17 +96,15 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
     list<PlaneVisionMessage> previousPlanes){
   static int frame = 0;
   frame++;
-  if(image == NULL){
+  if(image == nullptr){
     return PlaneVisionMessage();
   }
 
   vector<ImageMessage> extras;
   Log::debug("Frame: " + boost::lexical_cast<string>(frame));
   CvBlobs candidates = findCandidates(image,extras);
-
   int minBlobPX = ((double)minBlobSize / 20000.0) * (double)(image->height * image->width);
   int maxBlobPX = ((double)maxBlobSize / 10000.0) * (double)(image->height * image->width);
-  Log::log("Min Blob Pixels: " + boost::lexical_cast<string>(minBlobPX));
   cvFilterByArea(candidates,minBlobPX,maxBlobPX);
   double maxScore = -DBL_MAX;
   Option<CvBlob> bestCandidate = None<CvBlob>();
@@ -131,19 +129,21 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
         maxScore = score;
         bestCandidate = Some<CvBlob>(*blob);
       }
+      delete blob;
     }
   } else {
     if ( candidates.size() > 0 ){
       bestCandidate = Some<CvBlob>(*candidates.begin()->second);
+      for (CvBlobs::const_iterator it=candidates.begin(); it!=candidates.end(); ++it){
+        auto blob = it->second;
+        delete blob;
+      }
     } 
   }
-  // cout << "Blob #" << it->second->label << ": Area=" << it->second->area;
-  // cout << ", Centroid=(" << it->second->centroid.x << ", " << it->second->centroid.y << ")\n";
 
   if (bestCandidate.isDefined()) {
     return PlaneVisionMessage(*bestCandidate,image,extras);
   } else {
-    Log::debug("NPF");
     return PlaneVisionMessage(image,extras);
   }
 }

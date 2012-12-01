@@ -10,6 +10,7 @@ ImageView::ImageView(QWidget *parent): QMainWindow(parent), imageView(new Ui::Im
 void ImageView::updateImage(IplImage* image){
   QImage qimage = iplImageToQImage(image);
   imageView->imageLabel->setPixmap(QPixmap::fromImage(qimage));
+  cvReleaseImage(&image);
 }
 
 QImage ImageView::iplImageToQImage(IplImage* image) {

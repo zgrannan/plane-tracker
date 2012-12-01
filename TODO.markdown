@@ -8,4 +8,3 @@ Todo
 - __Fix memory leaks__
 - Color matching
 - __Fix segfaults__
-- Adjust slider sensitivity for min blob size

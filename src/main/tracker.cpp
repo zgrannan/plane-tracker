@@ -31,8 +31,7 @@ void showImage(ImageView* imageView, IplImage* image, float scale){
   CvSize newSize = cvSize(720,405);
   IplImage* newImage = cvCreateImage(newSize,image->depth,image->nChannels);
   cvResize(image,newImage); 
-  imageView->sendImage(image);
-  cvReleaseImage(&newImage); 
+  imageView->sendImage(newImage);
 }
 
 int baudRate(string baudRate){
@@ -51,11 +50,8 @@ int baudRate(string baudRate){
 int main(int argc, char* argv[]){
 
   struct arguments{
-    bool blind;
     bool debug;
     bool drawLine;
-    bool noGPS;
-    bool noGUI;
     bool showExtras;
     double alt; 
     double lat; 
@@ -75,7 +71,6 @@ int main(int argc, char* argv[]){
     ("alt",po::value<double>(&arguments.alt)->default_value(0.0),"Set tracker altitude (Meters)")
     ("arduino-baud",po::value<string>(&arguments.arduinoBaud)->default_value("57600"),"Specify arduino serial baud rate")
     ("arduino-port",po::value<string>(&arguments.arduinoPort)->default_value("/dev/tty.usbmodem1411"),"Specify arduino serial port")
-    ("blind","Do not use visual input")
     ("debug", "Display debug output")
     ("extras","Display intermediate steps")
     ("gps-baud",po::value<string>(&arguments.gpsBaud)->default_value("9600"),"Specify GPS serial baud rate")
@@ -85,8 +80,6 @@ int main(int argc, char* argv[]){
     ("lat",po::value<double>(&arguments.lat)->default_value(-32.0),"Set tracker latitude (GPS Degrees)")
     ("line", "Draw a line to the plane")
     ("lon",po::value<double>(&arguments.lon)->default_value(117.0),"Set tracker longitude (GPS Degrees)")
-    ("no-gps", "Do not use GPS")
-    ("no-gui", "Do not use GUI")
     ("record",po::value<string>(&arguments.recordDirectory)->default_value(""),"Record to directory [arg]")
     ("scale",po::value<double>(&arguments.scale)->default_value(0.25),"Video scale")
     ("video", po::value<string>(&arguments.videoFilename)->default_value(""),"Simulate using video file [arg]");
@@ -110,7 +103,6 @@ int main(int argc, char* argv[]){
   arguments.alt = vm["alt"].as<double>();
   arguments.arduinoBaud= vm["arduino-baud"].as<string>();
   arguments.arduinoPort= vm["arduino-port"].as<string>();
-  arguments.blind = vm.count("blind");
   arguments.debug = vm.count("debug");
   arguments.drawLine = vm.count("line");
   arguments.gpsBaud = vm["gps-baud"].as<string>();
@@ -118,8 +110,6 @@ int main(int argc, char* argv[]){
   arguments.imageFilename = vm["image"].as<string>();
   arguments.lat = vm["lat"].as<double>();
   arguments.lon = vm["lon"].as<double>();
-  arguments.noGPS = vm.count("no-gps");
-  arguments.noGUI = vm.count("no-gui");
   arguments.recordDirectory = vm["record"].as<string>();
   arguments.scale = vm["scale"].as<double>();
   arguments.showExtras = vm.count("extras");
@@ -190,41 +180,9 @@ int main(int argc, char* argv[]){
       multimodalActor->GetAddress()
       );
 
-  if (!arguments.blind){
-    if (arguments.imageFilename == ""){
-      Log::log("Spawning VideoReceiver Interface...");
-      if (arguments.videoFilename == ""){
-        new VideoReceiverInterface(
-            framework,
-            frameAnalyzerActor->GetAddress()
-            );
-      } else {
-        new VideoReceiverInterface(
-            framework,
-            arguments.videoFilename,
-            frameAnalyzerActor->GetAddress()
-            );
-      }
-    } else {
-      IplImage* image = cvLoadImage(arguments.imageFilename.c_str());
-      framework.Send(
-          ImageMessage(image),
-          imageReceiver.GetAddress(),
-          frameAnalyzerActor->GetAddress()
-          );
-    }
-  } else {
-    Log::log("Not using video input");
-  }
 
   Log::log("Spawning Georeferencing Actor...");
   georeferencingActor = new GeoreferencingActor(framework,arguments.lat,arguments.lon,arguments.alt,multimodalActor->GetAddress());
-  if (!arguments.noGPS){
-    Log::log("Spawning GPSReceiver Interface..."); 
-    new GPSReceiverInterface(framework, arguments.gpsPort, baudRate(arguments.gpsBaud), georeferencingActor->GetAddress());
-  } else {
-    Log::log("Not using GPS");
-  }
 
   if (arguments.recordDirectory != "") {
     string command = string("mkdir ") + arguments.recordDirectory;
@@ -232,10 +190,10 @@ int main(int argc, char* argv[]){
     Log::log("Recording to: " +  arguments.recordDirectory);
   }
 
+
   Log::log("Initializaing QApplication...");
   QApplication a(argc,argv);
   UI ui(nullptr,frameAnalyzerActor,georeferencingActor,multimodalActor);
-  Log::success("Tracker Initialization Complete");
   vector<ImageView*> extraViews;
   for (int i = 0; i < 3; i ++){
     extraViews.push_back(new ImageView(&ui));
@@ -244,6 +202,7 @@ int main(int argc, char* argv[]){
   ImageView* imageView = new ImageView(&ui);
   imageView->show();
 
+  ui.show();
 
   auto threadFunct = [&](){
     unsigned int currentFrame = 0;
@@ -253,7 +212,8 @@ int main(int argc, char* argv[]){
       while (!imageCatcher.Empty()){
         imageCatcher.Pop(message,from);
         if (!imageCatcher.Empty()){
-           cvReleaseImage(&message.result);
+          Log::debug("Skipped a frame in video playback");
+          cvReleaseImage(&message.result);
           for (auto extra : message.extras ){
             cvReleaseImage(&extra.image);
           }
@@ -263,6 +223,7 @@ int main(int argc, char* argv[]){
       for (unsigned int i = 0; i < message.extras.size(); i++){
         auto extra = message.extras[i];
         showImage(extraViews[i],extra.image, arguments.scale);
+        cvReleaseImage(&extra.image);
       }
 
       showImage(imageView, message.result, arguments.scale);
@@ -272,15 +233,39 @@ int main(int argc, char* argv[]){
         Log::debug("Saving current frame to: " + filename);
         cvSaveImage(filename.c_str(), message.result);
       }
+      cvReleaseImage(&message.result);
     } 
   };
 
   auto t = thread(threadFunct);
 
-
-  if (!arguments.noGUI){
-    ui.show();
-    return a.exec();
+  Log::log("Spawning GPSReceiver Interface..."); 
+  new GPSReceiverInterface(framework, arguments.gpsPort, baudRate(arguments.gpsBaud), georeferencingActor->GetAddress());
+  if (arguments.imageFilename == ""){
+    Log::log("Spawning VideoReceiver Interface...");
+    if (arguments.videoFilename == ""){
+      new VideoReceiverInterface(
+          framework,
+          frameAnalyzerActor->GetAddress()
+          );
+    } else {
+      new VideoReceiverInterface(
+          framework,
+          arguments.videoFilename,
+          frameAnalyzerActor->GetAddress()
+          );
+    }
+  } else {
+    IplImage* image = cvLoadImage(arguments.imageFilename.c_str());
+    framework.Send(
+        ImageMessage(image),
+        imageReceiver.GetAddress(),
+        frameAnalyzerActor->GetAddress()
+        );
   }
+
+  Log::success("Tracker Initialization Complete");
+  return a.exec();
+
 }
 

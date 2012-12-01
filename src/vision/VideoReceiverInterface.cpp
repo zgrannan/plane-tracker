@@ -23,6 +23,7 @@ class VideoCallback : public IDeckLinkInputCallback {
     VideoCallback(VideoReceiverInterface* vInterface): IDeckLinkInputCallback(),vInterface(vInterface){};
     virtual HRESULT VideoInputFrameArrived(IDeckLinkVideoInputFrame * videoFrame,
                                            IDeckLinkAudioInputPacket*) {
+      Log::debug("begin frame convert");
       long width = videoFrame->GetWidth();
       long height = videoFrame->GetHeight();
       BMDFrameFlags flags = videoFrame->GetFlags();
@@ -51,7 +52,7 @@ class VideoCallback : public IDeckLinkInputCallback {
       }
       vInterface->sendImage(image);
       //videoFrame->Release();
-      Log::debug("Decklink Image received");
+      Log::debug("End frame convert");
       return S_OK;
     }
 
@@ -119,7 +120,6 @@ void VideoReceiverInterface::videoFunction(string videoFilename){
   auto numFrames = capture.get(CV_CAP_PROP_FRAME_COUNT);
   Mat temp;
   IplImage* image;
-  usleep(1000000); // Let other things start
   for(int i = 0; i < numFrames; i++) {
     capture >> temp;
     IplImage tempIpl = temp;
