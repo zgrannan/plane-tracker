@@ -129,17 +129,13 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
         maxScore = score;
         bestCandidate = Some<CvBlob>(*blob);
       }
-      delete blob;
     }
   } else {
     if ( candidates.size() > 0 ){
       bestCandidate = Some<CvBlob>(*candidates.begin()->second);
-      for (CvBlobs::const_iterator it=candidates.begin(); it!=candidates.end(); ++it){
-        auto blob = it->second;
-        delete blob;
-      }
     } 
   }
+  cvReleaseBlobs(candidates);
 
   if (bestCandidate.isDefined()) {
     return PlaneVisionMessage(*bestCandidate,image,extras);

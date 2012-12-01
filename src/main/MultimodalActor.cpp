@@ -22,59 +22,59 @@ MultimodalActor::MultimodalActor(Theron::Framework &framework, string serialPort
     RegisterHandler(this, &MultimodalActor::GPSHandler);
     RegisterHandler(this, &MultimodalActor::VisionHandler);
   }
-    void MultimodalActor::GPSHandler(const AbsolutePositionMessage &message,
-                                     const Theron::Address){
-      Log::debug("AbsolutePositionMessage received");
-      if (!message.positionLost){
-        gpsLost = false;
-        useRSSI = false;
-        Log::debug("Pan: " + lexical_cast<string>(message.pan) + " Tilt: " + lexical_cast<string>(message.tilt));
-        if (videoLost)
-          instructGimbal(message);
-      } else {
-        Log::debug("GPS Lost");
-        gpsLost = true;
-        if (videoLost == true && useRSSI == false){
-          Log::debug("Switching to RSSI");
-          useRSSI = true;
-          instructGimbal(UseRSSIMessage());
-        }
-      }
+void MultimodalActor::GPSHandler(const AbsolutePositionMessage &message,
+    const Theron::Address){
+  Log::debug("AbsolutePositionMessage received");
+  if (!message.positionLost){
+    gpsLost = false;
+    useRSSI = false;
+    Log::debug("Pan: " + lexical_cast<string>(message.pan) + " Tilt: " + lexical_cast<string>(message.tilt));
+    if (videoLost)
+      instructGimbal(message);
+  } else {
+    Log::debug("GPS Lost");
+    gpsLost = true;
+    if (videoLost == true && useRSSI == false){
+      Log::debug("Switching to RSSI");
+      useRSSI = true;
+      instructGimbal(UseRSSIMessage());
     }
+  }
+}
 
-    
-    void MultimodalActor::VisionHandler(const RelativePositionMessage &message,
-                                        const Theron::Address){
-      Log::debug("RelativePositionMessage received");
-      if (!message.positionLost){
-        videoLost = false;
-        useRSSI = false;
-        Log::debug("Pan: " + lexical_cast<string>(message.pan) + " Tilt: " + lexical_cast<string>(message.tilt));
-        if (amplification != 1.0) {
-          auto amplifiedMessage = RelativePositionMessage(message.pan * amplification,
-                                                          message.tilt * amplification);
-          instructGimbal(amplifiedMessage);
-        } else {
-          instructGimbal(message);
-        }
-      } else {
-        Log::debug("Video Lost");
-        videoLost = true;
-        if (videoLost == true && useRSSI == false){
-          Log::debug("Switching to RSSI");
-          useRSSI = true;
-          instructGimbal(UseRSSIMessage());
-        }
-      }
-    }
 
-    void MultimodalActor::instructGimbal(const PositionMessage &message){
-      const vector<char> bytes = message.toBytes();
-      const char* bytePtr = &bytes[0];
-      Log::debug(string("Writing message: ") + string(bytes.begin(),bytes.end()));
-      write(fd, bytePtr, bytes.size());
+void MultimodalActor::VisionHandler(const RelativePositionMessage &message,
+    const Theron::Address){
+  Log::debug("RelativePositionMessage received");
+  if (!message.positionLost){
+    videoLost = false;
+    useRSSI = false;
+    Log::debug("Pan: " + lexical_cast<string>(message.pan) + " Tilt: " + lexical_cast<string>(message.tilt));
+    if (amplification != 1.0) {
+      auto amplifiedMessage = RelativePositionMessage(message.pan * amplification,
+          message.tilt * amplification);
+      instructGimbal(amplifiedMessage);
+    } else {
+      instructGimbal(message);
     }
+  } else {
+    Log::debug("Video Lost");
+    videoLost = true;
+    if (videoLost == true && useRSSI == false){
+      Log::debug("Switching to RSSI");
+      useRSSI = true;
+      instructGimbal(UseRSSIMessage());
+    }
+  }
+}
 
-    void MultimodalActor::setAmplification(double amplification){
-      this->amplification = amplification;
-    }
+void MultimodalActor::instructGimbal(const PositionMessage &message){
+  const vector<char> bytes = message.toBytes();
+  const char* bytePtr = &bytes[0];
+  Log::debug(string("Writing message: ") + string(bytes.begin(),bytes.end()));
+  write(fd, bytePtr, bytes.size());
+}
+
+void MultimodalActor::setAmplification(double amplification){
+  this->amplification = amplification;
+}
