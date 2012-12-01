@@ -35,20 +35,39 @@ class VideoCallback : public IDeckLinkInputCallback {
       void* _buffer;
       videoFrame->GetBytes(&_buffer);
       unsigned char* buffer = (unsigned char*) _buffer;
+
       for(int i = 0, j=0; i < width * height * 3; i+=6, j+=4)
       { 
-        unsigned char u = buffer[j];
-        unsigned char y = buffer[j+1];
-        unsigned char v = buffer[j+2];
 
-        image->imageData[i+2] = 1.0*y + 8 + 1.402*(v-128);
-        image->imageData[i+1] = 1.0*y - 0.34413*(u-128) - 0.71414*(v-128);
-        image->imageData[i] = 1.0*y + 1.772*(u-128) + 0;
+        unsigned char Cb = buffer[j];
+        unsigned char Y = buffer[j+1];
+        unsigned char Cr = buffer[j+2];
+        unsigned char Y2 = buffer[j+3];
 
-        y = buffer[j+3];
-        image->imageData[i+5] = 1.0*y + 8 + 1.402*(v-128);
-        image->imageData[i+4] = 1.0*y - 0.34413*(u-128) - 0.71414*(v-128);
-        image->imageData[i+3] = 1.0*y + 1.772*(u-128) + 0;
+        int r = (int)(1.164*(Y-16) + 1.596*(Cr-128));
+        int g = (int)(1.164*(Y-16) - 0.813*(Cr-128) - 0.391*(Cb-128));
+        int b = (int)(1.164*(Y-16) + 2.018*(Cb-128));
+
+        r = (r < 0) ? 0 : (r > 255) ? 255 : r;
+        g = (g < 0) ? 0 : (g > 255) ? 255 : g;
+        b = (b < 0) ? 0 : (b > 255) ? 255 : b;
+
+        image->imageData[i+2] = r;
+        image->imageData[i+1] = g;
+        image->imageData[i] = b;
+
+        r = (int)(1.164*(Y2-16) + 1.596*(Cr-128));
+        g = (int)(1.164*(Y2-16) - 0.813*(Cr-128) - 0.391*(Cb-128));
+        b = (int)(1.164*(Y2-16) + 2.018*(Cb-128));
+
+        r = (r < 0) ? 0 : (r > 255) ? 255 : r;
+        g = (g < 0) ? 0 : (g > 255) ? 255 : g;
+        b = (b < 0) ? 0 : (b > 255) ? 255 : b;
+
+        image->imageData[i+5] = r;
+        image->imageData[i+4] = g;
+        image->imageData[i+3] = b;
+
       }
       vInterface->sendImage(image);
       //videoFrame->Release();
