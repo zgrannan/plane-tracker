@@ -7,8 +7,10 @@
 #include "src/main/MultimodalActor.h"
 #include <boost/lexical_cast.hpp>
 #include <Theron/Theron.h>
+#include <QKeyEvent>
 
 using namespace Messages;
+using namespace Qt;
 
 UI::UI( QWidget *parent,
         FrameAnalyzerActor* frameAnalyzerActor,
@@ -69,6 +71,29 @@ UI::UI( QWidget *parent,
                        SIGNAL(valueChanged(int)),
                        this,
                        SLOT(updateRatioWeight(int)));
+}
+
+void UI::keyPressEvent(QKeyEvent *e){
+  int value;
+  const int step = 5;
+  switch(e->key()){
+  case Key::Key_A: 
+    value = ui->panSlider->value();
+    ui->panSlider->setValue(value-step);
+  break;
+  case Key::Key_D: 
+    value = ui->panSlider->value();
+    ui->panSlider->setValue(value+step);
+  break;
+  case Key::Key_W: 
+    value = ui->tiltSlider->value();
+    ui->tiltSlider->setValue(value+step);
+  break;
+  case Key::Key_S: 
+    value = ui->tiltSlider->value();
+    ui->tiltSlider->setValue(value-step);
+  break;
+  }
 }
 
 void UI::updateSizeWeight(int weight){

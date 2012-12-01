@@ -41,6 +41,9 @@ class UI : public QMainWindow
     void updateSizeWeight(int weight);
     void updateRatioWeight(int weight);
 
+  protected:
+    void keyPressEvent(QKeyEvent *e);
+
   private:
     FrameAnalyzerActor* frameAnalyzerActor;
     GeoreferencingActor* georeferencingActor;
