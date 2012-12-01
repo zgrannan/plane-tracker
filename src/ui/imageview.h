@@ -13,7 +13,7 @@ class ImageView : public QMainWindow
   Q_OBJECT
 
   public: 
-    explicit ImageView(QWidget *parent);
+    explicit ImageView(QWidget *parent, int width, int height);
     void sendImage(IplImage* image){
       _sendImage(image);
     }

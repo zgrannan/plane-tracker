@@ -27,8 +27,8 @@ namespace po = boost::program_options;
 /**
  * Displays the image on the screen for debugging purposes
  */
-void showImage(ImageView* imageView, IplImage* image, float scale){
-  CvSize newSize = cvSize(720,405);
+void showImage(ImageView* imageView, IplImage* image, int width, int height){
+  CvSize newSize = cvSize(width,height);
   IplImage* newImage = cvCreateImage(newSize,image->depth,image->nChannels);
   cvResize(image,newImage); 
   imageView->sendImage(newImage);
@@ -51,6 +51,7 @@ int main(int argc, char* argv[]){
 
   struct arguments{
     bool debug;
+    bool useCompositeInput;
     bool drawLine;
     bool showExtras;
     double alt; 
@@ -71,6 +72,7 @@ int main(int argc, char* argv[]){
     ("alt",po::value<double>(&arguments.alt)->default_value(0.0),"Set tracker altitude (Meters)")
     ("arduino-baud",po::value<string>(&arguments.arduinoBaud)->default_value("57600"),"Specify arduino serial baud rate")
     ("arduino-port",po::value<string>(&arguments.arduinoPort)->default_value("/dev/tty.usbmodem1411"),"Specify arduino serial port")
+    ("composite","Use composite input instead of HDMI")
     ("debug", "Display debug output")
     ("extras","Display intermediate steps")
     ("gps-baud",po::value<string>(&arguments.gpsBaud)->default_value("9600"),"Specify GPS serial baud rate")
@@ -81,7 +83,7 @@ int main(int argc, char* argv[]){
     ("line", "Draw a line to the plane")
     ("lon",po::value<double>(&arguments.lon)->default_value(117.0),"Set tracker longitude (GPS Degrees)")
     ("record",po::value<string>(&arguments.recordDirectory)->default_value(""),"Record to directory [arg]")
-    ("scale",po::value<double>(&arguments.scale)->default_value(0.25),"Video scale")
+    ("scale",po::value<double>(&arguments.scale)->default_value(0.0),"Video scale")
     ("video", po::value<string>(&arguments.videoFilename)->default_value(""),"Simulate using video file [arg]");
   po::variables_map vm;
   auto parsedOptions = po::command_line_parser(argc,argv).options(desc).allow_unregistered().run();
@@ -103,6 +105,7 @@ int main(int argc, char* argv[]){
   arguments.alt = vm["alt"].as<double>();
   arguments.arduinoBaud= vm["arduino-baud"].as<string>();
   arguments.arduinoPort= vm["arduino-port"].as<string>();
+  arguments.useCompositeInput = vm.count("composite");
   arguments.debug = vm.count("debug");
   arguments.drawLine = vm.count("line");
   arguments.gpsBaud = vm["gps-baud"].as<string>();
@@ -115,6 +118,14 @@ int main(int argc, char* argv[]){
   arguments.showExtras = vm.count("extras");
   arguments.videoFilename = vm["video"].as<string>();
 
+  if (arguments.scale <= 0.0){
+    if (arguments.useCompositeInput){
+      arguments.scale = 1.0;
+    } else {
+      arguments.scale = 0.5;
+    }
+  }
+
   /* Initialize variables */
   Theron::Receiver                          imageReceiver;
   Vision*                                   vision;
@@ -124,6 +135,17 @@ int main(int argc, char* argv[]){
   Theron::Catcher<PlaneVisionMessage>       imageCatcher;
   Theron::Address                           from;
   PlaneVisionMessage                        message;
+
+  int displayWindowWidth, displayWindowHeight;
+
+
+  if ( arguments.useCompositeInput ){
+    displayWindowWidth = 720 * arguments.scale;
+    displayWindowHeight = 486 * arguments.scale;
+  } else {
+    displayWindowWidth = 1920 * arguments.scale;
+    displayWindowHeight = 1080 * arguments.scale;
+  }
 
   imageReceiver.RegisterHandler(&imageCatcher,&Theron::Catcher<PlaneVisionMessage>::Push);
 
@@ -135,6 +157,7 @@ int main(int argc, char* argv[]){
   cout << "\tGPS Baud Rate: \t\t" << KMAG << arguments.gpsBaud << KNRM << endl;
   cout << "\tArduino Serial Device: \t" << KMAG << arguments.arduinoPort << KNRM << endl;
   cout << "\tArduino Baud Rate: \t" << KMAG << arguments.arduinoBaud << KNRM << endl << endl;
+
 
   if (arguments.videoFilename != ""){
     Log::log("\tSimulating flight using " + arguments.videoFilename);
@@ -195,11 +218,15 @@ int main(int argc, char* argv[]){
   QApplication a(argc,argv);
   UI ui(nullptr,frameAnalyzerActor,georeferencingActor,multimodalActor);
   vector<ImageView*> extraViews;
-  for (int i = 0; i < 3; i ++){
-    extraViews.push_back(new ImageView(&ui));
-    extraViews[i]->show();
+
+  if (arguments.showExtras){
+    for (int i = 0; i < 3; i ++){
+      extraViews.push_back(new ImageView(&ui,displayWindowWidth,displayWindowHeight));
+      extraViews[i]->show();
+    }
   }
-  ImageView* imageView = new ImageView(&ui);
+
+  ImageView* imageView = new ImageView(&ui,displayWindowWidth,displayWindowHeight);
   imageView->show();
 
   ui.show();
@@ -222,11 +249,11 @@ int main(int argc, char* argv[]){
 
       for (unsigned int i = 0; i < message.extras.size(); i++){
         auto extra = message.extras[i];
-        showImage(extraViews[i],extra.image, arguments.scale);
+        showImage(extraViews[i],extra.image, displayWindowWidth, displayWindowHeight);
         cvReleaseImage(&extra.image);
       }
 
-      showImage(imageView, message.result, arguments.scale);
+      showImage(imageView, message.result, displayWindowWidth, displayWindowHeight);
       if (arguments.recordDirectory != "") {
         string frame = (boost::format("%06d") % currentFrame).str();
         string filename = arguments.recordDirectory + "/" + frame + ".jpg";
@@ -246,7 +273,8 @@ int main(int argc, char* argv[]){
     if (arguments.videoFilename == ""){
       new VideoReceiverInterface(
           framework,
-          frameAnalyzerActor->GetAddress()
+          frameAnalyzerActor->GetAddress(),
+          arguments.useCompositeInput
           );
     } else {
       new VideoReceiverInterface(

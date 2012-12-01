@@ -2,8 +2,10 @@
 #include "src/ui/ui_imageview.h"
 #include <cv.h>
 
-ImageView::ImageView(QWidget *parent): QMainWindow(parent), imageView(new Ui::ImageView) {
+ImageView::ImageView(QWidget *parent, int width, int height): QMainWindow(parent), imageView(new Ui::ImageView) {
   imageView->setupUi(this);
+  resize(width,height);
+  imageView->imageLabel->resize(width,height);
   connect(this,SIGNAL(_sendImage(IplImage*)), this, SLOT(updateImage(IplImage*)));
 }
 

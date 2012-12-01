@@ -3,8 +3,11 @@
 Todo
 ----
 
-- __Fix YUV to RGB conversion__ [Code](https://github.com/UCSD-AUVSI/Skynet/blob/7e8bf32b8b7c9a7cd2997ba50237ab6537137497/DecklinkCallback.cpp)
-- Test Georef
-- __Fix memory leaks__
+- Re-implement scale
 - Color matching
-- __Fix segfaults__
+
+- Test Georef
+- Map trackpad to tracker
+- Add inverse pan/tilt buttons
+- Window names
+- Fix scoring

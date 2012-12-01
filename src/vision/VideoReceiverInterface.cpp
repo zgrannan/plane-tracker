@@ -87,12 +87,16 @@ class VideoCallback : public IDeckLinkInputCallback {
     VideoReceiverInterface* vInterface;
 };
 
-void VideoReceiverInterface::cameraFunction(){
-
+void VideoReceiverInterface::cameraFunction(bool useCompositeInput){
   IDeckLink *deckLink;
   IDeckLinkInput *deckLinkInput;
   BMDVideoInputFlags inputFlags = 0;
-  BMDDisplayMode displayMode = bmdModeNTSC; // bmdModeHD1080i5994;
+  BMDDisplayMode displayMode;
+  if (useCompositeInput){
+    displayMode = bmdModeNTSC;
+  } else {
+    displayMode = bmdModeHD1080i5994;
+  }
   BMDPixelFormat pixelFormat = bmdFormat8BitYUV;
   IDeckLinkIterator *deckLinkIterator = CreateDeckLinkIteratorInstance();
   Log::debug("Creating decklink iterator...");
@@ -150,8 +154,8 @@ void VideoReceiverInterface::videoFunction(string videoFilename){
   }
 }
 
-VideoReceiverInterface::VideoReceiverInterface(Theron::Framework &framework, Theron::Address frameAnalyzerActor): framework(framework), frameAnalyzerActor(frameAnalyzerActor) {
-  cameraFunction();
+VideoReceiverInterface::VideoReceiverInterface(Theron::Framework &framework, Theron::Address frameAnalyzerActor, bool useCompositeInput): framework(framework), frameAnalyzerActor(frameAnalyzerActor) {
+  cameraFunction(useCompositeInput);
 }
 
 VideoReceiverInterface::VideoReceiverInterface(Theron::Framework &framework, string videoFilename, Theron::Address frameAnalyzerActor): framework(framework), frameAnalyzerActor(frameAnalyzerActor) {
