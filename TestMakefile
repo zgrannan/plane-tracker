@@ -1,0 +1,6 @@
+CC=g++ --std=c++11
+CXXFLAGS= -g -Wall 
+INCPATH = -I.
+
+georeftest:
+	$(CC) $(CXXFLAGS) $(INCPATH) src/gps/GeoReference.cpp src/test/georeferencetest.cpp -o georeftest
