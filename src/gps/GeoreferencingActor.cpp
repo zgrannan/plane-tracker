@@ -12,9 +12,9 @@ void GeoreferencingActor::Handler(const GPSDataMessage& message, const Theron::A
 }
 
 AbsolutePositionMessage GeoreferencingActor::calculateAbsolutePosition(const GPSDataMessage& message){
-  vector<double> resultVector = GeoReference::calculateBearingAndDistance(trackerLatitude,trackerLongitude,message.lat,message.lon);
-  double bearing = resultVector[0];
-  double distance = resultVector[1];
-  double tilt = tan(message.alt/distance)*180/3.14159;
-  return AbsolutePositionMessage(bearing,tilt);
+  auto result = GeoReference::calculatePanAndTilt(
+    trackerLatitude, trackerLongitude, trackerAltitude,
+    message.lat, message.lon, message.alt);
+
+  return AbsolutePositionMessage(result.first,result.second);
 }

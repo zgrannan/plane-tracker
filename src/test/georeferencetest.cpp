@@ -14,7 +14,7 @@ int main(int argc, char** argv){
   double lat2 = atof(argv[4]);
   double lon2 = atof(argv[5]);
   double alt2 = atof(argv[6]);
-  double roll, pitch;
-  cout << GeoReference::calculateBearingAndDistance(lat1,lon1,lat2,lon2)[0] << endl;
-  cout << GeoReference::calculateBearingAndDistance(lat1,lon1,lat2,lon2)[1] << endl;
+  auto result = GeoReference::calculatePanAndTilt(lat1,lon1,alt1,lat2,lon2,alt2);
+  cout <<"Pan: "<<result.first<<endl;
+  cout <<"Tilt: "<<result.second<<endl;
 }
