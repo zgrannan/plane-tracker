@@ -7,6 +7,7 @@
 #include <cvblob.h>
 
 #include "src/util/Messages.h"
+#include "src/perhaps/perhaps.h"
 
 using namespace std;
 using namespace cvb;
@@ -29,14 +30,22 @@ class Vision {
     void setUseRatio(bool useRatio) { this->useRatio= useRatio; }
     void setUseColor(bool useColor) { this->useColor = useColor; this->hasColor = false; }
 
+    void setPlaneBlob(double blobX, double blobY){ 
+      this->blobXOption = Some<double>(blobX);
+      this->blobYOption = Some<double>(blobY);
+    }
+
     void setPositionWeight(int weight) {positionWeight = (double)weight / 100.0;};
     void setRatioWeight(int weight) {ratioWeight = (double)weight / 100.0;}
     void setSizeWeight(int weight) {sizeWeight = (double)weight / 100.0;}
     void setColorWeight(int weight) {colorWeight = (double)weight / 100.0;}
 
   private:
+    PlaneVisionMessage findPlane( IplImage* image, double blobX, double blobY);
     static constexpr double ep = 216.0/24389.0;
     static constexpr double ka = 24389.0/27.0;
+
+    Option<double> blobXOption, blobYOption;
 
     static double f_cbrt(double r);
     static void rgbToCielab(uchar _r, uchar _g, uchar _b,

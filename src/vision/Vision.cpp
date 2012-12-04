@@ -126,12 +126,45 @@ double Vision::computeRatio(CvBlob* blob){
   return dy / dx;
 }
 
+PlaneVisionMessage Vision::findPlane( IplImage* image, double blobX, double blobY){
+  if(image == nullptr){
+    return PlaneVisionMessage();
+  }
+  vector<ImageMessage> extras;
+  pair<CvBlobs,IplImage*> candidatesWithLabel = findCandidates(image,extras);
+  auto candidates = candidatesWithLabel.first;
+  Option<CvBlob> bestCandidate = None<CvBlob>();
+  double bestDistance = DBL_MAX;
+    for (CvBlobs::const_iterator it=candidates.begin(); it!=candidates.end(); ++it){
+      auto blob = it->second;
+      double dx = blob->centroid.x - blobX;
+      double dy = blob->centroid.y - blobY;
+      if (dx * dx + dy * dy  < bestDistance){
+        bestDistance = dx * dx + dy * dy;
+        bestCandidate = Some<CvBlob>(*blob);
+      }
+    }
+    cvReleaseBlobs(candidates);
+    if (bestCandidate.isDefined()) {
+      return PlaneVisionMessage(*bestCandidate,image,extras);
+    } else {
+      return PlaneVisionMessage(image,extras);
+    }
+}
+
 PlaneVisionMessage Vision::findPlane( IplImage* image,
     list<PlaneVisionMessage> previousPlanes){
   static int frame = 0;
   frame++;
   if(image == nullptr){
     return PlaneVisionMessage();
+  }
+
+  if (blobXOption.isDefined() && blobYOption.isDefined()){
+    PlaneVisionMessage result = findPlane(image,*blobXOption,*blobYOption);
+    blobXOption = None<double>();
+    blobYOption = None<double>();
+    return result;
   }
 
   bool canUseColor = true;

@@ -22,10 +22,9 @@ void FrameAnalyzerActor::deselectColor(){
 
 void FrameAnalyzerActor::BlobPositionHandler(const BlobPositionMessage& message,
                                              const Theron::Address){
-  previousPlanes = vector<PlaneVisionMessage>();
-  PlaneVisionMessage blobPlane = vision->findPlane(message.image, message.x, message.y);
-  vector.push_back(blobPlane);
-                                             }
+  previousPlanes = list<PlaneVisionMessage>();
+  vision->setPlaneBlob(message.x, message.y);
+} 
 
 void FrameAnalyzerActor::ImageHandler(const ImageMessage& message, const Theron::Address){
   if (GetNumQueuedMessages() > 1){

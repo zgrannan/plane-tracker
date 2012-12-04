@@ -1,10 +1,10 @@
-#include "src/ui/ui.h"
-#include "src/ui/ui_ui.h"
 #include "src/util/Log.h"
 #include "src/util/Messages.h"
 #include "src/vision/FrameAnalyzerActor.h"
 #include "src/gps/GeoreferencingActor.h"
 #include "src/main/MultimodalActor.h"
+#include "src/ui/ui.h"
+#include "src/ui/ui_ui.h"
 #include <boost/lexical_cast.hpp>
 #include <Theron/Theron.h>
 #include <QKeyEvent>

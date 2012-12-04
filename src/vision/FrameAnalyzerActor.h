@@ -23,7 +23,8 @@ class FrameAnalyzerActor : public Theron::Actor {
         vision(vision),
         imageViewer(imageViewer),
         multimodalActor(multimodalActor){
-          RegisterHandler(this, &FrameAnalyzerActor::Handler);
+          RegisterHandler(this, &FrameAnalyzerActor::ImageHandler);
+          RegisterHandler(this, &FrameAnalyzerActor::BlobPositionHandler);
         }
       void disable(){ disabled = true; hasLock = false; }
       void enable(){ disabled = false; }
@@ -47,7 +48,8 @@ class FrameAnalyzerActor : public Theron::Actor {
     bool hasLock = false;
     list<PlaneVisionMessage> previousPlanes;
 
-    void Handler(const ImageMessage& message, const Theron::Address from);
+    void ImageHandler(const ImageMessage& message, const Theron::Address from);
+    void BlobPositionHandler(const BlobPositionMessage& message, const Theron::Address from);
     RelativePositionMessage calculateRelativePosition(const ImageMessage& message);
 };
 

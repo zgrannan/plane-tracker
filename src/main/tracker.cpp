@@ -1,4 +1,3 @@
-#include <QtGui/QApplication>
 #include <Theron/Theron.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
@@ -11,12 +10,13 @@
 #include "src/gps/GPSReceiverInterface.h"
 #include "src/gps/GeoreferencingActor.h"
 #include "src/main/MultiModalActor.h"
-#include "src/ui/ui.h"
-#include "src/ui/imageview.h"
 #include "src/util/Log.h"
 #include "src/vision/FrameAnalyzerActor.h"
 #include "src/vision/VideoReceiverInterface.h"
 #include "src/vision/Vision.h"
+#include "src/ui/ui.h"
+#include "src/ui/imageview.h"
+#include <QtGui/QApplication>
 
 using namespace cv;
 using namespace std;
