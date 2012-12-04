@@ -147,6 +147,7 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
   double maxScore = -DBL_MAX;
   Option<CvBlob> bestCandidate = None<CvBlob>();
   Log::debug("Found candidates");
+  Log::debug("PROFILE: Finding blobs");
   if ( previousPlanes.size() >= 1){
     for (CvBlobs::const_iterator it=candidates.begin(); it!=candidates.end(); ++it){
       double score = 0;

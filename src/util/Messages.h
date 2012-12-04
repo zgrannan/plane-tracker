@@ -25,6 +25,12 @@ namespace Messages{
       ImageMessage(String name, IplImage* image): name(name), image(image){}
   };
 
+  class BlobPositionMessage{
+    public:
+      BlobPositionMessage(double x, double y): x(x), y(y) {}
+      double x,y;
+  };
+
   /**
    * This class represents the result of a successful CV plane detection
    * planeBlob: The CvBlob that the plane has been identified as

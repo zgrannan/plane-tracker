@@ -176,5 +176,8 @@ void UI::updateMaxBlobSize(int blobSize){
 
 UI::~UI()
 {
+    delete frameAnalyzerActor;
+    delete georeferencingActor;
+    delete multimodalActor;
     delete ui;
 }

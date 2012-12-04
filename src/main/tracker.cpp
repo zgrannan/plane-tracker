@@ -221,12 +221,22 @@ int main(int argc, char* argv[]){
 
   if (arguments.showExtras){
     for (int i = 0; i < 3; i ++){
-      extraViews.push_back(new ImageView(&ui,displayWindowWidth,displayWindowHeight));
+      extraViews.push_back(new ImageView(&ui,
+                                         displayWindowWidth,
+                                         displayWindowHeight,
+                                         arguments.scale,
+                                         frameAnalyzerActor->GetAddress(),
+                                         framework));
       extraViews[i]->show();
     }
   }
 
-  ImageView* imageView = new ImageView(&ui,displayWindowWidth,displayWindowHeight);
+  ImageView* imageView = new ImageView(&ui,
+                                       displayWindowWidth,
+                                       displayWindowHeight,
+                                       arguments.scale,
+                                       frameAnalyzerActor->GetAddress(),
+                                       framework);
   imageView->show();
 
   ui.show();
@@ -294,6 +304,5 @@ int main(int argc, char* argv[]){
 
   Log::success("Tracker Initialization Complete");
   return a.exec();
-
 }
 
