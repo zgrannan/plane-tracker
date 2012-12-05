@@ -154,6 +154,7 @@ PlaneVisionMessage Vision::findPlane( IplImage* image, double blobX, double blob
 
 PlaneVisionMessage Vision::findPlane( IplImage* image,
     list<PlaneVisionMessage> previousPlanes){
+  Log::debug("PROFILE: findPlane begins");
   static int frame = 0;
   frame++;
   if(image == nullptr){
@@ -170,17 +171,21 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
   bool canUseColor = true;
 
   vector<ImageMessage> extras;
-  Log::debug("Frame: " + boost::lexical_cast<string>(frame));
+  Log::debug("PROFILE: findCandidates begins");
   pair<CvBlobs,IplImage*> candidatesWithLabel = findCandidates(image,extras);
+  Log::debug("PROFILE: findCandidates ends");
   auto candidates = candidatesWithLabel.first;
   auto label = candidatesWithLabel.second;
   int minBlobPX = ((double)minBlobSize / 20000.0) * (double)(image->height * image->width);
   int maxBlobPX = ((double)maxBlobSize / 10000.0) * (double)(image->height * image->width);
+  Log::debug("PROFILE: FilterByArea begins");
   cvFilterByArea(candidates,minBlobPX,maxBlobPX);
+  Log::debug("PROFILE: FilterByArea ends");
   double maxScore = -DBL_MAX;
   Option<CvBlob> bestCandidate = None<CvBlob>();
-  Log::debug("Found candidates");
-  Log::debug("PROFILE: Finding blobs");
+  Log::debug("PROFILE: Scoring begins for " + boost::lexical_cast<string>(candidates.size())
+             + " candidates, " + boost::lexical_cast<string>(previousPlanes.size()) +
+             " previous planes." );
   if ( previousPlanes.size() >= 1){
     for (CvBlobs::const_iterator it=candidates.begin(); it!=candidates.end(); ++it){
       double score = 0;
@@ -188,11 +193,17 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
       for ( auto lastPlane : previousPlanes) {
         auto lastBlob = &lastPlane.planeBlob; 
         double dPosition = 0, dRatio = 0, dSize = 0;
+        Log::debug("PROFILE: Get Displacement Start");
         auto displacementVector = getDisplacement(blob,lastBlob);
+        Log::debug("PROFILE: Get Displacement End");
+        Log::debug("PROFILE: Compute Position/Size Start");
         dPosition = sqrt(pow(displacementVector[0],2)+ pow(displacementVector[1],2));
         dSize = fabs(blob->area-lastBlob->area);
+        Log::debug("PROFILE: Compute Position/Size End");
+        Log::debug("PROFILE: Compute Ratio Start");
         double oldRatio = computeRatio(lastBlob);
         double ratio = computeRatio(blob);
+        Log::debug("PROFILE: Compute Ratio End");
         double dColor = 0;
         if (useColor && hasColor){
           CvScalar color = cvBlobMeanColor(blob,label,image);
@@ -210,8 +221,10 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
           cvReleaseImage(&label);
         }
         dRatio = fabs(ratio/oldRatio);
+        Log::debug("PROFILE: Compute Score Start");
         score += BlobScore(dRatio,dPosition,dSize,dColor,
                             ratioWeight,positionWeight,sizeWeight,colorWeight).computeScore();
+        Log::debug("PROFILE: Compute Score End");
       }
       if ( score > maxScore ){
         Log::debug("MaxScore: " + boost::lexical_cast<string>(score));
@@ -224,6 +237,7 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
       bestCandidate = Some<CvBlob>(*candidates.begin()->second);
     } 
   }
+  Log::debug("PROFILE: Scoring ends");
   cvReleaseBlobs(candidates);
 
   if (bestCandidate.isDefined()) {
@@ -264,7 +278,7 @@ double Vision::BlobScore::computeScore(){
   double ratioScore = getScore(dRatio,maxdRatio);
   double sizeScore = getScore(dSize,maxdSize);
   double colorScore = getScore(dColor,maxdColor);
-
+  /**
   Log::debug("Position Difference: " + boost::lexical_cast<string>(dPosition));
   Log::debug("Position Score: " + boost::lexical_cast<string>(positionScore));
   Log::debug("Weighted Position Score: "  + boost::lexical_cast<string>(positionScore * positionWeight));
@@ -277,6 +291,7 @@ double Vision::BlobScore::computeScore(){
   Log::debug("Color Difference: " + boost::lexical_cast<string>(dColor));
   Log::debug("Color Score: " + boost::lexical_cast<string>(colorScore));
   Log::debug("Weighted Color Score: "  + boost::lexical_cast<string>(colorScore * colorWeight));
+  **/
   return positionScore * positionWeight +
          ratioScore * ratioWeight +
          sizeScore * sizeWeight + 
