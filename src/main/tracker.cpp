@@ -266,7 +266,7 @@ int main(int argc, char* argv[]){
       showImage(imageView, message.result, displayWindowWidth, displayWindowHeight);
       if (arguments.recordDirectory != "") {
         string frame = (boost::format("%06d") % currentFrame).str();
-        string filename = arguments.recordDirectory + "/" + frame + ".jpg";
+        string filename = arguments.recordDirectory + "/" + frame + ".bmp";
         Log::debug("Saving current frame to: " + filename);
         cvSaveImage(filename.c_str(), message.result);
       }
