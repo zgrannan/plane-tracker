@@ -238,8 +238,10 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
     } 
   }
   Log::debug("PROFILE: Scoring ends");
+  Log::debug("PROFILE: cvReleaseBlobs begins");
   cvReleaseBlobs(candidates);
-
+  Log::debug("PROFILE: cvReleaseBlobs ends");
+  Log::debug("PROFILE: findPlane ends");
   if (bestCandidate.isDefined()) {
     if (!hasColor && useColor && canUseColor){
       auto candidate = bestCandidate.get();

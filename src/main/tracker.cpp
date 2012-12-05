@@ -69,22 +69,42 @@ int main(int argc, char* argv[]){
 
   po::options_description desc("Allowed options");
   desc.add_options()
-    ("alt",po::value<double>(&arguments.alt)->default_value(0.0),"Set tracker altitude (Meters)")
-    ("arduino-baud",po::value<string>(&arguments.arduinoBaud)->default_value("57600"),"Specify arduino serial baud rate")
-    ("arduino-port",po::value<string>(&arguments.arduinoPort)->default_value("/dev/tty.usbmodem1411"),"Specify arduino serial port")
+    ("alt",
+      po::value<double>(&arguments.alt)->default_value(0.0),
+      "Set tracker altitude (Meters)")
+    ("arduino-baud",
+      po::value<string>(&arguments.arduinoBaud)->default_value("57600"),
+      "Specify arduino serial baud rate")
+    ("arduino-port",
+      po::value<string>(&arguments.arduinoPort)->default_value("/dev/tty.usbmodem1411"),
+      "Specify arduino serial port")
     ("composite","Use composite input instead of HDMI")
     ("debug", "Display debug output")
     ("extras","Display intermediate steps")
-    ("gps-baud",po::value<string>(&arguments.gpsBaud)->default_value("9600"),"Specify GPS serial baud rate")
-    ("gps-port",po::value<string>(&arguments.gpsPort)->default_value("/dev/tty0"),"Specify GPS serial port")
+    ("gps-baud",
+      po::value<string>(&arguments.gpsBaud)->default_value("9600"),
+      "Specify GPS serial baud rate")
+    ("gps-port",
+      po::value<string>(&arguments.gpsPort)->default_value("/dev/tty0"),
+      "Specify GPS serial port")
     ("help", "Display help message")
-    ("image", po::value<string>(&arguments.imageFilename)->default_value(""), "Analyze a single image [arg]")
-    ("lat",po::value<double>(&arguments.lat)->default_value(-32.0),"Set tracker latitude (GPS Degrees)")
+    ("image",
+      po::value<string>(&arguments.imageFilename)->default_value(""),
+      "Analyze a single image [arg]")
+    ("lat",
+      po::value<double>(&arguments.lat)->default_value(-32.0),
+      "Set tracker latitude (GPS Degrees)")
     ("line", "Draw a line to the plane")
-    ("lon",po::value<double>(&arguments.lon)->default_value(117.0),"Set tracker longitude (GPS Degrees)")
-    ("record",po::value<string>(&arguments.recordDirectory)->default_value(""),"Record to directory [arg]")
+    ("lon",
+      po::value<double>(&arguments.lon)->default_value(117.0),
+      "Set tracker longitude (GPS Degrees)")
+    ("record",
+      po::value<string>(&arguments.recordDirectory)->default_value(""),
+      "Record to directory [arg]")
     ("scale",po::value<double>(&arguments.scale)->default_value(0.0),"Video scale")
-    ("video", po::value<string>(&arguments.videoFilename)->default_value(""),"Simulate using video file [arg]");
+    ("video",
+      po::value<string>(&arguments.videoFilename)->default_value(""),
+      "Simulate using video file [arg]");
   po::variables_map vm;
   auto parsedOptions = po::command_line_parser(argc,argv).options(desc).allow_unregistered().run();
   auto invalidOptions = collect_unrecognized(parsedOptions.options,po::include_positional);

@@ -19,7 +19,7 @@ void GeoreferencingActor::Handler(const GPSDataMessage& message, const Theron::A
 }
 void GeoreferencingActor::setPosition(double lat, double lon, double alt){
   Log::log("Setting tracker position to: " + boost::lexical_cast<string>(lat) + ", " +
-           boost::lexical_cast<string>(lon) +" @ " + boost::lexical_cast<string>(alt) + "ft.");
+           boost::lexical_cast<string>(lon) +" @ " + boost::lexical_cast<string>(alt) + "m");
   this->trackerLatitude = lat;
   this->trackerLongitude = lon;
   this->trackerAltitude = alt;
