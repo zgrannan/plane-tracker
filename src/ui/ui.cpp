@@ -71,8 +71,27 @@ UI::UI( QWidget *parent,
                        SIGNAL(valueChanged(int)),
                        this,
                        SLOT(updateRatioWeight(int)));
+
+      QObject::connect(ui->useRadioPosition,
+                       SIGNAL(clicked()),
+                       this,
+                       SLOT(setTrackerGPSFromRadio()));
+
+      QObject::connect(ui->useTextPosition,
+                       SIGNAL(clicked()),
+                       this,
+                       SLOT(setTrackerGPSFromFields()));
 }
 
+void UI::setTrackerGPSFromFields(){
+  double lat = boost::lexical_cast<double>(ui->trackerLatitudeTextEdit->toPlainText().toStdString());
+  double lon = boost::lexical_cast<double>(ui->trackerLongitudeTextEdit->toPlainText().toStdString());
+  double alt= boost::lexical_cast<double>(ui->trackerAltitudeTextEdit->toPlainText().toStdString());
+  georeferencingActor->setPosition(lat,lon,alt);
+}
+void UI::setTrackerGPSFromRadio(){
+  georeferencingActor->setPositionFromRadio();
+}
 void UI::keyPressEvent(QKeyEvent *e){
   int value;
   const int step = 5;

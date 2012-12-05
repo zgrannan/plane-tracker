@@ -24,7 +24,7 @@ void Log::debug(string s) {
   if (debugMode) {
     boost::posix_time::ptime mst1 = boost::posix_time::microsec_clock::local_time();
     cout << boost::posix_time::to_simple_string(mst1) << ": "<< KBLU << s << KNRM << endl;
-    }
+  }
 }
 
 void Log::success(string s) {

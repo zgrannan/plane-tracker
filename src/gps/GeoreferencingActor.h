@@ -22,12 +22,12 @@ public:
 	}
     void disable(){disabled = true; }
     void enable(){disabled = false; }
-    void setPosition(double lat, double lon, double alt){
-      this->trackerLatitude = lat;
-      this->trackerLongitude = lon;
-      this->trackerAltitude = alt;
+    void setPosition(double lat, double lon, double alt);
+    void setPositionFromRadio(){
+      _setPositionFromRadio = true;
     }
 private:
+    bool _setPositionFromRadio = false;
     bool disabled = true;
 	void Handler(const GPSDataMessage& message, const Theron::Address from);
 	AbsolutePositionMessage calculateAbsolutePosition(const GPSDataMessage& gpsData);

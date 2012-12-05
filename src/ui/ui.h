@@ -40,6 +40,8 @@ class UI : public QMainWindow
     void updateColorWeight(int weight);
     void updateSizeWeight(int weight);
     void updateRatioWeight(int weight);
+    void setTrackerGPSFromFields();
+    void setTrackerGPSFromRadio();
 
   protected:
     void keyPressEvent(QKeyEvent *e);
