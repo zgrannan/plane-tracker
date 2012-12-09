@@ -19,7 +19,7 @@ GPSReceiverInterface::GPSReceiverInterface(Theron::Framework& framework,
   serialPort(serialPort),
   baudRate(baudRate),
   georeferencingActor(georeferencingActor) { 
-    Log::debug("Starting GPS Receiver worker thread");
+    DEBUG("Starting GPS Receiver worker thread");
     boost::thread workerThread(&GPSReceiverInterface::workerFunction,this);
 }
 

@@ -11,7 +11,7 @@ MultimodalActor::MultimodalActor(Theron::Framework &framework, string serialPort
   useRSSI(true),
   videoLost(true),
   gpsLost(true){
-    Log::debug("Multimodal actor opening serial port: " +serialPort);
+    DEBUG("Multimodal actor opening serial port: " +serialPort);
     fd = open(serialPort.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
     termios options;
     tcgetattr(fd, &options);
@@ -24,18 +24,18 @@ MultimodalActor::MultimodalActor(Theron::Framework &framework, string serialPort
   }
 void MultimodalActor::GPSHandler(const AbsolutePositionMessage &message,
     const Theron::Address){
-  Log::debug("AbsolutePositionMessage received");
+  DEBUG("AbsolutePositionMessage received");
   if (!message.positionLost){
     gpsLost = false;
     useRSSI = false;
-    Log::debug("Pan: " + lexical_cast<string>(message.pan) + " Tilt: " + lexical_cast<string>(message.tilt));
+    DEBUG("Pan: " + lexical_cast<string>(message.pan) + " Tilt: " + lexical_cast<string>(message.tilt));
     if (videoLost)
       instructGimbal(message);
   } else {
-    Log::debug("GPS Lost");
+    DEBUG("GPS Lost");
     gpsLost = true;
     if (videoLost == true && useRSSI == false){
-      Log::debug("Switching to RSSI");
+      DEBUG("Switching to RSSI");
       useRSSI = true;
       instructGimbal(UseRSSIMessage());
     }
@@ -45,11 +45,11 @@ void MultimodalActor::GPSHandler(const AbsolutePositionMessage &message,
 
 void MultimodalActor::VisionHandler(const RelativePositionMessage &message,
     const Theron::Address){
-  Log::debug("RelativePositionMessage received");
+  DEBUG("RelativePositionMessage received");
   if (!message.positionLost){
     videoLost = false;
     useRSSI = false;
-    Log::debug("Pan: " + lexical_cast<string>(message.pan) + " Tilt: " + lexical_cast<string>(message.tilt));
+    DEBUG("Pan: " + lexical_cast<string>(message.pan) + " Tilt: " + lexical_cast<string>(message.tilt));
     if (amplification != 1.0) {
       auto amplifiedMessage = RelativePositionMessage(message.pan * amplification,
           message.tilt * amplification);
@@ -58,10 +58,10 @@ void MultimodalActor::VisionHandler(const RelativePositionMessage &message,
       instructGimbal(message);
     }
   } else {
-    Log::debug("Video Lost");
+    DEBUG("Video Lost");
     videoLost = true;
     if (videoLost == true && useRSSI == false){
-      Log::debug("Switching to RSSI");
+      DEBUG("Switching to RSSI");
       useRSSI = true;
       instructGimbal(UseRSSIMessage());
     }
@@ -71,7 +71,7 @@ void MultimodalActor::VisionHandler(const RelativePositionMessage &message,
 void MultimodalActor::instructGimbal(const PositionMessage &message){
   const vector<char> bytes = message.toBytes();
   const char* bytePtr = &bytes[0];
-  Log::debug(string("Writing message: ") + string(bytes.begin(),bytes.end()));
+  DEBUG(string("Writing message: ") + string(bytes.begin(),bytes.end()));
   write(fd, bytePtr, bytes.size());
 }
 

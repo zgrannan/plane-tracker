@@ -10,6 +10,12 @@
 #define KCYN  "\x1B[36m"
 #define KWHT  "\x1B[37m"
 
+#ifndef NO_DEBUG_OUTPUT
+#define DEBUG(expression) Log::debug(expression);
+#else
+#define DEBUG(expression)
+#endif
+
 using namespace std;
 
 class Log {

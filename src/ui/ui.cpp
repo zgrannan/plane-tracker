@@ -134,10 +134,10 @@ void UI::updateColorWeight(int weight){
 void UI::selectPlaneColor(bool enabled){
   if (enabled){
     frameAnalyzerActor->selectColor();
-    Log::debug("Sent \"Select Color\" message");
+    DEBUG("Sent \"Select Color\" message");
   } else {
     frameAnalyzerActor->deselectColor();
-    Log::debug("Sent \"Deselect Color\" message");
+    DEBUG("Sent \"Deselect Color\" message");
   }
 }
 
@@ -164,32 +164,32 @@ void UI::toggleGPS(bool disabled) {
 void UI::updatePan(int pan){
   this->pan = pan;
   multimodalActor->instructGimbal(AbsolutePositionMessage(pan,tilt));
-  Log::debug("Changing pan to: "+ boost::lexical_cast<string>(pan));
+  DEBUG("Changing pan to: "+ boost::lexical_cast<string>(pan));
 }
 
 void UI::updateTilt(int tilt){
   this->tilt = tilt;
   multimodalActor->instructGimbal(AbsolutePositionMessage(pan,tilt));
-  Log::debug("Changing tilt to: " + boost::lexical_cast<string>(tilt));
+  DEBUG("Changing tilt to: " + boost::lexical_cast<string>(tilt));
 }
 
 void UI::updateAmplification(int amplification){
-  Log::debug("Changing amplification to: "+ boost::lexical_cast<string>(amplification));
+  DEBUG("Changing amplification to: "+ boost::lexical_cast<string>(amplification));
   multimodalActor->setAmplification((double)(amplification/10.0) + 1.0 );
 }
 
 void UI::updateEdgeThresholding(int thresholding){
-  Log::debug("Changing edge thresholding to: " + boost::lexical_cast<string>(thresholding));
+  DEBUG("Changing edge thresholding to: " + boost::lexical_cast<string>(thresholding));
   frameAnalyzerActor->setEdgeThresholding(thresholding);
 }
 
 void UI::updateMinBlobSize(int blobSize){
-  Log::debug("Changing minimum blob size to : " + boost::lexical_cast<string>(blobSize));
+  DEBUG("Changing minimum blob size to : " + boost::lexical_cast<string>(blobSize));
   frameAnalyzerActor->setMinBlobSize(blobSize);
 }
 
 void UI::updateMaxBlobSize(int blobSize){
-  Log::debug("Changing maximum blob size to : " + boost::lexical_cast<string>(blobSize));
+  DEBUG("Changing maximum blob size to : " + boost::lexical_cast<string>(blobSize));
   frameAnalyzerActor->setMaxBlobSize(blobSize);
 }
 

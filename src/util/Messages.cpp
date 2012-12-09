@@ -46,7 +46,7 @@ vector<int> PlaneVisionMessage::getDisplacement(){
   vector<int> resultVector;
   if (!hasPlane) return resultVector;
   if (!result) {
-    Log::debug("Error: image is null");
+    DEBUG("Error: image is null");
     return resultVector;
   }
   double imageCenterX = result->width/ 2.0;

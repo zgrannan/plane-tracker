@@ -22,7 +22,7 @@ GPSDataMessage Protocol::parseSerialInputForGPS(string input, string& extra) {
         extra = "";
         return parseSerialInputLineForGPS(lines[i]);
       } else {
-        Log::debug("Chunk " +  chunks[chunks.size() - 1]);
+        DEBUG("Chunk " +  chunks[chunks.size() - 1]);
         extra = lines[i];
       }
     }
@@ -39,9 +39,9 @@ GPSDataMessage Protocol::parseSerialInputLineForGPS(string input) {
     Log::warn("Invalid message: " + input);
     return GPSDataMessage();
   }
-  Log::debug("Received message: " +  input);
+  DEBUG("Received message: " +  input);
   if (strs[2] == "" || strs[3] == "" || strs[4] == "" || strs[5] == "") {
-    Log::debug("GPS Data not yet available");
+    DEBUG("GPS Data not yet available");
     return GPSDataMessage();
   }
   if (strs[3] == "N"){
@@ -60,7 +60,7 @@ GPSDataMessage Protocol::parseSerialInputLineForGPS(string input) {
 }
 
 double Protocol::parseLatitudeOrLongitude(string input){
-  Log::debug("Parsing " + input + " as lat or lon");
+  DEBUG("Parsing " + input + " as lat or lon");
   double raw = atof(input.c_str()) / 100;
   int degrees = (int)(raw);
   double minutes = (raw - degrees) * 100; 

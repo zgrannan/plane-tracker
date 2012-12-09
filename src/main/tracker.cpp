@@ -4,6 +4,7 @@
 #include <boost/program_options.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <iostream>
+#include <fstream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <thread>
@@ -198,12 +199,20 @@ int main(int argc, char* argv[]){
     Log::log("\tRecording output to: " +  arguments.recordDirectory);
   }
 
-  if (arguments.debug) {
+#ifndef NO_DEBUG_OUTPUT
+ if (arguments.debug) {
     Log::debugMode = true;
-    Log::debug("\tDebug output enabled");
+    DEBUG("\tDebug output enabled");
   } else {
     Log::debugMode = false;
   }
+#else
+  if (arguments.debug){
+    Log::error("Tracker was not compiled with debug output. Recompile without the "
+               "NO_DEBUG_OUTPUT flag to enable debug output.");
+    //return 1;
+  }
+#endif
 
   cout << endl;
 
@@ -269,7 +278,7 @@ int main(int argc, char* argv[]){
       while (!imageCatcher.Empty()){
         imageCatcher.Pop(message,from);
         if (!imageCatcher.Empty()){
-          Log::debug("Skipped a frame in video playback");
+          DEBUG("Skipped a frame in video playback");
           cvReleaseImage(&message.result);
           for (auto extra : message.extras ){
             cvReleaseImage(&extra.image);
@@ -287,8 +296,10 @@ int main(int argc, char* argv[]){
       if (arguments.recordDirectory != "") {
         string frame = (boost::format("%06d") % currentFrame).str();
         string filename = arguments.recordDirectory + "/" + frame + ".bmp";
-        Log::debug("Saving current frame to: " + filename);
-        cvSaveImage(filename.c_str(), message.result);
+        DEBUG("Saving current frame to: " + filename);
+        ofstream outfile(filename);
+        outfile.write(message.result->imageData,message.result->imageSize);
+        outfile.close();
       }
       cvReleaseImage(&message.result);
     } 

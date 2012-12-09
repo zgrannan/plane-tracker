@@ -14,7 +14,7 @@ using namespace Messages;
 
 void VideoReceiverInterface::sendImage(IplImage* image){
   const ImageMessage message(image);
-  Log::debug("Sending imageMessage to FrameAnalyzerActor");
+  DEBUG("Sending imageMessage to FrameAnalyzerActor");
   framework.Send(message,receiver.GetAddress(),frameAnalyzerActor);
 }
 
@@ -23,12 +23,12 @@ class VideoCallback : public IDeckLinkInputCallback {
     VideoCallback(VideoReceiverInterface* vInterface): IDeckLinkInputCallback(),vInterface(vInterface){};
     virtual HRESULT VideoInputFrameArrived(IDeckLinkVideoInputFrame * videoFrame,
                                            IDeckLinkAudioInputPacket*) {
-      Log::debug("begin frame convert");
+      DEBUG("begin frame convert");
       long width = videoFrame->GetWidth();
       long height = videoFrame->GetHeight();
       BMDFrameFlags flags = videoFrame->GetFlags();
       if (flags == (unsigned int)bmdFrameHasNoInputSource){
-        Log::debug("No input source connected\n");
+        DEBUG("No input source connected\n");
         return S_OK;
       }
       IplImage* image = cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,3);
@@ -71,7 +71,7 @@ class VideoCallback : public IDeckLinkInputCallback {
       }
       vInterface->sendImage(image);
       //videoFrame->Release();
-      Log::debug("End frame convert");
+      DEBUG("End frame convert");
       return S_OK;
     }
 
@@ -99,37 +99,37 @@ void VideoReceiverInterface::cameraFunction(bool useCompositeInput){
   }
   BMDPixelFormat pixelFormat = bmdFormat8BitYUV;
   IDeckLinkIterator *deckLinkIterator = CreateDeckLinkIteratorInstance();
-  Log::debug("Creating decklink iterator...");
+  DEBUG("Creating decklink iterator...");
   if (deckLinkIterator == 0 ){
     cerr << "\n\tUnable to create DeckLink Iterator. Video analysis will be disabled.\n\n";
     return;
   }
 
-  Log::debug("Creating decklink object...");
+  DEBUG("Creating decklink object...");
   if ( deckLinkIterator->Next(&deckLink) != S_OK ) {
     Log::error("\n\tCould not create decklink object. Video analysis will be disabled\n");
     return;
   }
 
-  Log::debug("Querying decklink interface...");
+  DEBUG("Querying decklink interface...");
   if ( deckLink->QueryInterface(IID_IDeckLinkInput, (void**)&deckLinkInput) != S_OK ) {
     Log::error("\n\tCould not find a decklink interface. Video analysis will be disabled\n");
     return;
   }
 
-  Log::debug("Registering decklink input callback...");
+  DEBUG("Registering decklink input callback...");
   if ( deckLinkInput->SetCallback(new VideoCallback(this)) != S_OK ) {
     Log::error("\n\tCould not set the decklink callback. Video analysis will be disabled\n");
     return;
   }
 
-  Log::debug("Enabling video input...");
+  DEBUG("Enabling video input...");
   if ( deckLinkInput->EnableVideoInput(displayMode,pixelFormat,inputFlags) != S_OK ) {
     Log::error("\n\tCould not enable video input. Video analysis will be disabled\n");
     return;
   }
   
-  Log::debug("Starting streams...");
+  DEBUG("Starting streams...");
   if ( deckLinkInput->StartStreams() != S_OK ) {
     Log::error("\n\tCould not start streams. Video analysis will be disabled\n");
     return;
