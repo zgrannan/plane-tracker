@@ -1,13 +1,22 @@
-Usage
------
-
 **Overview**
 
-This software uses video and GPS data to instruct the UAV tracker hardware. By default,
+This software uses video and GPS data to instruct our UAV aerial tracking platform. By default,
 this program will analyze video from the HDMI input to a connected Decklink capture card. GPS
 information will be received using a USB-serial connection to any GPS transmitter that
 implements the NMEA protocol. Tracker commands are sent via a USB-serial connection to the 
 Arduino microcontroller connected to the tracker hardware.
+
+Here is a sample video that shows the CV algorithm detecting the plane:
+
+http://www.youtube.com/watch?v=PJB8deGmM24
+
+And here is a video of the tracker in action using Georeferencing:
+
+https://www.youtube.com/watch?v=pxmqRLSEIO0
+
+Finally this is the paper that my partner Eric Lo and I wrote on our tracking platform:
+
+https://www.dropbox.com/s/3iirlqt6ric5884/CSE145FinalReport.pdf
 
 In addition to live tracking, the software has some additional features. For example, the 
 tracker can record the video input, saving the result as a sequence of JPEGs that can later
