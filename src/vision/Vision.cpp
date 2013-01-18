@@ -73,7 +73,7 @@ IplImage* Vision::canny(IplImage* grayImage, vector<ImageMessage> &extras){
   IplImage* result = cvCreateImage(cvGetSize(grayImage),IPL_DEPTH_8U,1);
   IplImage* destIpl= new IplImage(dest);
   cvThreshold(destIpl,result,1,255,CV_THRESH_BINARY);
-  if (intermediateSteps){
+  if (false){
     IplImage* toDisplay = cvCreateImage(cvGetSize(grayImage),IPL_DEPTH_8U,3);
     cvCvtColor(result,toDisplay,CV_GRAY2RGB);
     extras.push_back(ImageMessage("Edge detection", toDisplay));
@@ -90,7 +90,7 @@ IplImage* Vision::fullColorToBW (IplImage* image,  vector<ImageMessage> &extras)
   assert(image != nullptr);
   IplImage* grayscaleImage = cvCreateImage(cvGetSize(image),IPL_DEPTH_8U,1);
   cvCvtColor(image,grayscaleImage,CV_BGR2GRAY);
-  if (intermediateSteps){
+  if (false){
     IplImage* toDisplay = cvCreateImage(cvGetSize(image),IPL_DEPTH_8U,3);
     cvCvtColor(grayscaleImage,toDisplay,CV_GRAY2RGB);
     extras.push_back(ImageMessage("Converted to grayscale",toDisplay));

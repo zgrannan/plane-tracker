@@ -43,21 +43,32 @@ namespace Messages{
       vector<ImageMessage> extras;
       vector<int> getDisplacement();
       bool hasPlane;
+      bool userHasConfirmed;
       PlaneVisionMessage(CvBlob planeBlob, IplImage* result, vector<ImageMessage> extras):
         planeBlob(planeBlob),
         result(result),
         extras(extras),
-        hasPlane(true){}
+        hasPlane(true),
+        userHasConfirmed(false){}
+      PlaneVisionMessage(CvBlob planeBlob, IplImage* result,
+                         vector<ImageMessage> extras, bool userHasConfirmed):
+        planeBlob(planeBlob),
+        result(result),
+        extras(extras),
+        hasPlane(true),
+        userHasConfirmed(userHasConfirmed){}
       PlaneVisionMessage(): 
         planeBlob(CvBlob()),
         result(0),
         extras(vector<ImageMessage>()),
-        hasPlane(false){}
+        hasPlane(false),
+        userHasConfirmed(false){}
       PlaneVisionMessage(IplImage* image, vector<ImageMessage> extras): 
         planeBlob(CvBlob()),
         result(image),
         extras(extras),
-        hasPlane(false){}
+        hasPlane(false),
+        userHasConfirmed(false){}
   };
 
   class GPSDataMessage{

@@ -59,6 +59,13 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
   }
 
   PlaneVisionMessage data = vision->findPlane(image,previousPlanes);
+
+  if (data.userHasConfirmed){
+    previousPlanes = list<PlaneVisionMessage>();
+    for (int i = 0; i < 5; i ++){
+      previousPlanes.push_front(data);
+    }
+  }
   double pan = 0,tilt = 0;
   if (data.hasPlane){
     previousPlanes.push_front(data);
