@@ -3,9 +3,12 @@
 #include "src/vision/Vision.h"
 #include "src/util/Messages.h"
 #include "src/util/Log.h"
+#include <cv.h>
 
 #define CAMERA_H_FOV 12.8
 #define CAMERA_V_FOV 8.6
+
+using namespace cv;
 
 void FrameAnalyzerActor::selectColor(){
   if (!hasLock){
@@ -43,7 +46,19 @@ void FrameAnalyzerActor::ImageHandler(const ImageMessage& message, const Theron:
 }
 
 RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const ImageMessage& message){
-  PlaneVisionMessage data = vision->findPlane(message.image,previousPlanes);
+  IplImage* image;
+  if ( scale != 1.0){
+    image = cvCreateImage(cvSize(message.image->height * scale,
+                                       message.image->width * scale),
+                                       message.image->depth,
+                                       message.image->nChannels);
+    cvResize(message.image,image);
+    cvReleaseImage((IplImage**)&(message.image));
+  } else {
+    image = message.image;
+  }
+
+  PlaneVisionMessage data = vision->findPlane(image,previousPlanes);
   double pan = 0,tilt = 0;
   if (data.hasPlane){
     previousPlanes.push_front(data);
@@ -61,7 +76,7 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
       CvPoint origin = cvPoint(centerX,centerY);
       CvPoint destination =  cvPoint(centerX+dx,centerY-dy);
       CvScalar color = cvScalar(0,0,255);
-      cvLine(message.image,origin,destination,color,2);
+      cvLine(image,origin,destination,color,2);
     }
   } else {
     if (previousPlanes.size() > 0){

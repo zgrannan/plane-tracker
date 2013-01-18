@@ -13,7 +13,7 @@ TEMPLATE = app
 DEFINES += THERON_BOOST
 
 INCLUDEPATH += /usr/local/include/External 
-INCLUDEPATH += /usr/local/include/opencv
+INCLUDEPATH += /Users/zgrannan/opencv_trunk/include/opencv
 QMAKE_CXXFLAGS += -isystem /usr/local/include/decklink
 
 OBJECTS_DIR = ./obj

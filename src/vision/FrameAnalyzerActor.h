@@ -14,11 +14,13 @@ class FrameAnalyzerActor : public Theron::Actor {
   public:
     FrameAnalyzerActor(
       Theron::Framework &framework,
+      double scale,
       bool drawLine,
       Vision* vision,
       Theron::Address imageViewer,
       Theron::Address multimodalActor) :
         Theron::Actor(framework),
+        scale(scale),
         drawLine(drawLine),
         vision(vision),
         imageViewer(imageViewer),
@@ -40,6 +42,7 @@ class FrameAnalyzerActor : public Theron::Actor {
       void setColorWeight(int weight) { vision->setColorWeight(weight); }
 
   private:
+    double scale = 1.0; 
     bool drawLine;
     Vision* vision;
     Theron::Address imageViewer;

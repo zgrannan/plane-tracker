@@ -26,7 +26,7 @@ class Vision {
     void setMinBlobSize(int blobSize){ this->minBlobSize = blobSize; }
     void setMaxBlobSize(int blobSize){ this->maxBlobSize = blobSize; }
     void setUseSize(bool useSize) { this->useSize = useSize; }
-    void setUsePosition(bool usePosition) { this->usePosition= usePosition; }
+    void setUsePosition(bool usePosition) { this->usePosition = usePosition; }
     void setUseRatio(bool useRatio) { this->useRatio= useRatio; }
     void setUseColor(bool useColor) { this->useColor = useColor; this->hasColor = false; }
 
