@@ -28,7 +28,7 @@ void ImageView::updateImage(IplImage* image){
   cvReleaseImage(&image);
 }
 
-void ImageView::mouseDoubleClickEvent(QMouseEvent *event){
+void ImageView::mouseReleaseEvent(QMouseEvent *event){
   Log::log("Mouse click: (" + boost::lexical_cast<string>(event->x()) +", " +
            boost::lexical_cast<string>(event->y()) + ")");
   double x = event->x() / scale;

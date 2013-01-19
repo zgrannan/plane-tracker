@@ -146,7 +146,7 @@ PlaneVisionMessage Vision::findPlane( IplImage* image, double blobX, double blob
     }
     cvReleaseBlobs(candidates);
     if (bestCandidate.isDefined()) {
-      return PlaneVisionMessage(*bestCandidate,image,extras);
+      return PlaneVisionMessage(*bestCandidate,image,extras,true);
     } else {
       return PlaneVisionMessage(image,extras);
     }

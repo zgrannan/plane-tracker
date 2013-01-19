@@ -160,15 +160,19 @@ int main(int argc, char* argv[]){
   Theron::Address                           from;
   PlaneVisionMessage                        message;
 
-  int displayWindowWidth, displayWindowHeight;
+  int displayWindowWidth = 1920;
+  int displayWindowHeight = 486;
 
 
   if ( arguments.useCompositeInput ){
     displayWindowWidth = 720 * arguments.scale;
     displayWindowHeight = 486 * arguments.scale;
-  } else {
-    displayWindowWidth = 1920 * arguments.scale;
-    displayWindowHeight = 1080 * arguments.scale;
+  } else if ( arguments.videoFilename != "" ){
+    VideoCapture cap(arguments.videoFilename);
+    Mat firstFrame;
+    cap >> firstFrame;
+    displayWindowWidth = firstFrame.cols * arguments.scale;
+    displayWindowHeight = firstFrame.rows * arguments.scale;
   }
 
   imageReceiver.RegisterHandler(&imageCatcher,&Theron::Catcher<PlaneVisionMessage>::Push);
@@ -301,9 +305,7 @@ int main(int argc, char* argv[]){
         string frame = (boost::format("%06d") % currentFrame).str();
         string filename = arguments.recordDirectory + "/" + frame + ".bmp";
         DEBUG("Saving current frame to: " + filename);
-        ofstream outfile(filename);
-        outfile.write(message.result->imageData,message.result->imageSize);
-        outfile.close();
+        cvSaveImage(filename.c_str(),message.result);
       }
       cvReleaseImage(&message.result);
     } 

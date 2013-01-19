@@ -26,7 +26,7 @@ class ImageView : public QMainWindow
   signals:
     void _sendImage(IplImage* image);
   protected:
-    void mouseDoubleClickEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
   private:
     QImage iplImageToQImage(IplImage* image);
     int width, height;
