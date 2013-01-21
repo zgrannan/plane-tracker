@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ui.ui'
 **
-** Created: Sun Dec 9 10:01:41 2012
+** Created: Sat Jan 19 09:46:44 2013
 **      by: Qt User Interface Compiler version 4.8.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -81,7 +81,7 @@ public:
     {
         if (UI->objectName().isEmpty())
             UI->setObjectName(QString::fromUtf8("UI"));
-        UI->resize(820, 430);
+        UI->resize(831, 430);
         centralWidget = new QWidget(UI);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         horizontalLayout_2 = new QHBoxLayout(centralWidget);
@@ -350,7 +350,7 @@ public:
         UI->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(UI);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 820, 22));
+        menuBar->setGeometry(QRect(0, 0, 831, 22));
         UI->setMenuBar(menuBar);
         statusBar = new QStatusBar(UI);
         statusBar->setObjectName(QString::fromUtf8("statusBar"));

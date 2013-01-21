@@ -103,8 +103,8 @@ IplImage* Vision::fullColorToBW (IplImage* image,  vector<ImageMessage> &extras)
 
 pair<CvBlobs,IplImage*> Vision::findCandidates(IplImage *image, vector<ImageMessage> &extras){
   DEBUG("Looking for images");
-  assert(image->nChannels = 3 );
-  assert(image->depth = IPL_DEPTH_8U);
+  assert(image->nChannels == 3 );
+  assert(image->depth == IPL_DEPTH_8U);
 
   CvBlobs blobs;
   IplImage* bwImage = fullColorToBW(image,extras);
@@ -190,6 +190,8 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
     for (CvBlobs::const_iterator it=candidates.begin(); it!=candidates.end(); ++it){
       double score = 0;
       auto blob = it->second;
+      if (blob->centroid.x > image->width - 50 || blob->centroid.x < 50 ) continue;
+      if (blob->centroid.y > image->height - 50 || blob->centroid.y < 50 ) continue;
       for ( auto lastPlane : previousPlanes) {
         auto lastBlob = &lastPlane.planeBlob; 
         double dPosition = 0, dRatio = 0, dSize = 0;
@@ -198,6 +200,9 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
         DEBUG("PROFILE: Get Displacement End");
         DEBUG("PROFILE: Compute Position/Size Start");
         dPosition = sqrt(pow(displacementVector[0],2)+ pow(displacementVector[1],2));
+        if ( dPosition > 200){
+          continue;
+        }
         dSize = fabs(blob->area-lastBlob->area);
         DEBUG("PROFILE: Compute Position/Size End");
         DEBUG("PROFILE: Compute Ratio Start");
@@ -232,11 +237,7 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
         bestCandidate = Some<CvBlob>(*blob);
       }
     }
-  } else {
-    if ( candidates.size() > 0 ){
-      bestCandidate = Some<CvBlob>(*candidates.begin()->second);
-    } 
-  }
+  } 
   DEBUG("PROFILE: Scoring ends");
   DEBUG("PROFILE: cvReleaseBlobs begins");
   cvReleaseBlobs(candidates);
