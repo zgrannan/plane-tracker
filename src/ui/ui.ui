@@ -182,58 +182,59 @@
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="colorWeightSlider">
+         <widget class="QSlider" name="colorThreshSlider">
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>50</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="colorWeightLabel">
+         <widget class="QLabel" name="colorThreshLabel">
           <property name="text">
-           <string>Color Weight</string>
+           <string>Color Threshhold</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="ratioWeightSlider">
+         <widget class="QSlider" name="sizeThreshSlider">
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>50</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="ratioWeightLabel">
+         <widget class="QLabel" name="sizeThreshLabel">
           <property name="text">
-           <string>Ratio Weight</string>
+           <string>Size Threshhold</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="sizeWeightSlider">
+         <widget class="QSlider" name="positionThreshSlider">
+          <property name="value">
+           <number>50</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="sizeWeightLabel">
+         <widget class="QLabel" name="positionThreshLabel">
           <property name="text">
-           <string>Size Weight</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSlider" name="positionWeightSlider">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="positionWeightLabel">
-          <property name="text">
-           <string>Position Weight</string>
+           <string>Position Threshhold</string>
           </property>
          </widget>
         </item>

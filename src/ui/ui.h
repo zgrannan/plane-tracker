@@ -36,10 +36,9 @@ class UI : public QMainWindow
     void updateEdgeThresholding(int edgeThresholding);
     void updateMinBlobSize(int blobSize);
     void updateMaxBlobSize(int blobSize);
-    void updatePositionWeight(int weight);
-    void updateColorWeight(int weight);
-    void updateSizeWeight(int weight);
-    void updateRatioWeight(int weight);
+    void updatePositionThresh(int thresh);
+    void updateColorThresh(int thresh);
+    void updateSizeThresh(int thresh);
     void setTrackerGPSFromFields();
     void setTrackerGPSFromRadio();
 

@@ -38,10 +38,9 @@ class FrameAnalyzerActor : public Theron::Actor {
       void setEdgeThresholding(int thresholding){ vision->setEdgeThresholding(thresholding); }
       void setMinBlobSize(int blobSize){ vision->setMinBlobSize(blobSize); }
       void setMaxBlobSize(int blobSize){ vision->setMaxBlobSize(blobSize); }
-      void setPositionWeight(int weight) { vision->setPositionWeight(weight); }
-      void setRatioWeight(int weight) { vision->setRatioWeight(weight); }
-      void setSizeWeight(int weight) { vision->setSizeWeight(weight); }
-      void setColorWeight(int weight) { vision->setColorWeight(weight); }
+      void setPositionThresh(int thresh) { vision->setPositionThresh(thresh); }
+      void setSizeThresh(int thresh) { vision->setSizeThresh(thresh); }
+      void setColorThresh(int thresh) { vision->setColorThresh(thresh); }
 
   private:
     double scale = 1.0; 

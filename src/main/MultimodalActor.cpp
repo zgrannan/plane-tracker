@@ -58,7 +58,7 @@ void MultimodalActor::VisionHandler(const RelativePositionMessage &message,
       instructGimbal(message);
     }
   } else {
-    DEBUG("Video Lost");
+    DEBUG("Video Not Available");
     videoLost = true;
     if (videoLost == true && useRSSI == false){
       DEBUG("Switching to RSSI");

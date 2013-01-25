@@ -52,25 +52,20 @@ UI::UI( QWidget *parent,
                        this,
                        SLOT(selectPlaneColor(bool)));
 
-      QObject::connect(ui->colorWeightSlider,
+      QObject::connect(ui->colorThreshSlider,
                        SIGNAL(valueChanged(int)),
                        this,
-                       SLOT(updateColorWeight(int)));
+                       SLOT(updateColorThresh(int)));
 
-      QObject::connect(ui->positionWeightSlider,
+      QObject::connect(ui->positionThreshSlider,
                        SIGNAL(valueChanged(int)),
                        this,
-                       SLOT(updatePositionWeight(int)));
+                       SLOT(updatePositionThresh(int)));
 
-      QObject::connect(ui->sizeWeightSlider,
+      QObject::connect(ui->sizeThreshSlider,
                        SIGNAL(valueChanged(int)),
                        this,
-                       SLOT(updateSizeWeight(int)));
-
-      QObject::connect(ui->ratioWeightSlider,
-                       SIGNAL(valueChanged(int)),
-                       this,
-                       SLOT(updateRatioWeight(int)));
+                       SLOT(updateSizeThresh(int)));
 
       QObject::connect(ui->useRadioPosition,
                        SIGNAL(clicked()),
@@ -115,20 +110,16 @@ void UI::keyPressEvent(QKeyEvent *e){
   }
 }
 
-void UI::updateSizeWeight(int weight){
-  frameAnalyzerActor->setSizeWeight(weight);
+void UI::updateSizeThresh(int thresh){
+  frameAnalyzerActor->setSizeThresh(thresh);
 }
 
-void UI::updatePositionWeight(int weight){
-  frameAnalyzerActor->setPositionWeight(weight);
+void UI::updatePositionThresh(int thresh){
+  frameAnalyzerActor->setPositionThresh(thresh);
 }
 
-void UI::updateRatioWeight(int weight){
-  frameAnalyzerActor->setRatioWeight(weight);
-}
-
-void UI::updateColorWeight(int weight){
-  frameAnalyzerActor->setColorWeight(weight);
+void UI::updateColorThresh(int thresh){
+  frameAnalyzerActor->setColorThresh(thresh);
 }
 
 void UI::selectPlaneColor(bool enabled){

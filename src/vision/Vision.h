@@ -35,10 +35,9 @@ class Vision {
       this->blobYOption = Some<double>(blobY);
     }
 
-    void setPositionWeight(int weight) {positionWeight = (double)weight / 100.0;};
-    void setRatioWeight(int weight) {ratioWeight = (double)weight / 100.0;}
-    void setSizeWeight(int weight) {sizeWeight = (double)weight / 100.0;}
-    void setColorWeight(int weight) {colorWeight = (double)weight / 100.0;}
+    void setPositionThresh(int thresh) {positionThresh = (double)thresh / 100.0;};
+    void setSizeThresh(int thresh) {sizeThresh = (double)thresh / 100.0;}
+    void setColorThresh(int thresh) {colorThresh = (double)thresh / 100.0;}
 
     static void testRgbToHsv();
 
@@ -62,41 +61,9 @@ class Vision {
     int minBlobSize = 0;
     int maxBlobSize = 40;
 
-    double ratioWeight = 0;
-    double positionWeight = 0;
-    double sizeWeight = 0;
-    double colorWeight = 0;
-
-    class BlobScore {
-      public: 
-        BlobScore(double dRatio, double dPosition, double dSize, double dColor,
-                  double ratioWeight, double positionWeight, double sizeWeight,
-                  double colorWeight): dRatio(dRatio),
-                                       dPosition(dPosition),
-                                       dSize(dSize),
-                                       dColor(dColor),
-                                       ratioWeight(ratioWeight),
-                                       positionWeight(positionWeight),
-                                       sizeWeight(sizeWeight),
-                                       colorWeight(colorWeight){}
-                                                       
-        BlobScore(){}
-        double computeScore();	// Uses these displacements to compute the plane score   
-      private:
-
-        double getScore(double diff, double& maxdiff);
-
-
-
-        double dRatio; 		// The change in the plane's width/height ratio
-        double dPosition; 	// The change in the plane's position 
-        double dSize; 		// The change in the plane's size
-        double dColor;      // The change in the plane's color
-        double ratioWeight;
-        double positionWeight;
-        double sizeWeight;
-        double colorWeight;
-    };
+    double positionThresh = 0.5;
+    double sizeThresh = 0.5;
+    double colorThresh = 0.5;
 
     /**
      * Returns all of the blobs that are returned from a CV analysis of 

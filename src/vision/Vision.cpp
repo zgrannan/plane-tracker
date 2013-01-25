@@ -8,14 +8,6 @@
 #include "src/perhaps/fun.cpp"
 #include <boost/lexical_cast.hpp>
 
-/* Plane detection flags */
-#define USE_POSITION true
-#define USE_PLANE_SIZE true
-#define USE_RATIO true
-
-/* Color -> Black and White conversion technique */
-#define ADAPTIVE_THRESHHOLD 0
-
 using namespace cvb;
 using namespace std;
 using namespace cv;
@@ -105,7 +97,6 @@ IplImage* Vision::canny(IplImage* grayImage, vector<ImageMessage> &extras){
   int kernelSize =3;
   Mat edges, dest;
   blur(Mat(grayImage), edges, Size(3,3));
-  DEBUG("Edge thresholding is: "+ boost::lexical_cast<string>(edgeThresholding));
   Canny(edges, edges, edgeThresholding ,edgeThresholding * ratio, kernelSize);
   dest = Scalar::all(0);
   Mat(grayImage).copyTo(dest, edges);
@@ -141,7 +132,6 @@ IplImage* Vision::fullColorToBW (IplImage* image,  vector<ImageMessage> &extras)
 }
 
 pair<CvBlobs,IplImage*> Vision::findCandidates(IplImage *image, vector<ImageMessage> &extras){
-  DEBUG("Looking for images");
   assert(image->nChannels == 3 );
   assert(image->depth == IPL_DEPTH_8U);
 
@@ -165,7 +155,7 @@ double Vision::computeRatio(CvBlob* blob){
   return dy / dx;
 }
 
-PlaneVisionMessage Vision::findPlane( IplImage* image, double blobX, double blobY){
+PlaneVisionMessage Vision::findPlane(IplImage* image, double blobX, double blobY){
   if(image == nullptr){
     return PlaneVisionMessage();
   }
@@ -194,7 +184,6 @@ PlaneVisionMessage Vision::findPlane( IplImage* image, double blobX, double blob
 PlaneVisionMessage Vision::findPlane( IplImage* image,
     list<PlaneVisionMessage> previousPlanes){
 
-  DEBUG("PROFILE: findPlane begins");
   if(image == nullptr){
     return PlaneVisionMessage();
   }
@@ -207,18 +196,14 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
   }
 
   vector<ImageMessage> extras;
-  DEBUG("PROFILE: findCandidates begins");
   pair<CvBlobs,IplImage*> candidatesWithLabel = findCandidates(image,extras);
-  DEBUG("PROFILE: findCandidates ends");
 
   auto candidates = candidatesWithLabel.first;
   auto label = candidatesWithLabel.second;
   int minBlobPX = ((double)minBlobSize / 20000.0) * (double)(image->height * image->width);
   int maxBlobPX = ((double)maxBlobSize / 10000.0) * (double)(image->height * image->width);
 
-  DEBUG("PROFILE: FilterByArea begins");
   cvFilterByArea(candidates,minBlobPX,maxBlobPX);
-  DEBUG("PROFILE: FilterByArea ends");
 
   double maxScore = -DBL_MAX;
   Option<CvBlob> bestCandidate = None<CvBlob>();
@@ -234,43 +219,39 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
       auto displacementVector = getDisplacement(blob,&lastBlob);
       double dPosition = sqrt(pow(displacementVector[0],2)+ pow(displacementVector[1],2));
 
-      if ( displacementVector[0] > image->width / 10.0 ||
-          displacementVector[1] > image->height / 10.0 ){
+      if ( dPosition > image->width * image->height / (25.0 * positionThresh)){
+        DEBUG("Filtered blob by position");
         continue;
       }
 
-      if ( (double)blob->area / (double)lastBlob.area < 0.1 || 
-           (double)blob->area / (double)lastBlob.area > 10.0) {
-         continue;
+      if ( sizeThresh != 0){ 
+        if ( (double)blob->area / (double)lastBlob.area < (0.1 * sizeThresh) || 
+             (double)blob->area / (double)lastBlob.area > (10.0 / sizeThresh)) {
+          DEBUG("Filtered blob by size");
+           continue;
+        }
       }
 
       if (useColor && hasColor){
         CvScalar color = cvBlobMeanColor(blob,label,image);
         double h,s,v;
         Vision::rgbToHsv(color.val[0],color.val[1],color.val[2],h,s,v);
-        DEBUG("H: " + boost::lexical_cast<string>(h));
-        DEBUG("S: " + boost::lexical_cast<string>(s));
-        DEBUG("V: " + boost::lexical_cast<string>(v));
-        double dColor = pow(h - goodH,2); 
-        if (dColor > 50) {
+        double dColor = fabs(h - goodH); 
+        if (dColor > 360.0 * (1.0 - colorThresh)) {
+          DEBUG("Filtered blob by color: " + boost::lexical_cast<string>(dColor));
           continue;
         }
       } else if (!useColor) {
         cvReleaseImage(&label);
       }
-      double score = - dPosition;
+      double score = -dPosition;
       if ( score > maxScore ){
-        DEBUG("MaxScore: " + boost::lexical_cast<string>(score));
         maxScore = score;
         bestCandidate = Some<CvBlob>(*blob);
       }
     }
   } 
-  DEBUG("PROFILE: Scoring ends");
-  DEBUG("PROFILE: cvReleaseBlobs begins");
   cvReleaseBlobs(candidates);
-  DEBUG("PROFILE: cvReleaseBlobs ends");
-  DEBUG("PROFILE: findPlane ends");
   if (bestCandidate.isDefined()) {
     if (!hasColor && useColor){
       auto candidate = bestCandidate.get();
@@ -288,29 +269,3 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
     return PlaneVisionMessage(image,extras);
   }
 }
-
-double Vision::BlobScore::getScore(double diff, double& maxDiff){
-  if ( diff > maxDiff ){
-    maxDiff = diff;
-    return 0;
-  } else {
-    if ( maxDiff == 0 ) return 0;
-    return 1 - (diff / maxDiff);
-  }
-}
-
-double Vision::BlobScore::computeScore(){
-  static double maxdRatio = 0;
-  static double maxdPosition = 0;
-  static double maxdSize = 0;
-  static double maxdColor = 0;
-  
-  double positionScore = getScore(dPosition,maxdPosition);
-  double ratioScore = getScore(dRatio,maxdRatio);
-  double sizeScore = getScore(dSize,maxdSize);
-  double colorScore = getScore(dColor,maxdColor);
-  return positionScore * positionWeight +
-         ratioScore * ratioWeight +
-         sizeScore * sizeWeight + 
-         colorScore * colorWeight;
-}  

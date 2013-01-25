@@ -20,7 +20,7 @@ void FrameAnalyzerActor::selectColor(){
 
 void FrameAnalyzerActor::deselectColor(){
   DEBUG("No longer using plane color");
-  vision->setUseColor(true);
+  vision->setUseColor(false);
 }
 
 void FrameAnalyzerActor::BlobPositionHandler(const BlobPositionMessage& message,

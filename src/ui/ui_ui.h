@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ui.ui'
 **
-** Created: Sat Jan 19 09:46:44 2013
+** Created: Thu Jan 24 20:05:27 2013
 **      by: Qt User Interface Compiler version 4.8.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -51,14 +51,12 @@ public:
     QLabel *amplificationLabel;
     QHBoxLayout *scoreControls;
     QPushButton *planeColorButton;
-    QSlider *colorWeightSlider;
-    QLabel *colorWeightLabel;
-    QSlider *ratioWeightSlider;
-    QLabel *ratioWeightLabel;
-    QSlider *sizeWeightSlider;
-    QLabel *sizeWeightLabel;
-    QSlider *positionWeightSlider;
-    QLabel *positionWeightLabel;
+    QSlider *colorThreshSlider;
+    QLabel *colorThreshLabel;
+    QSlider *sizeThreshSlider;
+    QLabel *sizeThreshLabel;
+    QSlider *positionThreshSlider;
+    QLabel *positionThreshLabel;
     QHBoxLayout *horizontalLayout;
     QPushButton *toggleVideoButton;
     QPushButton *toggleGPSButton;
@@ -195,49 +193,43 @@ public:
 
         scoreControls->addWidget(planeColorButton);
 
-        colorWeightSlider = new QSlider(centralWidget);
-        colorWeightSlider->setObjectName(QString::fromUtf8("colorWeightSlider"));
-        colorWeightSlider->setOrientation(Qt::Vertical);
+        colorThreshSlider = new QSlider(centralWidget);
+        colorThreshSlider->setObjectName(QString::fromUtf8("colorThreshSlider"));
+        colorThreshSlider->setMaximum(100);
+        colorThreshSlider->setValue(50);
+        colorThreshSlider->setOrientation(Qt::Vertical);
 
-        scoreControls->addWidget(colorWeightSlider);
+        scoreControls->addWidget(colorThreshSlider);
 
-        colorWeightLabel = new QLabel(centralWidget);
-        colorWeightLabel->setObjectName(QString::fromUtf8("colorWeightLabel"));
+        colorThreshLabel = new QLabel(centralWidget);
+        colorThreshLabel->setObjectName(QString::fromUtf8("colorThreshLabel"));
 
-        scoreControls->addWidget(colorWeightLabel);
+        scoreControls->addWidget(colorThreshLabel);
 
-        ratioWeightSlider = new QSlider(centralWidget);
-        ratioWeightSlider->setObjectName(QString::fromUtf8("ratioWeightSlider"));
-        ratioWeightSlider->setOrientation(Qt::Vertical);
+        sizeThreshSlider = new QSlider(centralWidget);
+        sizeThreshSlider->setObjectName(QString::fromUtf8("sizeThreshSlider"));
+        sizeThreshSlider->setMaximum(100);
+        sizeThreshSlider->setValue(50);
+        sizeThreshSlider->setOrientation(Qt::Vertical);
 
-        scoreControls->addWidget(ratioWeightSlider);
+        scoreControls->addWidget(sizeThreshSlider);
 
-        ratioWeightLabel = new QLabel(centralWidget);
-        ratioWeightLabel->setObjectName(QString::fromUtf8("ratioWeightLabel"));
+        sizeThreshLabel = new QLabel(centralWidget);
+        sizeThreshLabel->setObjectName(QString::fromUtf8("sizeThreshLabel"));
 
-        scoreControls->addWidget(ratioWeightLabel);
+        scoreControls->addWidget(sizeThreshLabel);
 
-        sizeWeightSlider = new QSlider(centralWidget);
-        sizeWeightSlider->setObjectName(QString::fromUtf8("sizeWeightSlider"));
-        sizeWeightSlider->setOrientation(Qt::Vertical);
+        positionThreshSlider = new QSlider(centralWidget);
+        positionThreshSlider->setObjectName(QString::fromUtf8("positionThreshSlider"));
+        positionThreshSlider->setValue(50);
+        positionThreshSlider->setOrientation(Qt::Vertical);
 
-        scoreControls->addWidget(sizeWeightSlider);
+        scoreControls->addWidget(positionThreshSlider);
 
-        sizeWeightLabel = new QLabel(centralWidget);
-        sizeWeightLabel->setObjectName(QString::fromUtf8("sizeWeightLabel"));
+        positionThreshLabel = new QLabel(centralWidget);
+        positionThreshLabel->setObjectName(QString::fromUtf8("positionThreshLabel"));
 
-        scoreControls->addWidget(sizeWeightLabel);
-
-        positionWeightSlider = new QSlider(centralWidget);
-        positionWeightSlider->setObjectName(QString::fromUtf8("positionWeightSlider"));
-        positionWeightSlider->setOrientation(Qt::Vertical);
-
-        scoreControls->addWidget(positionWeightSlider);
-
-        positionWeightLabel = new QLabel(centralWidget);
-        positionWeightLabel->setObjectName(QString::fromUtf8("positionWeightLabel"));
-
-        scoreControls->addWidget(positionWeightLabel);
+        scoreControls->addWidget(positionThreshLabel);
 
 
         mainLayout->addLayout(scoreControls);
@@ -370,10 +362,9 @@ public:
         thresholdingLabel->setText(QApplication::translate("UI", "Edge Thresholding", 0, QApplication::UnicodeUTF8));
         amplificationLabel->setText(QApplication::translate("UI", "Tracker Amplification", 0, QApplication::UnicodeUTF8));
         planeColorButton->setText(QApplication::translate("UI", "Use Current Plane Color", 0, QApplication::UnicodeUTF8));
-        colorWeightLabel->setText(QApplication::translate("UI", "Color Weight", 0, QApplication::UnicodeUTF8));
-        ratioWeightLabel->setText(QApplication::translate("UI", "Ratio Weight", 0, QApplication::UnicodeUTF8));
-        sizeWeightLabel->setText(QApplication::translate("UI", "Size Weight", 0, QApplication::UnicodeUTF8));
-        positionWeightLabel->setText(QApplication::translate("UI", "Position Weight", 0, QApplication::UnicodeUTF8));
+        colorThreshLabel->setText(QApplication::translate("UI", "Color Threshhold", 0, QApplication::UnicodeUTF8));
+        sizeThreshLabel->setText(QApplication::translate("UI", "Size Threshhold", 0, QApplication::UnicodeUTF8));
+        positionThreshLabel->setText(QApplication::translate("UI", "Position Threshhold", 0, QApplication::UnicodeUTF8));
         toggleVideoButton->setText(QApplication::translate("UI", "Disable Video", 0, QApplication::UnicodeUTF8));
         toggleGPSButton->setText(QApplication::translate("UI", "Disable GPS", 0, QApplication::UnicodeUTF8));
         useRadioPosition->setText(QApplication::translate("UI", "Use Radio to Set Position", 0, QApplication::UnicodeUTF8));
