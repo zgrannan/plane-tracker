@@ -13,9 +13,9 @@ using namespace Messages;
 using namespace Qt;
 
 UI::UI( QWidget *parent,
-        FrameAnalyzerActor* frameAnalyzerActor,
-        GeoreferencingActor* georeferencingActor,
-        MultimodalActor* multimodalActor):
+        FrameAnalyzerActor* const frameAnalyzerActor,
+        GeoreferencingActor* const georeferencingActor,
+        MultimodalActor* const multimodalActor):
     QMainWindow(parent),
     frameAnalyzerActor(frameAnalyzerActor),
     georeferencingActor(georeferencingActor),
@@ -79,15 +79,15 @@ UI::UI( QWidget *parent,
 }
 
 void UI::setTrackerGPSFromFields(){
-  double lat = boost::lexical_cast<double>(ui->trackerLatitudeTextEdit->toPlainText().toStdString());
-  double lon = boost::lexical_cast<double>(ui->trackerLongitudeTextEdit->toPlainText().toStdString());
-  double alt= boost::lexical_cast<double>(ui->trackerAltitudeTextEdit->toPlainText().toStdString());
+  const double lat = boost::lexical_cast<double>(ui->trackerLatitudeTextEdit->toPlainText().toStdString());
+  const double lon = boost::lexical_cast<double>(ui->trackerLongitudeTextEdit->toPlainText().toStdString());
+  const double alt= boost::lexical_cast<double>(ui->trackerAltitudeTextEdit->toPlainText().toStdString());
   georeferencingActor->setPosition(lat,lon,alt);
 }
 void UI::setTrackerGPSFromRadio(){
   georeferencingActor->setPositionFromRadio();
 }
-void UI::keyPressEvent(QKeyEvent *e){
+void UI::keyPressEvent(QKeyEvent * const e){
   int value;
   const int step = 5;
   switch(e->key()){
@@ -110,19 +110,19 @@ void UI::keyPressEvent(QKeyEvent *e){
   }
 }
 
-void UI::updateSizeThresh(int thresh){
+void UI::updateSizeThresh(const int thresh){
   frameAnalyzerActor->setSizeThresh(thresh);
 }
 
-void UI::updatePositionThresh(int thresh){
+void UI::updatePositionThresh(const int thresh){
   frameAnalyzerActor->setPositionThresh(thresh);
 }
 
-void UI::updateColorThresh(int thresh){
+void UI::updateColorThresh(const int thresh){
   frameAnalyzerActor->setColorThresh(thresh);
 }
 
-void UI::selectPlaneColor(bool enabled){
+void UI::selectPlaneColor(const bool enabled){
   if (enabled){
     frameAnalyzerActor->selectColor();
     DEBUG("Sent \"Select Color\" message");
@@ -132,7 +132,7 @@ void UI::selectPlaneColor(bool enabled){
   }
 }
 
-void UI::toggleVideo(bool disabled){
+void UI::toggleVideo(const bool disabled){
   if (disabled){
     frameAnalyzerActor->disable();
     Log::log("Video disabled.\n");
@@ -142,7 +142,7 @@ void UI::toggleVideo(bool disabled){
   }
 }
 
-void UI::toggleGPS(bool disabled) {
+void UI::toggleGPS(const bool disabled) {
   if (disabled){
     georeferencingActor->disable();
     Log::log("GPS disabled.\n");
@@ -152,34 +152,34 @@ void UI::toggleGPS(bool disabled) {
   }
 }
 
-void UI::updatePan(int pan){
+void UI::updatePan(const int pan){
   this->pan = pan;
   multimodalActor->instructGimbal(AbsolutePositionMessage(pan,tilt));
   DEBUG("Changing pan to: "+ boost::lexical_cast<string>(pan));
 }
 
-void UI::updateTilt(int tilt){
+void UI::updateTilt(const int tilt){
   this->tilt = tilt;
   multimodalActor->instructGimbal(AbsolutePositionMessage(pan,tilt));
   DEBUG("Changing tilt to: " + boost::lexical_cast<string>(tilt));
 }
 
-void UI::updateAmplification(int amplification){
+void UI::updateAmplification(const int amplification){
   DEBUG("Changing amplification to: "+ boost::lexical_cast<string>(amplification));
   multimodalActor->setAmplification((double)(amplification/10.0) + 1.0 );
 }
 
-void UI::updateEdgeThresholding(int thresholding){
+void UI::updateEdgeThresholding(const int thresholding){
   DEBUG("Changing edge thresholding to: " + boost::lexical_cast<string>(thresholding));
   frameAnalyzerActor->setEdgeThresholding(thresholding);
 }
 
-void UI::updateMinBlobSize(int blobSize){
+void UI::updateMinBlobSize(const int blobSize){
   DEBUG("Changing minimum blob size to : " + boost::lexical_cast<string>(blobSize));
   frameAnalyzerActor->setMinBlobSize(blobSize);
 }
 
-void UI::updateMaxBlobSize(int blobSize){
+void UI::updateMaxBlobSize(const int blobSize){
   DEBUG("Changing maximum blob size to : " + boost::lexical_cast<string>(blobSize));
   frameAnalyzerActor->setMaxBlobSize(blobSize);
 }

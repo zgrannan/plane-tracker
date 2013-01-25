@@ -14,21 +14,21 @@ namespace Messages{
   class AmplificationMessage{
     public:
       AmplificationMessage(int amplification): amplification(amplification){}
-      int amplification;
+      const int amplification;
   };
 
   class ImageMessage{
     public:
-      String name;
+      string name;
       IplImage* image;
-      ImageMessage(IplImage* image): name("unnamed"), image(image){}
-      ImageMessage(String name, IplImage* image): name(name), image(image){}
+      ImageMessage(IplImage* const image): name("unnamed"), image(image){}
+      ImageMessage(const string name, IplImage* const image): name(name), image(image){}
   };
 
   class BlobPositionMessage{
     public:
-      BlobPositionMessage(double x, double y): x(x), y(y) {}
-      double x,y;
+      BlobPositionMessage(const double x, const double y): x(x), y(y) {}
+      const double x,y;
   };
 
   /**
@@ -41,17 +41,17 @@ namespace Messages{
       CvBlob planeBlob;
       IplImage* result;
       vector<ImageMessage> extras;
-      vector<int> getDisplacement();
+      vector<int> getDisplacement() const;
       bool hasPlane;
       bool userHasConfirmed;
-      PlaneVisionMessage(CvBlob planeBlob, IplImage* result, vector<ImageMessage> extras):
+      PlaneVisionMessage(const CvBlob planeBlob, IplImage* const result, const vector<ImageMessage> extras):
         planeBlob(planeBlob),
         result(result),
         extras(extras),
         hasPlane(true),
         userHasConfirmed(false){}
-      PlaneVisionMessage(CvBlob planeBlob, IplImage* result,
-                         vector<ImageMessage> extras, bool userHasConfirmed):
+      PlaneVisionMessage(const CvBlob planeBlob, IplImage* const result,
+                         const vector<ImageMessage> extras, const bool userHasConfirmed):
         planeBlob(planeBlob),
         result(result),
         extras(extras),
@@ -63,7 +63,7 @@ namespace Messages{
         extras(vector<ImageMessage>()),
         hasPlane(false),
         userHasConfirmed(false){}
-      PlaneVisionMessage(IplImage* image, vector<ImageMessage> extras): 
+      PlaneVisionMessage(IplImage* const image, const vector<ImageMessage> extras): 
         planeBlob(CvBlob()),
         result(image),
         extras(extras),
@@ -73,32 +73,33 @@ namespace Messages{
 
   class GPSDataMessage{
     public:
-      double lat, lon, alt;
-      bool hasData;
-      GPSDataMessage(double lat, double lon, double alt): lat(lat),lon(lon),alt(alt),hasData(true){}
+      const double lat, lon, alt;
+      const bool hasData;
+      GPSDataMessage(const double lat, const double lon, const double alt):
+        lat(lat),lon(lon),alt(alt),hasData(true){}
       GPSDataMessage(): lat(0),lon(0),alt(0),hasData(false){}
   };
 
 
   class PositionMessage{
     public:
-      double pan, tilt;
-      bool positionLost;
-      PositionMessage(double pan, double tilt): pan(pan), tilt(tilt), positionLost(false){}
+      const double pan, tilt;
+      const bool positionLost;
+      PositionMessage(const double pan, const double tilt): pan(pan), tilt(tilt), positionLost(false){}
       PositionMessage(): pan(0), tilt(0), positionLost(true){}
       virtual vector<char> toBytes() const = 0;
   };
 
   class RelativePositionMessage: public PositionMessage{
     public:
-      RelativePositionMessage(double pan, double tilt): PositionMessage(pan,tilt){}
+      RelativePositionMessage(const double pan, const double tilt): PositionMessage(pan,tilt){}
       RelativePositionMessage(): PositionMessage(){}
       vector<char> toBytes() const;
   };
 
   class AbsolutePositionMessage: public PositionMessage{
     public:
-      AbsolutePositionMessage(double pan, double tilt): PositionMessage(pan,tilt){}
+      AbsolutePositionMessage(const double pan, const double tilt): PositionMessage(pan,tilt){}
       AbsolutePositionMessage(): PositionMessage(){}
       vector<char> toBytes() const;
   };

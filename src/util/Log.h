@@ -21,10 +21,10 @@ using namespace std;
 class Log {
 public:
   static bool debugMode;
-  static void log(string s);
-  static void debug(string s); 
-  static void warn(string s);
-  static void error(string s);
-  static void success(string s);
+  static void log(const string s);
+  static void debug(const string s); 
+  static void warn(const string s);
+  static void error(const string s);
+  static void success(const string s);
 };
 #endif

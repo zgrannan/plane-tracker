@@ -7,8 +7,9 @@
 
 using namespace Messages;
 
-ImageView::ImageView(QWidget *parent, int width, int height, double scale,
-                     Theron::Address frameAnalyzerActor, Theron::Framework& framework):
+ImageView::ImageView(QWidget *parent, 
+                     const int width, const int height, const double scale,
+                     const Theron::Address frameAnalyzerActor, Theron::Framework& framework):
                        QMainWindow(parent),
                        width(width),
                        height(height),
@@ -23,7 +24,7 @@ ImageView::ImageView(QWidget *parent, int width, int height, double scale,
 }
 
 void ImageView::updateImage(IplImage* image){
-  QImage qimage = iplImageToQImage(image);
+  const QImage qimage = iplImageToQImage(image);
   imageView->imageLabel->setPixmap(QPixmap::fromImage(qimage));
   cvReleaseImage(&image);
 }
@@ -31,18 +32,19 @@ void ImageView::updateImage(IplImage* image){
 void ImageView::mouseReleaseEvent(QMouseEvent *event){
   Log::log("Mouse click: (" + boost::lexical_cast<string>(event->x()) +", " +
            boost::lexical_cast<string>(event->y()) + ")");
-  double x = event->x() / scale;
-  double y = event->y() / scale;
+  const double x = event->x() / scale;
+  const double y = event->y() / scale;
   framework.Send(BlobPositionMessage(x,y),
                 receiver.GetAddress(),
                 frameAnalyzerActor);
 }
-QImage ImageView::iplImageToQImage(IplImage* image) {
-  int height = image->height;
-  int width = image->width;
 
-  const uchar *qImageBuffer = (const uchar*)image->imageData;
-  QImage qimage(qImageBuffer, width, height, QImage::Format_RGB888);
+QImage ImageView::iplImageToQImage(const IplImage* const image) const {
+  const int height = image->height;
+  const int width = image->width;
+
+  const uchar* const qImageBuffer = (const uchar*)image->imageData;
+  const QImage qimage(qImageBuffer, width, height, QImage::Format_RGB888);
   return qimage.rgbSwapped();
 }
 

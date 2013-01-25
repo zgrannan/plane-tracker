@@ -17,7 +17,7 @@ void GeoreferencingActor::Handler(const GPSDataMessage& message, const Theron::A
       Send(positionMessage,multiModalActor);
   }
 }
-void GeoreferencingActor::setPosition(double lat, double lon, double alt){
+void GeoreferencingActor::setPosition(const double lat, const double lon, const double alt){
   Log::log("Setting tracker position to: " + boost::lexical_cast<string>(lat) + ", " +
            boost::lexical_cast<string>(lon) +" @ " + boost::lexical_cast<string>(alt) + "m");
   this->trackerLatitude = lat;
@@ -25,8 +25,9 @@ void GeoreferencingActor::setPosition(double lat, double lon, double alt){
   this->trackerAltitude = alt;
 }
 
-AbsolutePositionMessage GeoreferencingActor::calculateAbsolutePosition(const GPSDataMessage& message){
-  auto result = GeoReference::calculatePanAndTilt(
+AbsolutePositionMessage GeoreferencingActor::calculateAbsolutePosition(const GPSDataMessage& message)
+const{
+  const auto result = GeoReference::calculatePanAndTilt(
     trackerLatitude, trackerLongitude, trackerAltitude,
     message.lat, message.lon, message.alt);
 

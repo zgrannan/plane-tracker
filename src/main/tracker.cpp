@@ -28,14 +28,14 @@ namespace po = boost::program_options;
 /**
  * Displays the image on the screen for debugging purposes
  */
-void showImage(ImageView* imageView, IplImage* image, int width, int height){
-  CvSize newSize = cvSize(width,height);
-  IplImage* newImage = cvCreateImage(newSize,image->depth,image->nChannels);
+void showImage(ImageView* const imageView, const IplImage* const image, const int width, const int height){
+  const CvSize newSize = cvSize(width,height);
+  IplImage* const newImage = cvCreateImage(newSize,image->depth,image->nChannels);
   cvResize(image,newImage); 
   imageView->sendImage(newImage);
 }
 
-int baudRate(string baudRate){
+int baudRate(const string baudRate){
   if (baudRate == "4800") return B4800;
   if (baudRate == "9600") return B9600;
   if (baudRate == "19200") return B19200;
@@ -44,7 +44,6 @@ int baudRate(string baudRate){
   if (baudRate == "76800") return B76800;
   if (baudRate == "115200") return B115200;
   Log::error("Invalid baudrate: " + baudRate);
-  exit(1);
   return -1;
 }
 
@@ -108,8 +107,9 @@ int main(int argc, char* argv[]){
       po::value<string>(&arguments.videoFilename)->default_value(""),
       "Simulate using video file [arg]");
   po::variables_map vm;
-  auto parsedOptions = po::command_line_parser(argc,argv).options(desc).allow_unregistered().run();
-  auto invalidOptions = collect_unrecognized(parsedOptions.options,po::include_positional);
+  const auto parsedOptions = po::command_line_parser(argc,argv)
+                                 .options(desc).allow_unregistered().run();
+  const auto invalidOptions = collect_unrecognized(parsedOptions.options,po::include_positional);
   if (invalidOptions.size() > 0){
     Log::error("Invalid Option: " + invalidOptions[0]);
     cout << endl << desc << endl;
@@ -117,7 +117,6 @@ int main(int argc, char* argv[]){
   }
   po::store(parsedOptions,vm);
   po::notify(vm);
-  cerr << "done\n";
 
   if (vm.count("help")) {
     cout << desc << endl;
@@ -215,7 +214,6 @@ int main(int argc, char* argv[]){
   if (arguments.debug){
     Log::error("Tracker was not compiled with debug output. Recompile without the "
                "NO_DEBUG_OUTPUT flag to enable debug output.");
-    //return 1;
   }
 #endif
 
@@ -267,7 +265,7 @@ int main(int argc, char* argv[]){
     }
   }
 
-  ImageView* imageView = new ImageView(&ui,
+  ImageView* const imageView = new ImageView(&ui,
                                        displayWindowWidth,
                                        displayWindowHeight,
                                        arguments.scale,
@@ -301,8 +299,8 @@ int main(int argc, char* argv[]){
 
       showImage(imageView, message.result, displayWindowWidth, displayWindowHeight);
       if (arguments.recordDirectory != "") {
-        string frame = (boost::format("%06d") % currentFrame).str();
-        string filename = arguments.recordDirectory + "/" + frame + ".bmp";
+        const string frame = (boost::format("%06d") % currentFrame).str();
+        const string filename = arguments.recordDirectory + "/" + frame + ".bmp";
         DEBUG("Saving current frame to: " + filename);
         cvSaveImage(filename.c_str(),message.result);
       }
@@ -310,10 +308,12 @@ int main(int argc, char* argv[]){
     } 
   };
 
-  auto t = thread(threadFunct);
+  const auto t = thread(threadFunct);
 
   Log::log("Spawning GPSReceiver Interface..."); 
-  new GPSReceiverInterface(framework, arguments.gpsPort, baudRate(arguments.gpsBaud), georeferencingActor->GetAddress());
+  new GPSReceiverInterface(framework, arguments.gpsPort,
+                           baudRate(arguments.gpsBaud),
+                           georeferencingActor->GetAddress());
   if (arguments.imageFilename == ""){
     Log::log("Spawning VideoReceiver Interface...");
     if (arguments.videoFilename == ""){
@@ -330,7 +330,7 @@ int main(int argc, char* argv[]){
           );
     }
   } else {
-    IplImage* image = cvLoadImage(arguments.imageFilename.c_str());
+    IplImage* const image = cvLoadImage(arguments.imageFilename.c_str());
     framework.Send(
         ImageMessage(image),
         imageReceiver.GetAddress(),

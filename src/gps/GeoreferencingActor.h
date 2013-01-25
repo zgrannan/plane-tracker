@@ -9,9 +9,9 @@ using namespace Messages;
 class GeoreferencingActor : public Theron::Actor {
 public:
 	GeoreferencingActor(Theron::Framework &framework,
-                        double lat,
-                        double lon,
-                        double alt,
+                        const double lat,
+                        const double lon,
+                        const double alt,
                         Theron::Address multiModalActor) : 
       Theron::Actor(framework),
       trackerLatitude(lat),
@@ -22,7 +22,7 @@ public:
 	}
     void disable(){disabled = true; }
     void enable(){disabled = false; }
-    void setPosition(double lat, double lon, double alt);
+    void setPosition(const double lat, const double lon, const double alt);
     void setPositionFromRadio(){
       _setPositionFromRadio = true;
     }
@@ -30,9 +30,9 @@ private:
     bool _setPositionFromRadio = false;
     bool disabled = true;
 	void Handler(const GPSDataMessage& message, const Theron::Address from);
-	AbsolutePositionMessage calculateAbsolutePosition(const GPSDataMessage& gpsData);
+	AbsolutePositionMessage calculateAbsolutePosition(const GPSDataMessage& gpsData) const;
     double trackerLatitude,trackerLongitude,trackerAltitude;
-    Theron::Address multiModalActor;
+    const Theron::Address multiModalActor;
 };
 
 #endif

@@ -6,7 +6,9 @@
 
 using namespace boost;
 
-MultimodalActor::MultimodalActor(Theron::Framework &framework, string serialPort, int baudRate) : 
+MultimodalActor::MultimodalActor(Theron::Framework &framework, 
+                                 const string serialPort,
+                                 const int baudRate): 
   Theron::Actor(framework),
   useRSSI(true),
   videoLost(true),
@@ -51,7 +53,7 @@ void MultimodalActor::VisionHandler(const RelativePositionMessage &message,
     useRSSI = false;
     DEBUG("Pan: " + lexical_cast<string>(message.pan) + " Tilt: " + lexical_cast<string>(message.tilt));
     if (amplification != 1.0) {
-      auto amplifiedMessage = RelativePositionMessage(message.pan * amplification,
+      const auto amplifiedMessage = RelativePositionMessage(message.pan * amplification,
           message.tilt * amplification);
       instructGimbal(amplifiedMessage);
     } else {
@@ -70,11 +72,11 @@ void MultimodalActor::VisionHandler(const RelativePositionMessage &message,
 
 void MultimodalActor::instructGimbal(const PositionMessage &message){
   const vector<char> bytes = message.toBytes();
-  const char* bytePtr = &bytes[0];
+  const char* const bytePtr = &bytes[0];
   DEBUG(string("Writing message: ") + string(bytes.begin(),bytes.end()));
   write(fd, bytePtr, bytes.size());
 }
 
-void MultimodalActor::setAmplification(double amplification){
+void MultimodalActor::setAmplification(const double amplification){
   this->amplification = amplification;
 }

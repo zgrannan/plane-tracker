@@ -10,10 +10,10 @@ using namespace boost;
 vector<char> RelativePositionMessage::toBytes() const {
   vector<char> byteVector;
   string byteString;
-  int _pan = -(int)this->pan;
-  int _tilt= -(int)this->tilt;
-  string panS = (boost::format("%04d") % _pan).str();
-  string tiltS = (boost::format("%04d") % _tilt).str();
+  const int _pan = -(int)this->pan;
+  const int _tilt= -(int)this->tilt;
+  const string panS = (boost::format("%04d") % _pan).str();
+  const string tiltS = (boost::format("%04d") % _tilt).str();
   if (!positionLost){
     byteString = "#1 " + panS + " " + tiltS + "\n";
   } else {
@@ -25,10 +25,10 @@ vector<char> RelativePositionMessage::toBytes() const {
 vector<char> AbsolutePositionMessage::toBytes() const{
   vector<char> byteVector;
   string byteString;
-  int _pan = -(int)this->pan;
-  int _tilt= -(int)this->tilt;
-  string panS = (boost::format("%04d") % _pan).str();
-  string tiltS = (boost::format("%04d") % _tilt).str();
+  const int _pan = -(int)this->pan;
+  const int _tilt= -(int)this->tilt;
+  const string panS = (boost::format("%04d") % _pan).str();
+  const string tiltS = (boost::format("%04d") % _tilt).str();
   if (!positionLost){
     byteString = "#0 " + panS + " " + tiltS + "\n";
   } else {
@@ -38,24 +38,21 @@ vector<char> AbsolutePositionMessage::toBytes() const{
 }
 
 vector<char> UseRSSIMessage::toBytes() const{
-  string byteString = "#2 0000 0000\n";
+  const string byteString = "#2 0000 0000\n";
   return vector<char>(byteString.begin(),byteString.end());
 }
 
-vector<int> PlaneVisionMessage::getDisplacement(){
-  vector<int> resultVector;
-  if (!hasPlane) return resultVector;
+vector<int> PlaneVisionMessage::getDisplacement() const{
+  if (!hasPlane) return {};
   if (!result) {
     DEBUG("Error: image is null");
-    return resultVector;
+    return {};
   }
-  double imageCenterX = result->width/ 2.0;
-  double imageCenterY = result->height/ 2.0;
-  double planeX = planeBlob.centroid.x;
-  double planeY = planeBlob.centroid.y;
-  int dx = planeX - imageCenterX;
-  int dy = imageCenterY - planeY;
-  resultVector.push_back(dx);
-  resultVector.push_back(dy);
-  return resultVector;
+  const double imageCenterX = result->width/ 2.0;
+  const double imageCenterY = result->height/ 2.0;
+  const double planeX = planeBlob.centroid.x;
+  const double planeY = planeBlob.centroid.y;
+  const int dx = planeX - imageCenterX;
+  const int dy = imageCenterY - planeY;
+  return {dx,dy};
 }

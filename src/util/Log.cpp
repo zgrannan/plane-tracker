@@ -8,25 +8,25 @@ using namespace std;
 
 bool Log::debugMode = false;
 
-void Log::log(string s) {
+void Log::log(const string s) {
   cout << KNRM <<  s << KNRM << endl;
 }
 
-void Log::error(string s) {
+void Log::error(const string s) {
   cerr << KRED << s << KNRM << endl;
 }
 
-void Log::warn(string s) {
+void Log::warn(const string s) {
   cerr << KYEL << s << KNRM << endl;
 }
 
-void Log::debug(string s) {
+void Log::debug(const string s) {
   if (debugMode) {
     boost::posix_time::ptime mst1 = boost::posix_time::microsec_clock::local_time();
     cout << boost::posix_time::to_simple_string(mst1) << ": "<< KBLU << s << KNRM << endl;
   }
 }
 
-void Log::success(string s) {
+void Log::success(const string s) {
   cout << KGRN << s << KNRM << endl;
 }

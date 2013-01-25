@@ -22,23 +22,23 @@ class UI : public QMainWindow
 
   public:
     explicit UI(QWidget *parent,
-        FrameAnalyzerActor* frameAnalyzerActor,
-        GeoreferencingActor* georeferencingActor,
-        MultimodalActor* mulitimodalActor);
+        FrameAnalyzerActor* const frameAnalyzerActor,
+        GeoreferencingActor* const georeferencingActor,
+        MultimodalActor* const mulitimodalActor);
     ~UI();
     public slots:
-    void selectPlaneColor(bool enabled);
-    void toggleVideo(bool enabled);
-    void toggleGPS(bool enabled);
-    void updatePan(int pan);
-    void updateTilt(int tilt);
-    void updateAmplification(int amplification);
-    void updateEdgeThresholding(int edgeThresholding);
-    void updateMinBlobSize(int blobSize);
-    void updateMaxBlobSize(int blobSize);
-    void updatePositionThresh(int thresh);
-    void updateColorThresh(int thresh);
-    void updateSizeThresh(int thresh);
+    void selectPlaneColor(const bool enabled);
+    void toggleVideo(const bool enabled);
+    void toggleGPS(const bool enabled);
+    void updatePan(const int pan);
+    void updateTilt(const int tilt);
+    void updateAmplification(const int amplification);
+    void updateEdgeThresholding(const int edgeThresholding);
+    void updateMinBlobSize(const int blobSize);
+    void updateMaxBlobSize(const int blobSize);
+    void updatePositionThresh(const int thresh);
+    void updateColorThresh(const int thresh);
+    void updateSizeThresh(const int thresh);
     void setTrackerGPSFromFields();
     void setTrackerGPSFromRadio();
 

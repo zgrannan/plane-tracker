@@ -15,8 +15,8 @@ class ImageView : public QMainWindow
   Q_OBJECT
 
   public: 
-    explicit ImageView(QWidget *parent, int width, int height, double scale,
-                       Theron::Address frameAnalyzerActor, Theron::Framework &framework);
+    explicit ImageView(QWidget *parent, const int width, const int height, const double scale,
+                       const Theron::Address frameAnalyzerActor, Theron::Framework &framework);
     void sendImage(IplImage* image){
       _sendImage(image);
     }
@@ -28,13 +28,13 @@ class ImageView : public QMainWindow
   protected:
     void mouseReleaseEvent(QMouseEvent *event);
   private:
-    QImage iplImageToQImage(IplImage* image);
-    int width, height;
-    double scale;
-    Theron::Address frameAnalyzerActor;
+    QImage iplImageToQImage(const IplImage* image) const;
+    const int width, height;
+    const double scale;
+    const Theron::Address frameAnalyzerActor;
     Theron::Framework& framework;
     Ui::ImageView *imageView;
-    Theron::Receiver receiver;
+    const Theron::Receiver receiver;
 };
 
 #endif

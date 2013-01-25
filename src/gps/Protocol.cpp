@@ -9,14 +9,14 @@
 using namespace std;
 using namespace boost;
 
-GPSDataMessage Protocol::parseSerialInputForGPS(string input, string& extra) {
+GPSDataMessage Protocol::parseSerialInputForGPS(const string input, string& extra) {
   vector<string> lines;
   boost::split(lines,input,is_any_of("\n"));
   for (unsigned int i = 0; i < lines.size(); i++){
     vector<string> chunks;
     boost::split(chunks,lines[i],is_any_of(","));
-    string lastChunk = chunks[chunks.size()-1];
-    char lastChar = lastChunk[lastChunk.length()-1];
+    const string lastChunk = chunks[chunks.size()-1];
+    const char lastChar = lastChunk[lastChunk.length()-1];
     if (chunks[0] == "$GPGGA") {
       if (lastChar == '\r') {
         extra = "";
@@ -30,7 +30,7 @@ GPSDataMessage Protocol::parseSerialInputForGPS(string input, string& extra) {
   return GPSDataMessage();
 }
 
-GPSDataMessage Protocol::parseSerialInputLineForGPS(string input) { 
+GPSDataMessage Protocol::parseSerialInputLineForGPS(const string input) { 
   //$GPGGA,hhmmss.ss,Latitude,N,Longitude,E,FS,NoSV,HDOP,msl,m,Altref,m,DiffAge,DiffStation*cs<CR><LF> 
   double lat,lon,alt;
   vector<string> strs;
@@ -59,11 +59,11 @@ GPSDataMessage Protocol::parseSerialInputLineForGPS(string input) {
   return GPSDataMessage(lat,lon,alt);
 }
 
-double Protocol::parseLatitudeOrLongitude(string input){
+double Protocol::parseLatitudeOrLongitude(const string input){
   DEBUG("Parsing " + input + " as lat or lon");
-  double raw = atof(input.c_str()) / 100;
-  int degrees = (int)(raw);
-  double minutes = (raw - degrees) * 100; 
-  double minutesFraction = minutes / 60.0;
+  const double raw = atof(input.c_str()) / 100;
+  const int degrees = (int)(raw);
+  const double minutes = (raw - degrees) * 100; 
+  const double minutesFraction = minutes / 60.0;
   return (double)degrees + minutesFraction;
 }

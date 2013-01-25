@@ -6,9 +6,9 @@
 using namespace Messages;
 
 namespace Protocol {
-  Messages::GPSDataMessage parseSerialInputForGPS(string input, string& extra);
-  Messages::GPSDataMessage parseSerialInputLineForGPS(string input);
-  double parseLatitudeOrLongitude(string input);
+  Messages::GPSDataMessage parseSerialInputForGPS(const string input, string& extra);
+  Messages::GPSDataMessage parseSerialInputLineForGPS(const string input);
+  double parseLatitudeOrLongitude(const string input);
 }
 
 #endif

@@ -5,23 +5,27 @@
 using namespace std;
 using namespace GeoReference;
 
-double GeoReference::degToRad(double deg) {
+double GeoReference::degToRad(const double deg) {
   return deg * PI / 180.0;
 }
 
 // Taken from: http://www.movable-type.co.uk/scripts/latlong.html
 
-pair<double,double> GeoReference::calculatePanAndTilt(double lat1, double lon1, double alt1,
-                                                      double lat2, double lon2, double alt2){
-  double dy = (lat2 - lat1) * M_PI / 180;
-  double dx = (cos(M_PI/180*lat1)*(lon2 - lon1) * M_PI / 180);
-  double angle = atan2(dy, dx);
-  double x = M_PI / 180 * (lon2-lon1) * cos(((M_PI/360) *(lat1+lat2)));
-  double y = M_PI / 180 * (lat2-lat1);
-  double distance = sqrt(x*x+y*y) * RADIUS_M;
-  double dAltitude = fabs(alt2-alt1);
-  double pan = (-angle * 180.0 / M_PI);
-  double tilt = tan(dAltitude/distance) * 180.0 / M_PI;
+pair<double,double> GeoReference::calculatePanAndTilt(const double lat1, 
+                                                      const double lon1,
+                                                      const double alt1,
+                                                      const double lat2,
+                                                      const double lon2,
+                                                      const double alt2){
+  const double dy = (lat2 - lat1) * M_PI / 180;
+  const double dx = (cos(M_PI/180*lat1)*(lon2 - lon1) * M_PI / 180);
+  const double angle = atan2(dy, dx);
+  const double x = M_PI / 180 * (lon2-lon1) * cos(((M_PI/360) *(lat1+lat2)));
+  const double y = M_PI / 180 * (lat2-lat1);
+  const double distance = sqrt(x*x+y*y) * RADIUS_M;
+  const double dAltitude = fabs(alt2-alt1);
+  const double pan = (-angle * 180.0 / M_PI);
+  const double tilt = tan(dAltitude/distance) * 180.0 / M_PI;
   return {tilt,pan};
 }  
 
