@@ -200,8 +200,8 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
 
   auto candidates = candidatesWithLabel.first;
   auto label = candidatesWithLabel.second;
-  int minBlobPX = ((double)minBlobSize / 20000.0) * (double)(image->height * image->width);
-  int maxBlobPX = ((double)maxBlobSize / 10000.0) * (double)(image->height * image->width);
+  int minBlobPX = minBlobSize * (double)image->height;
+  int maxBlobPX = maxBlobSize * (double)image->height;
 
   cvFilterByArea(candidates,minBlobPX,maxBlobPX);
 
@@ -218,6 +218,19 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
       auto blob = it->second;
       auto displacementVector = getDisplacement(blob,&lastBlob);
       double dPosition = sqrt(pow(displacementVector[0],2)+ pow(displacementVector[1],2));
+
+      double blobHeight = blob->maxy - blob->miny;
+      double blobWidth = blob->maxx - blob->minx;
+
+      if ( blobHeight > maxBlobPX || blobHeight < minBlobPX ){
+        DEBUG("Filtered blob by height: Exceeds " + boost::lexical_cast<string>(maxBlobPX));
+        continue;
+      }
+
+      if ( blobWidth > maxBlobPX || blobWidth < minBlobPX ){
+        DEBUG("Filtered blob by width");
+        continue;
+      }
 
       if ( dPosition > image->width * image->height / (25.0 * positionThresh)){
         DEBUG("Filtered blob by position");

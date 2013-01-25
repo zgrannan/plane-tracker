@@ -23,8 +23,12 @@ class Vision {
     PlaneVisionMessage findPlane(IplImage* image, list<PlaneVisionMessage> previousPlanes);
 
     void setEdgeThresholding(int thresholding){ this->edgeThresholding = thresholding; }
-    void setMinBlobSize(int blobSize){ this->minBlobSize = blobSize; }
-    void setMaxBlobSize(int blobSize){ this->maxBlobSize = blobSize; }
+    void setMinBlobSize(int blobSize){ 
+      this->minBlobSize = (double)blobSize / 100.0;
+    }
+    void setMaxBlobSize(int blobSize){ 
+      this->maxBlobSize = (double)blobSize / 100.0;
+    }
     void setUseSize(bool useSize) { this->useSize = useSize; }
     void setUsePosition(bool usePosition) { this->usePosition = usePosition; }
     void setUseRatio(bool useRatio) { this->useRatio= useRatio; }
@@ -58,8 +62,8 @@ class Vision {
     bool hasColor = false;
 
     int edgeThresholding = 50;
-    int minBlobSize = 0;
-    int maxBlobSize = 40;
+    double minBlobSize = 0.0;
+    double maxBlobSize = 1.0;
 
     double positionThresh = 0.5;
     double sizeThresh = 0.5;

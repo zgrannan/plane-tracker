@@ -4,6 +4,7 @@
 #include <Theron/Theron.h>
 #include "src/util/Messages.h"
 #include "src/vision/Vision.h"
+#include "src/util/Log.h"
 #include <cv.h>
 #include <highgui.h>
 
@@ -36,8 +37,15 @@ class FrameAnalyzerActor : public Theron::Actor {
       void deselectColor();
 
       void setEdgeThresholding(int thresholding){ vision->setEdgeThresholding(thresholding); }
-      void setMinBlobSize(int blobSize){ vision->setMinBlobSize(blobSize); }
-      void setMaxBlobSize(int blobSize){ vision->setMaxBlobSize(blobSize); }
+      void setMinBlobSize(int blobSize){ 
+        vision->setMinBlobSize(blobSize);
+        sizeBoxToDraw = Some<int>(blobSize);
+        DEBUG("HEY");
+      }
+      void setMaxBlobSize(int blobSize){
+        vision->setMaxBlobSize(blobSize);
+        sizeBoxToDraw = Some<int>(blobSize);
+      }
       void setPositionThresh(int thresh) { vision->setPositionThresh(thresh); }
       void setSizeThresh(int thresh) { vision->setSizeThresh(thresh); }
       void setColorThresh(int thresh) { vision->setColorThresh(thresh); }
@@ -51,6 +59,7 @@ class FrameAnalyzerActor : public Theron::Actor {
     Theron::Address multimodalActor;
     bool disabled = true;
     bool hasLock = false;
+    Option<int>sizeBoxToDraw = None<int>();
     unsigned int consecutiveLost = 0;
     list<PlaneVisionMessage> previousPlanes;
 

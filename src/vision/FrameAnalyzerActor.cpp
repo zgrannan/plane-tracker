@@ -67,6 +67,18 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
       previousPlanes.push_front(data);
     }
   }
+
+  if (sizeBoxToDraw.isDefined()){
+    DEBUG("Drawing sizeBox");
+    double size = ((double)*sizeBoxToDraw) / 100.0 * image->height;
+    CvPoint ul = cvPoint(5,5);
+    CvPoint br = cvPoint(5 + size, 5 + size);
+    CvScalar color = cvScalar(0,0,255);
+    cvRectangle(image,ul,br,color);
+    sizeBoxToDraw = None<int>();
+    DEBUG("LOL");
+  }
+
   double pan = 0,tilt = 0;
   if (data.hasPlane){
     consecutiveLost = 0;
