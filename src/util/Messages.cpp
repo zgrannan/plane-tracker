@@ -10,10 +10,10 @@ using namespace boost;
 vector<char> RelativePositionMessage::toBytes() const {
   vector<char> byteVector;
   string byteString;
-  const int _pan = -(int)this->pan;
-  const int _tilt= -(int)this->tilt;
-  const string panS = (boost::format("%04d") % _pan).str();
-  const string tiltS = (boost::format("%04d") % _tilt).str();
+  const int _pan = -(int)(this->pan * 100.0);
+  const int _tilt= -(int)(this->tilt * 100.0);
+  const string panS = (boost::format("%06d") % _pan).str();
+  const string tiltS = (boost::format("%06d") % _tilt).str();
   if (!positionLost){
     byteString = "#1 " + panS + " " + tiltS + "\n";
   } else {
@@ -25,10 +25,10 @@ vector<char> RelativePositionMessage::toBytes() const {
 vector<char> AbsolutePositionMessage::toBytes() const{
   vector<char> byteVector;
   string byteString;
-  const int _pan = -(int)this->pan;
-  const int _tilt= -(int)this->tilt;
-  const string panS = (boost::format("%04d") % _pan).str();
-  const string tiltS = (boost::format("%04d") % _tilt).str();
+  const int _pan = -(int)(this->pan * 100.0);
+  const int _tilt= -(int)(this->tilt * 100.0);
+  const string panS = (boost::format("%06d") % _pan).str();
+  const string tiltS = (boost::format("%06d") % _tilt).str();
   if (!positionLost){
     byteString = "#0 " + panS + " " + tiltS + "\n";
   } else {
@@ -38,7 +38,7 @@ vector<char> AbsolutePositionMessage::toBytes() const{
 }
 
 vector<char> UseRSSIMessage::toBytes() const{
-  const string byteString = "#2 0000 0000\n";
+  const string byteString = "#2 000000 000000\n";
   return vector<char>(byteString.begin(),byteString.end());
 }
 
