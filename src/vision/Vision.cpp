@@ -203,8 +203,6 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
   int minBlobPX = minBlobSize * (double)image->height;
   int maxBlobPX = maxBlobSize * (double)image->height;
 
-  cvFilterByArea(candidates,minBlobPX,maxBlobPX);
-
   double maxScore = -DBL_MAX;
   Option<CvBlob> bestCandidate = None<CvBlob>();
 

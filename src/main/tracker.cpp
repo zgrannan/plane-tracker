@@ -81,7 +81,6 @@ int main(int argc, char* argv[]){
       po::value<string>(&arguments.arduinoPort)->default_value("/dev/tty.usbmodem1411"),
       "Specify arduino serial port")
     ("composite","Use composite input instead of HDMI")
-    ("cv-scale",po::value<double>(&arguments.cvScale)->default_value(1.0),"CV Scale")
     ("debug", "Display debug output")
     ("extras","Display intermediate steps")
     ("gps-baud",
@@ -104,7 +103,7 @@ int main(int argc, char* argv[]){
     ("record",
       po::value<string>(&arguments.recordDirectory)->default_value(""),
       "Record to directory [arg]")
-    ("video-scale",po::value<double>(&arguments.scale)->default_value(0.0),"Video scale")
+    ("scale",po::value<double>(&arguments.scale)->default_value(0.0),"Video scale")
     ("video",
       po::value<string>(&arguments.videoFilename)->default_value(""),
       "Simulate using video file [arg]");
@@ -128,7 +127,6 @@ int main(int argc, char* argv[]){
   arguments.alt = vm["alt"].as<double>();
   arguments.arduinoBaud= vm["arduino-baud"].as<string>();
   arguments.arduinoPort= vm["arduino-port"].as<string>();
-  arguments.cvScale = vm["cv-scale"].as<double>();
   arguments.useCompositeInput = vm.count("composite");
   arguments.debug = vm.count("debug");
   arguments.drawLine = vm.count("line");
@@ -138,12 +136,12 @@ int main(int argc, char* argv[]){
   arguments.lat = vm["lat"].as<double>();
   arguments.lon = vm["lon"].as<double>();
   arguments.recordDirectory = vm["record"].as<string>();
-  arguments.scale = vm["video-scale"].as<double>();
+  arguments.scale = vm["scale"].as<double>();
   arguments.showExtras = vm.count("extras");
   arguments.videoFilename = vm["video"].as<string>();
 
   if (arguments.scale <= 0.0){
-    if (arguments.useCompositeInput){
+    if (arguments.useCompositeInput || arguments.videoFilename != ""){
       arguments.scale = 1.0;
     } else {
       arguments.scale = 0.5;
@@ -233,7 +231,7 @@ int main(int argc, char* argv[]){
   Log::log("Spawning Frame Analyzer Actor...");
   frameAnalyzerActor = new FrameAnalyzerActor(
       framework,
-      arguments.cvScale,
+      arguments.scale,
       1,
       arguments.drawLine,
       vision,

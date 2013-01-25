@@ -4,7 +4,6 @@
 #include <Theron/Theron.h>
 #include "src/util/Messages.h"
 #include "src/vision/Vision.h"
-#include "src/util/Log.h"
 #include <cv.h>
 #include <highgui.h>
 
@@ -40,7 +39,6 @@ class FrameAnalyzerActor : public Theron::Actor {
       void setMinBlobSize(int blobSize){ 
         vision->setMinBlobSize(blobSize);
         sizeBoxToDraw = Some<int>(blobSize);
-        DEBUG("HEY");
       }
       void setMaxBlobSize(int blobSize){
         vision->setMaxBlobSize(blobSize);

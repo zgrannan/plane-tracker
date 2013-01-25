@@ -76,7 +76,6 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
     CvScalar color = cvScalar(0,0,255);
     cvRectangle(image,ul,br,color);
     sizeBoxToDraw = None<int>();
-    DEBUG("LOL");
   }
 
   double pan = 0,tilt = 0;
