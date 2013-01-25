@@ -202,6 +202,8 @@ int main(int argc, char* argv[]){
     vision = new Vision(false);
   }
 
+  vision->testRgbToHsv();
+
   if (arguments.recordDirectory != "") {
     Log::log("\tRecording output to: " +  arguments.recordDirectory);
   }

@@ -20,39 +20,78 @@ using namespace cvb;
 using namespace std;
 using namespace cv;
 
-
-double Vision::f_cbrt(double r){
-	r/=65535.0;
-	return r>ep?pow(r,1/3.0):(ka*r+16)/116.0;
+void Vision::testRgbToHsv(){
+  uchar r = 34, g = 52, b = 29;
+  double h,s,v;
+  rgbToHsv(r,g,b,h,s,v);
+  cout << "HSV: " << h << " " << s << " " << v << endl;
 }
 
-void Vision::rgbToCielab(uchar _r, uchar _g, uchar _b, double& l, double& a, double& b){
-  static double d50_white[3]={0.964220,1,0.825211};
+/**
+ * Code stolen from: 
+ * http://en.literateprograms.org/RGB_to_HSV_color_space_conversion_%28C%29
+ */
+void Vision::rgbToHsv(uchar _r, uchar _g, uchar _b, double& h, double& s, double& v){
 
-  double xyz[3] = {0,0,0};
-  double red = (double) _r / 255.0;
-  double green = (double) _g / 255.0;
-  double blue = (double) _b / 255.0;
+  double r = (double)_r / 255.0;
+  double g = (double)_g / 255.0;
+  double b = (double)_b / 255.0;
+  auto min3 =[](const double a, const double b, const double c){
+    if ( a < b && a < c) {
+      return a;
+    } else if ( b < a && b < c) {
+      return b;
+    } else {
+      return c;
+    }
+  };
 
-  static const double rgb_xyz[3][3] =
-	{ { 0.7976748465, 0.1351917082, 0.0313534088 },
-	  { 0.2880402025, 0.7118741325, 0.0000856651 },
-	  { 0.0000000000, 0.0000000000, 0.8252114389 } }; // From Jacques Desmis
+  auto max3 =[](const double a, const double b, const double c){
+    if ( a > b && a > c) {
+      return a;
+    } else if ( b > a && b > c) {
+      return b;
+    } else {
+      return c;
+    }
+  };
 
-  for (int i = 0; i < 3; i++){
-    xyz[i] += rgb_xyz[i][0]*red;
-    xyz[i] += rgb_xyz[i][1]*green;
-    xyz[i] += rgb_xyz[i][2]*blue;
+  double rgb_min, rgb_max;
+  rgb_min = min3(r,g,b);
+  rgb_max = max3(r,g,b);
+  v = rgb_max;
+  if (v == 0) {
+    h = s = 0;
+    return;
   }
-
-  for (int i = 0; i < 3; i++){
-    xyz[i] = f_cbrt(xyz[i]/d50_white[i]);
+  /* Normalize value to 1 */
+  r /= v;
+  g /= v;
+  b /= v;
+  rgb_min = min3(r, g, b);
+  rgb_max = max3(r, g, b);
+  s = rgb_max - rgb_min;
+  if (s == 0) {
+    h = 0;
+    return;
   }
-
-  l = 116.0 * xyz[1]-16.0;
-  a = 500.0 * (xyz[0]-xyz[1]);
-  b = 200.0 * (xyz[1]-xyz[2]);
-
+  /* Normalize saturation to 1 */
+  r = (r - rgb_min)/(rgb_max - rgb_min);
+  g = (g - rgb_min)/(rgb_max - rgb_min);
+  b = (b - rgb_min)/(rgb_max - rgb_min);
+  rgb_min = min3(r, g, b);
+  rgb_max = max3(r, g, b);
+  /* Compute hue */
+  if (rgb_max == r) {
+    h = 0.0 + 60.0*(g - b);
+    if (h < 0.0) {
+      h += 360.0;
+    }
+  } else if (rgb_max == g) {
+    h = 120.0 + 60.0*(b - r);
+  } else /* rgb_max == b */ {
+    h = 240.0 + 60.0*(r - g);
+  }
 }
 
 vector<double> Vision::getDisplacement(CvBlob* blob1, CvBlob* blob2){
@@ -154,9 +193,8 @@ PlaneVisionMessage Vision::findPlane( IplImage* image, double blobX, double blob
 
 PlaneVisionMessage Vision::findPlane( IplImage* image,
     list<PlaneVisionMessage> previousPlanes){
+
   DEBUG("PROFILE: findPlane begins");
-  static int frame = 0;
-  frame++;
   if(image == nullptr){
     return PlaneVisionMessage();
   }
@@ -168,66 +206,59 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
     return result;
   }
 
-  bool canUseColor = true;
-
   vector<ImageMessage> extras;
   DEBUG("PROFILE: findCandidates begins");
   pair<CvBlobs,IplImage*> candidatesWithLabel = findCandidates(image,extras);
   DEBUG("PROFILE: findCandidates ends");
+
   auto candidates = candidatesWithLabel.first;
   auto label = candidatesWithLabel.second;
   int minBlobPX = ((double)minBlobSize / 20000.0) * (double)(image->height * image->width);
   int maxBlobPX = ((double)maxBlobSize / 10000.0) * (double)(image->height * image->width);
+
   DEBUG("PROFILE: FilterByArea begins");
   cvFilterByArea(candidates,minBlobPX,maxBlobPX);
   DEBUG("PROFILE: FilterByArea ends");
+
   double maxScore = -DBL_MAX;
   Option<CvBlob> bestCandidate = None<CvBlob>();
+
   DEBUG("PROFILE: Scoring begins for " + boost::lexical_cast<string>(candidates.size())
              + " candidates, " + boost::lexical_cast<string>(previousPlanes.size()) +
              " previous planes." );
+
   if ( previousPlanes.size() >= 1){
     auto lastBlob = previousPlanes.front().planeBlob;
     for (CvBlobs::const_iterator it=candidates.begin(); it!=candidates.end(); ++it){
       auto blob = it->second;
-
-      DEBUG("PROFILE: Get Displacement Start");
       auto displacementVector = getDisplacement(blob,&lastBlob);
       double dPosition = sqrt(pow(displacementVector[0],2)+ pow(displacementVector[1],2));
-      DEBUG("PROFILE: Get Displacement End");
-      DEBUG("PROFILE: Compute Position/Size Start");
+
       if ( displacementVector[0] > image->width / 10.0 ||
           displacementVector[1] > image->height / 10.0 ){
         continue;
       }
-      double dSize = fabs(blob->area - lastBlob.area);
+
       if ( (double)blob->area / (double)lastBlob.area < 0.1 || 
            (double)blob->area / (double)lastBlob.area > 10.0) {
-         cout << "Blob Area: " << blob->area << endl;
-         cout << "LastBlob Area: " << lastBlob.area << endl;
          continue;
       }
-      DEBUG("PROFILE: Compute Position/Size End");
-      double dColor = 0;
+
       if (useColor && hasColor){
         CvScalar color = cvBlobMeanColor(blob,label,image);
-        double l,a,b;
-        rgbToCielab(color.val[0],color.val[1],color.val[2],l,a,b);
-        DEBUG("L: " + boost::lexical_cast<string>(l));
-        DEBUG("A: " + boost::lexical_cast<string>(a));
-        DEBUG("B: " + boost::lexical_cast<string>(b));
-        double dL2 = pow(l - goodL,2); 
-        double dA2 = pow(l - goodA,2); 
-        double dB2 = pow(l - goodB,2); 
-        dColor = sqrt(dL2 + dA2 + dB2);
+        double h,s,v;
+        Vision::rgbToHsv(color.val[0],color.val[1],color.val[2],h,s,v);
+        DEBUG("H: " + boost::lexical_cast<string>(h));
+        DEBUG("S: " + boost::lexical_cast<string>(s));
+        DEBUG("V: " + boost::lexical_cast<string>(v));
+        double dColor = pow(h - goodH,2); 
+        if (dColor > 50) {
+          continue;
+        }
       } else if (!useColor) {
-        canUseColor = false;
         cvReleaseImage(&label);
       }
-      DEBUG("PROFILE: Compute Score Start");
-      double score = BlobScore(0,dPosition,dSize,dColor,
-          ratioWeight,positionWeight,sizeWeight,colorWeight).computeScore();
-      DEBUG("PROFILE: Compute Score End");
+      double score = - dPosition;
       if ( score > maxScore ){
         DEBUG("MaxScore: " + boost::lexical_cast<string>(score));
         maxScore = score;
@@ -241,14 +272,14 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
   DEBUG("PROFILE: cvReleaseBlobs ends");
   DEBUG("PROFILE: findPlane ends");
   if (bestCandidate.isDefined()) {
-    if (!hasColor && useColor && canUseColor){
+    if (!hasColor && useColor){
       auto candidate = bestCandidate.get();
       CvScalar color = cvBlobMeanColor(&candidate,label,image);
-      rgbToCielab(color.val[0],color.val[1],color.val[2],goodL,goodA,goodB);
+      rgbToHsv(color.val[2],color.val[1],color.val[0],goodH,goodS,goodV);
       Log::log("Color found");
-      Log::log("GoodL: " + boost::lexical_cast<string>(goodL));
-      Log::log("GoodA: " + boost::lexical_cast<string>(goodA));
-      Log::log("GoodB: " + boost::lexical_cast<string>(goodB));
+      Log::log("GoodH: " + boost::lexical_cast<string>(goodH));
+      Log::log("GoodS: " + boost::lexical_cast<string>(goodS));
+      Log::log("GoodV: " + boost::lexical_cast<string>(goodV));
       hasColor = true;
     }
     cvReleaseImage(&label);
@@ -278,20 +309,6 @@ double Vision::BlobScore::computeScore(){
   double ratioScore = getScore(dRatio,maxdRatio);
   double sizeScore = getScore(dSize,maxdSize);
   double colorScore = getScore(dColor,maxdColor);
-  /**
-  DEBUG("Position Difference: " + boost::lexical_cast<string>(dPosition));
-  DEBUG("Position Score: " + boost::lexical_cast<string>(positionScore));
-  DEBUG("Weighted Position Score: "  + boost::lexical_cast<string>(positionScore * positionWeight));
-  DEBUG("Ratio Difference: " + boost::lexical_cast<string>(dRatio));
-  DEBUG("Ratio Score: " + boost::lexical_cast<string>(ratioScore));
-  DEBUG("Weighted Ratio Score: "  + boost::lexical_cast<string>(ratioScore * ratioWeight));
-  DEBUG("Size Difference: " + boost::lexical_cast<string>(dColor));
-  DEBUG("Size Score: " + boost::lexical_cast<string>(sizeScore));
-  DEBUG("Weighted Size Score: "  + boost::lexical_cast<string>(sizeScore * sizeWeight));
-  DEBUG("Color Difference: " + boost::lexical_cast<string>(dColor));
-  DEBUG("Color Score: " + boost::lexical_cast<string>(colorScore));
-  DEBUG("Weighted Color Score: "  + boost::lexical_cast<string>(colorScore * colorWeight));
-  **/
   return positionScore * positionWeight +
          ratioScore * ratioWeight +
          sizeScore * sizeWeight + 

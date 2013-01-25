@@ -40,19 +40,17 @@ class Vision {
     void setSizeWeight(int weight) {sizeWeight = (double)weight / 100.0;}
     void setColorWeight(int weight) {colorWeight = (double)weight / 100.0;}
 
+    static void testRgbToHsv();
+
   private:
     PlaneVisionMessage findPlane( IplImage* image, double blobX, double blobY);
-    static constexpr double ep = 216.0/24389.0;
-    static constexpr double ka = 24389.0/27.0;
+    static void rgbToHsv(uchar _r, uchar _g, uchar _b, double& h, double& s, double& v);
 
     Option<double> blobXOption, blobYOption;
 
     static double f_cbrt(double r);
-    static void rgbToCielab(uchar _r, uchar _g, uchar _b,
-                                    double& l, double& a, double& b);
 
-    double goodL, goodA, goodB;
-
+    double goodH, goodS, goodV;
     bool intermediateSteps;
     bool usePosition = true;
     bool useSize = true;
