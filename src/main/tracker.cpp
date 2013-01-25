@@ -234,6 +234,7 @@ int main(int argc, char* argv[]){
   frameAnalyzerActor = new FrameAnalyzerActor(
       framework,
       arguments.cvScale,
+      1,
       arguments.drawLine,
       vision,
       imageReceiver.GetAddress(),

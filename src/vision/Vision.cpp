@@ -187,50 +187,47 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
              + " candidates, " + boost::lexical_cast<string>(previousPlanes.size()) +
              " previous planes." );
   if ( previousPlanes.size() >= 1){
+    auto lastBlob = previousPlanes.front().planeBlob;
     for (CvBlobs::const_iterator it=candidates.begin(); it!=candidates.end(); ++it){
-      double score = 0;
       auto blob = it->second;
-      if (blob->centroid.x > image->width - 50 || blob->centroid.x < 50 ) continue;
-      if (blob->centroid.y > image->height - 50 || blob->centroid.y < 50 ) continue;
-      for ( auto lastPlane : previousPlanes) {
-        auto lastBlob = &lastPlane.planeBlob; 
-        double dPosition = 0, dRatio = 0, dSize = 0;
-        DEBUG("PROFILE: Get Displacement Start");
-        auto displacementVector = getDisplacement(blob,lastBlob);
-        DEBUG("PROFILE: Get Displacement End");
-        DEBUG("PROFILE: Compute Position/Size Start");
-        dPosition = sqrt(pow(displacementVector[0],2)+ pow(displacementVector[1],2));
-        if ( dPosition > 200){
-          continue;
-        }
-        dSize = fabs(blob->area-lastBlob->area);
-        DEBUG("PROFILE: Compute Position/Size End");
-        DEBUG("PROFILE: Compute Ratio Start");
-        double oldRatio = computeRatio(lastBlob);
-        double ratio = computeRatio(blob);
-        DEBUG("PROFILE: Compute Ratio End");
-        double dColor = 0;
-        if (useColor && hasColor){
-          CvScalar color = cvBlobMeanColor(blob,label,image);
-          double l,a,b;
-          rgbToCielab(color.val[0],color.val[1],color.val[2],l,a,b);
-          DEBUG("L: " + boost::lexical_cast<string>(l));
-          DEBUG("A: " + boost::lexical_cast<string>(a));
-          DEBUG("B: " + boost::lexical_cast<string>(b));
-          double dL2 = pow(l - goodL,2); 
-          double dA2 = pow(l - goodA,2); 
-          double dB2 = pow(l - goodB,2); 
-          dColor = sqrt(dL2 + dA2 + dB2);
-        } else if (!useColor) {
-          canUseColor = false;
-          cvReleaseImage(&label);
-        }
-        dRatio = fabs(ratio/oldRatio);
-        DEBUG("PROFILE: Compute Score Start");
-        score += BlobScore(dRatio,dPosition,dSize,dColor,
-                            ratioWeight,positionWeight,sizeWeight,colorWeight).computeScore();
-        DEBUG("PROFILE: Compute Score End");
+
+      DEBUG("PROFILE: Get Displacement Start");
+      auto displacementVector = getDisplacement(blob,&lastBlob);
+      double dPosition = sqrt(pow(displacementVector[0],2)+ pow(displacementVector[1],2));
+      DEBUG("PROFILE: Get Displacement End");
+      DEBUG("PROFILE: Compute Position/Size Start");
+      if ( displacementVector[0] > image->width / 10.0 ||
+          displacementVector[1] > image->height / 10.0 ){
+        continue;
       }
+      double dSize = fabs(blob->area - lastBlob.area);
+      if ( (double)blob->area / (double)lastBlob.area < 0.1 || 
+           (double)blob->area / (double)lastBlob.area > 10.0) {
+         cout << "Blob Area: " << blob->area << endl;
+         cout << "LastBlob Area: " << lastBlob.area << endl;
+         continue;
+      }
+      DEBUG("PROFILE: Compute Position/Size End");
+      double dColor = 0;
+      if (useColor && hasColor){
+        CvScalar color = cvBlobMeanColor(blob,label,image);
+        double l,a,b;
+        rgbToCielab(color.val[0],color.val[1],color.val[2],l,a,b);
+        DEBUG("L: " + boost::lexical_cast<string>(l));
+        DEBUG("A: " + boost::lexical_cast<string>(a));
+        DEBUG("B: " + boost::lexical_cast<string>(b));
+        double dL2 = pow(l - goodL,2); 
+        double dA2 = pow(l - goodA,2); 
+        double dB2 = pow(l - goodB,2); 
+        dColor = sqrt(dL2 + dA2 + dB2);
+      } else if (!useColor) {
+        canUseColor = false;
+        cvReleaseImage(&label);
+      }
+      DEBUG("PROFILE: Compute Score Start");
+      double score = BlobScore(0,dPosition,dSize,dColor,
+          ratioWeight,positionWeight,sizeWeight,colorWeight).computeScore();
+      DEBUG("PROFILE: Compute Score End");
       if ( score > maxScore ){
         DEBUG("MaxScore: " + boost::lexical_cast<string>(score));
         maxScore = score;

@@ -15,12 +15,14 @@ class FrameAnalyzerActor : public Theron::Actor {
     FrameAnalyzerActor(
       Theron::Framework &framework,
       double scale,
+      const unsigned int planesToConsider,
       bool drawLine,
       Vision* vision,
       Theron::Address imageViewer,
       Theron::Address multimodalActor) :
         Theron::Actor(framework),
         scale(scale),
+        planesToConsider(planesToConsider),
         drawLine(drawLine),
         vision(vision),
         imageViewer(imageViewer),
@@ -43,12 +45,14 @@ class FrameAnalyzerActor : public Theron::Actor {
 
   private:
     double scale = 1.0; 
+    const unsigned int planesToConsider;
     bool drawLine;
     Vision* vision;
     Theron::Address imageViewer;
     Theron::Address multimodalActor;
     bool disabled = true;
     bool hasLock = false;
+    unsigned int consecutiveLost = 0;
     list<PlaneVisionMessage> previousPlanes;
 
     void ImageHandler(const ImageMessage& message, const Theron::Address from);

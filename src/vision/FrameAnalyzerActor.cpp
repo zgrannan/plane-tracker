@@ -63,14 +63,15 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
   if (data.userHasConfirmed){
     Log::log("Plane found from blob");
     previousPlanes = list<PlaneVisionMessage>();
-    for (int i = 0; i < 5; i ++){
+    for (unsigned int i = 0; i < planesToConsider; i ++){
       previousPlanes.push_front(data);
     }
   }
   double pan = 0,tilt = 0;
   if (data.hasPlane){
+    consecutiveLost = 0;
     previousPlanes.push_front(data);
-    if ( previousPlanes.size() > 5 ) {
+    if ( previousPlanes.size() > planesToConsider ) {
       previousPlanes.pop_back();
     }
     double dx = data.getDisplacement()[0];
@@ -87,7 +88,10 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
       cvLine(image,origin,destination,color,2);
     }
   } else if (previousPlanes.size() > 0) {
+    consecutiveLost++;
+    if ( consecutiveLost > 5){
       previousPlanes.pop_back();
+    }
   } 
   
   Send(data,imageViewer);
