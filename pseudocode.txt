@@ -107,6 +107,11 @@ namespace PlaneTracking {
     double value;
   }
 
+  struct PlaneVisionMessage {
+    Mat image;
+    option<cvBlob> plane;
+  }
+
   /////////// Camera ///////////////////
 
   struct CameraArguments {

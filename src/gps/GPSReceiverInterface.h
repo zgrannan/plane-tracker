@@ -1,25 +1,18 @@
-#ifndef GPSRECIEVER_INTERFACE_H 
-#define GPSRECIEVER_INTERFACE_H 
+#pragma once
 
-#include <boost/asio.hpp>
-#include <Theron/Theron.h>
-#include "src/util/Messages.h"
+namespace PlaneTracking {
 
-class GPSReceiverInterface {
-public:
-  GPSReceiverInterface(Theron::Framework& framework,
-                       const string serialPort,
-                       const int baudRate,
-                       const Theron::Address georeferencingActor);
-private: 
-  void workerFunction();
-  void sendGPSData(Messages::GPSDataMessage message);
+  class GPSProtocol;
+  class SerialConnection;
 
-  Theron::Framework& framework;
-  const string serialPort;
-  const int baudRate;
-  const Theron::Address georeferencingActor;
-  const Theron::Receiver receiver;
-};
-
-#endif
+  class GPSReceiverInterface : public RawDataReceiver {
+    public:
+      GPSReceiverInterface(shared_ptr<GPSProtocol> protocol,
+                           shared_ptr<SerialConnection> serial);
+    
+    protected:
+      static virtual GPSCoordinateMessage toMessage(GPSCoordinate coordinate) const = 0;
+      shared_ptr<GPSProtocol> protocol;
+      shared_ptr<SerialConnection> serial;
+  };
+}

@@ -1,0 +1,379 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ADAPTIVE_THRESHHOLD	vision/Vision.cpp	/^#define ADAPTIVE_THRESHHOLD /;"	d	file:
+AbsolutePositionMessage	util/Messages.h	/^      AbsolutePositionMessage(): PositionMessage(){}$/;"	f	class:Messages::AbsolutePositionMessage
+AbsolutePositionMessage	util/Messages.h	/^      AbsolutePositionMessage(double pan, double tilt): PositionMessage(pan,tilt){}$/;"	f	class:Messages::AbsolutePositionMessage
+AbsolutePositionMessage	util/Messages.h	/^  class AbsolutePositionMessage: public PositionMessage{$/;"	c	namespace:Messages
+AddRef	vision/VideoReceiverInterface.cpp	/^    virtual ULONG STDMETHODCALLTYPE AddRef(void){return 0;};$/;"	f	class:VideoCallback
+AmplificationMessage	util/Messages.h	/^      AmplificationMessage(int amplification): amplification(amplification){}$/;"	f	class:Messages::AmplificationMessage
+AmplificationMessage	util/Messages.h	/^  class AmplificationMessage{$/;"	c	namespace:Messages
+BLOBSCORER_H	vision/BlobScorer.h	/^#define BLOBSCORER_H$/;"	d
+BlobPositionHandler	vision/FrameAnalyzerActor.cpp	/^void FrameAnalyzerActor::BlobPositionHandler(const BlobPositionMessage& message,$/;"	f	class:FrameAnalyzerActor
+BlobPositionMessage	util/Messages.h	/^      BlobPositionMessage(double x, double y): x(x), y(y) {}$/;"	f	class:Messages::BlobPositionMessage
+BlobPositionMessage	util/Messages.h	/^  class BlobPositionMessage{$/;"	c	namespace:Messages
+BlobScore	vision/Vision.h	/^        BlobScore(){}$/;"	f	class:Vision::BlobScore
+BlobScore	vision/Vision.h	/^        BlobScore(double dRatio, double dPosition, double dSize, double dColor,$/;"	f	class:Vision::BlobScore
+BlobScore	vision/Vision.h	/^    class BlobScore {$/;"	c	class:Vision
+BlobScorer	vision/BlobScorer.h	/^    BlobScorer(){}$/;"	f	class:BlobScorer
+BlobScorer	vision/BlobScorer.h	/^class BlobScorer{$/;"	c
+CAMERA_H_FOV	vision/FrameAnalyzerActor.cpp	/^#define CAMERA_H_FOV /;"	d	file:
+CAMERA_V_FOV	vision/FrameAnalyzerActor.cpp	/^#define CAMERA_V_FOV /;"	d	file:
+CC	perhaps/Makefile	/^CC=g++ -std=c++11$/;"	m
+CFLAGS	perhaps/Makefile	/^CFLAGS = -c -Wall$/;"	m
+DEBUG	util/Log.h	/^#define DEBUG(/;"	d
+FRAME_ANALYZER_ACTOR_H	vision/FrameAnalyzerActor.h	/^#define FRAME_ANALYZER_ACTOR_H$/;"	d
+FrameAnalyzerActor	vision/FrameAnalyzerActor.h	/^    FrameAnalyzerActor($/;"	f	class:FrameAnalyzerActor
+FrameAnalyzerActor	vision/FrameAnalyzerActor.h	/^class FrameAnalyzerActor : public Theron::Actor {$/;"	c
+GEOREFERENCE_H	gps/GeoReference.h	/^#define GEOREFERENCE_H$/;"	d
+GEOREFERENCING_ACTOR_H	gps/GeoreferencingActor.h	/^#define GEOREFERENCING_ACTOR_H$/;"	d
+GPSDataMessage	util/Messages.h	/^      GPSDataMessage(): lat(0),lon(0),alt(0),hasData(false){}$/;"	f	class:Messages::GPSDataMessage
+GPSDataMessage	util/Messages.h	/^      GPSDataMessage(double lat, double lon, double alt): lat(lat),lon(lon),alt(alt),hasData(true){}$/;"	f	class:Messages::GPSDataMessage
+GPSDataMessage	util/Messages.h	/^  class GPSDataMessage{$/;"	c	namespace:Messages
+GPSHandler	main/MultimodalActor.cpp	/^void MultimodalActor::GPSHandler(const AbsolutePositionMessage &message,$/;"	f	class:MultimodalActor
+GPSRECIEVER_INTERFACE_H	gps/GPSReceiverInterface.h	/^#define GPSRECIEVER_INTERFACE_H /;"	d
+GPSReceiverInterface	gps/GPSReceiverInterface.cpp	/^GPSReceiverInterface::GPSReceiverInterface(Theron::Framework& framework,$/;"	f	class:GPSReceiverInterface
+GPSReceiverInterface	gps/GPSReceiverInterface.h	/^class GPSReceiverInterface {$/;"	c
+GeoReference	gps/GeoReference.h	/^namespace GeoReference{$/;"	n
+GeoreferencingActor	gps/GeoreferencingActor.h	/^	GeoreferencingActor(Theron::Framework &framework,$/;"	f	class:GeoreferencingActor
+GeoreferencingActor	gps/GeoreferencingActor.h	/^class GeoreferencingActor : public Theron::Actor {$/;"	c
+Handler	gps/GeoreferencingActor.cpp	/^void GeoreferencingActor::Handler(const GPSDataMessage& message, const Theron::Address){$/;"	f	class:GeoreferencingActor
+IMAGEVIEW_H	ui/imageview.h	/^#define IMAGEVIEW_H$/;"	d
+ImageHandler	vision/FrameAnalyzerActor.cpp	/^void FrameAnalyzerActor::ImageHandler(const ImageMessage& message, const Theron::Address){$/;"	f	class:FrameAnalyzerActor
+ImageMessage	util/Messages.h	/^      ImageMessage(cv::Mat image): name("unnamed"), image(image){}$/;"	f	class:Messages::ImageMessage
+ImageMessage	util/Messages.h	/^      ImageMessage(std::string name, cv::Mat image): name(name), image(image){}$/;"	f	class:Messages::ImageMessage
+ImageMessage	util/Messages.h	/^  class ImageMessage{$/;"	c	namespace:Messages
+ImageView	ui/imageview.cpp	/^ImageView::ImageView(QWidget *parent, int width, int height, double scale,$/;"	f	class:ImageView
+ImageView	ui/imageview.h	/^class ImageView : public QMainWindow$/;"	c
+ImageView	ui/ui_imageview.h	/^    class ImageView: public Ui_ImageView {};$/;"	c	namespace:Ui
+KBLU	util/Log.h	/^#define KBLU /;"	d
+KCYN	util/Log.h	/^#define KCYN /;"	d
+KGRN	util/Log.h	/^#define KGRN /;"	d
+KMAG	util/Log.h	/^#define KMAG /;"	d
+KNRM	util/Log.h	/^#define KNRM /;"	d
+KRED	util/Log.h	/^#define KRED /;"	d
+KWHT	util/Log.h	/^#define KWHT /;"	d
+KYEL	util/Log.h	/^#define KYEL /;"	d
+LDFLAGS	perhaps/Makefile	/^LDFLAGS= -ggdb$/;"	m
+LOG_H	util/Log.h	/^#define LOG_H$/;"	d
+Log	util/Log.h	/^class Log {$/;"	c
+MESSAGES_H	util/Messages.h	/^#define MESSAGES_H$/;"	d
+MULTIMODAL_ACTOR_H	main/MultimodalActor.h	/^#define MULTIMODAL_ACTOR_H$/;"	d
+Messages	util/Messages.h	/^namespace Messages{$/;"	n
+MultimodalActor	main/MultimodalActor.cpp	/^MultimodalActor::MultimodalActor(Theron::Framework &framework, string serialPort, int baudRate) : $/;"	f	class:MultimodalActor
+MultimodalActor	main/MultimodalActor.h	/^class MultimodalActor : public Theron::Actor {$/;"	c
+None	perhaps/perhaps.h	/^    None(): Option<T>(){}$/;"	f	class:None
+None	perhaps/perhaps.h	/^class None : public Option<T>{$/;"	c
+OPTION_H	perhaps/perhaps.h	/^#define OPTION_H$/;"	d
+Option	perhaps/perhaps.h	/^    Option(): hasValue(false) {}$/;"	f	class:Option
+Option	perhaps/perhaps.h	/^    Option(T value): value(value) ,hasValue(true) {}$/;"	f	class:Option
+Option	perhaps/perhaps.h	/^class Option{$/;"	c
+PI	gps/GeoReference.h	/^  const double PI = 3.14159;$/;"	m	namespace:GeoReference
+PROTOCOL_H	gps/Protocol.h	/^#define PROTOCOL_H$/;"	d
+PlaneVisionMessage	util/Messages.h	/^      PlaneVisionMessage( cvb::CvBlob planeBlob,$/;"	f	class:Messages::PlaneVisionMessage
+PlaneVisionMessage	util/Messages.h	/^      PlaneVisionMessage(): $/;"	f	class:Messages::PlaneVisionMessage
+PlaneVisionMessage	util/Messages.h	/^      PlaneVisionMessage(cv::Mat image, std::vector<ImageMessage> extras): $/;"	f	class:Messages::PlaneVisionMessage
+PlaneVisionMessage	util/Messages.h	/^  class PlaneVisionMessage {$/;"	c	namespace:Messages
+PositionMessage	util/Messages.h	/^      PositionMessage(): pan(0), tilt(0), positionLost(true){}$/;"	f	class:Messages::PositionMessage
+PositionMessage	util/Messages.h	/^      PositionMessage(double pan, double tilt): pan(pan), tilt(tilt), positionLost(false){}$/;"	f	class:Messages::PositionMessage
+PositionMessage	util/Messages.h	/^  class PositionMessage{$/;"	c	namespace:Messages
+Protocol	gps/Protocol.h	/^namespace Protocol {$/;"	n
+QueryInterface	vision/VideoReceiverInterface.cpp	/^    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID,LPVOID*) { return E_NOINTERFACE; }$/;"	f	class:VideoCallback
+RADIUS_M	gps/GeoReference.h	/^  const double RADIUS_M = 6371000;$/;"	m	namespace:GeoReference
+RelativePositionMessage	util/Messages.h	/^      RelativePositionMessage(): PositionMessage(){}$/;"	f	class:Messages::RelativePositionMessage
+RelativePositionMessage	util/Messages.h	/^      RelativePositionMessage(double pan, double tilt): PositionMessage(pan,tilt){}$/;"	f	class:Messages::RelativePositionMessage
+RelativePositionMessage	util/Messages.h	/^  class RelativePositionMessage: public PositionMessage{$/;"	c	namespace:Messages
+Release	vision/VideoReceiverInterface.cpp	/^    virtual ULONG STDMETHODCALLTYPE  Release(void){return 0;};$/;"	f	class:VideoCallback
+Some	perhaps/perhaps.h	/^    Some(T value): Option<T>(value){};$/;"	f	class:Some
+Some	perhaps/perhaps.h	/^class Some: public Option<T>{$/;"	c
+UI	ui/ui.cpp	/^UI::UI( QWidget *parent,$/;"	f	class:UI
+UI	ui/ui.h	/^class UI : public QMainWindow$/;"	c
+UI	ui/ui_ui.h	/^    class UI: public Ui_UI {};$/;"	c	namespace:Ui
+UI_H	ui/ui.h	/^#define UI_H$/;"	d
+UI_IMAGEVIEW_H	ui/ui_imageview.h	/^#define UI_IMAGEVIEW_H$/;"	d
+UI_UI_H	ui/ui_ui.h	/^#define UI_UI_H$/;"	d
+USE_PLANE_SIZE	vision/Vision.cpp	/^#define USE_PLANE_SIZE /;"	d	file:
+USE_POSITION	vision/Vision.cpp	/^#define USE_POSITION /;"	d	file:
+USE_RATIO	vision/Vision.cpp	/^#define USE_RATIO /;"	d	file:
+Ui	ui/imageview.h	/^namespace Ui {$/;"	n
+Ui	ui/ui.h	/^namespace Ui {$/;"	n
+Ui	ui/ui_imageview.h	/^namespace Ui {$/;"	n
+Ui	ui/ui_ui.h	/^namespace Ui {$/;"	n
+Ui_ImageView	ui/ui_imageview.h	/^class Ui_ImageView$/;"	c
+Ui_UI	ui/ui_ui.h	/^class Ui_UI$/;"	c
+UseRSSIMessage	util/Messages.h	/^  class UseRSSIMessage: public PositionMessage{$/;"	c	namespace:Messages
+VIDEORECIEVERINTERFACE_H	vision/VideoReceiverInterface.h	/^#define VIDEORECIEVERINTERFACE_H$/;"	d
+VISION_H	vision/Vision.h	/^#define VISION_H /;"	d
+VideoCallback	vision/VideoReceiverInterface.cpp	/^    VideoCallback(VideoReceiverInterface* vInterface): IDeckLinkInputCallback(),vInterface(vInterface){};$/;"	f	class:VideoCallback
+VideoCallback	vision/VideoReceiverInterface.cpp	/^class VideoCallback : public IDeckLinkInputCallback {$/;"	c	file:
+VideoInputFormatChanged	vision/VideoReceiverInterface.cpp	/^    virtual HRESULT VideoInputFormatChanged(BMDVideoInputFormatChangedEvents,$/;"	f	class:VideoCallback
+VideoInputFrameArrived	vision/VideoReceiverInterface.cpp	/^    virtual HRESULT VideoInputFrameArrived(IDeckLinkVideoInputFrame * videoFrame,$/;"	f	class:VideoCallback
+VideoReceiverInterface	vision/VideoReceiverInterface.cpp	/^VideoReceiverInterface::VideoReceiverInterface(Theron::Framework &framework, Theron::Address frameAnalyzerActor, bool useCompositeInput): framework(framework), frameAnalyzerActor(frameAnalyzerActor) {$/;"	f	class:VideoReceiverInterface
+VideoReceiverInterface	vision/VideoReceiverInterface.cpp	/^VideoReceiverInterface::VideoReceiverInterface(Theron::Framework &framework, string videoFilename, Theron::Address frameAnalyzerActor): framework(framework), frameAnalyzerActor(frameAnalyzerActor) {$/;"	f	class:VideoReceiverInterface
+VideoReceiverInterface	vision/VideoReceiverInterface.h	/^class VideoReceiverInterface {$/;"	c
+Vision	vision/Vision.h	/^    Vision(bool intermediateSteps): intermediateSteps(intermediateSteps) {}$/;"	f	class:Vision
+Vision	vision/Vision.h	/^class Vision {$/;"	c
+VisionHandler	main/MultimodalActor.cpp	/^void MultimodalActor::VisionHandler(const RelativePositionMessage &message,$/;"	f	class:MultimodalActor
+_setPositionFromRadio	gps/GeoreferencingActor.h	/^    bool _setPositionFromRadio = false;$/;"	m	class:GeoreferencingActor
+alt	util/Messages.h	/^      double lat, lon, alt;$/;"	m	class:Messages::GPSDataMessage
+amplification	main/MultimodalActor.h	/^    double amplification = 1.0;$/;"	m	class:MultimodalActor
+amplification	util/Messages.h	/^      int amplification;$/;"	m	class:Messages::AmplificationMessage
+amplificationLabel	ui/ui_ui.h	/^    QLabel *amplificationLabel;$/;"	m	class:Ui_UI
+amplificationSlider	ui/ui_ui.h	/^    QSlider *amplificationSlider;$/;"	m	class:Ui_UI
+baudRate	gps/GPSReceiverInterface.h	/^  int baudRate;$/;"	m	class:GPSReceiverInterface
+baudRate	main/tracker.cpp	/^int baudRate(string baudRate){$/;"	f
+blobXOption	vision/Vision.h	/^    Option<double> blobXOption, blobYOption;$/;"	m	class:Vision
+blobYOption	vision/Vision.h	/^    Option<double> blobXOption, blobYOption;$/;"	m	class:Vision
+calculateAbsolutePosition	gps/GeoreferencingActor.cpp	/^AbsolutePositionMessage GeoreferencingActor::calculateAbsolutePosition(const GPSDataMessage& message){$/;"	f	class:GeoreferencingActor
+calculatePanAndTilt	gps/GeoReference.cpp	/^pair<double,double> GeoReference::calculatePanAndTilt(double lat1, double lon1, double alt1,$/;"	f	class:GeoReference
+calculateRelativePosition	vision/FrameAnalyzerActor.cpp	/^RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const ImageMessage& message){$/;"	f	class:FrameAnalyzerActor
+cameraFunction	vision/VideoReceiverInterface.cpp	/^void VideoReceiverInterface::cameraFunction(bool useCompositeInput){$/;"	f	class:VideoReceiverInterface
+canny	vision/Vision.cpp	/^Mat Vision::canny(Mat grayImage, vector<ImageMessage> &extras){$/;"	f	class:Vision
+centralWidget	ui/ui_ui.h	/^    QWidget *centralWidget;$/;"	m	class:Ui_UI
+centralwidget	ui/ui_imageview.h	/^    QWidget *centralwidget;$/;"	m	class:Ui_ImageView
+colorWeight	vision/Vision.h	/^        double colorWeight;$/;"	m	class:Vision::BlobScore
+colorWeight	vision/Vision.h	/^    double colorWeight = 0;$/;"	m	class:Vision
+colorWeightLabel	ui/ui_ui.h	/^    QLabel *colorWeightLabel;$/;"	m	class:Ui_UI
+colorWeightSlider	ui/ui_ui.h	/^    QSlider *colorWeightSlider;$/;"	m	class:Ui_UI
+computeRatio	vision/Vision.cpp	/^double Vision::computeRatio(CvBlob* blob){$/;"	f	class:Vision
+computeScore	vision/BlobScorer.cpp	/^double BlobScorer::computeScore(double dRatio, double dPosition, double dSize, double dColor,$/;"	f	class:BlobScorer
+computeScore	vision/Vision.cpp	/^double Vision::BlobScore::computeScore(){$/;"	f	class:Vision::BlobScore
+dColor	vision/Vision.h	/^        double dColor;      \/\/ The change in the plane's color$/;"	m	class:Vision::BlobScore
+dPosition	vision/Vision.h	/^        double dPosition; 	\/\/ The change in the plane's position $/;"	m	class:Vision::BlobScore
+dRatio	vision/Vision.h	/^        double dRatio; 		\/\/ The change in the plane's width\/height ratio$/;"	m	class:Vision::BlobScore
+dSize	vision/Vision.h	/^        double dSize; 		\/\/ The change in the plane's size$/;"	m	class:Vision::BlobScore
+debug	util/Log.cpp	/^void Log::debug(string s) {$/;"	f	class:Log
+debugMode	util/Log.h	/^  static bool debugMode;$/;"	m	class:Log
+degToRad	gps/GeoReference.cpp	/^double GeoReference::degToRad(double deg) {$/;"	f	class:GeoReference
+deselectColor	vision/FrameAnalyzerActor.cpp	/^void FrameAnalyzerActor::deselectColor(){$/;"	f	class:FrameAnalyzerActor
+disable	gps/GeoreferencingActor.h	/^    void disable(){disabled = true; }$/;"	f	class:GeoreferencingActor
+disable	vision/FrameAnalyzerActor.h	/^      void disable(){ disabled = true; hasLock = false; }$/;"	f	class:FrameAnalyzerActor
+disabled	gps/GeoreferencingActor.h	/^    bool disabled = true;$/;"	m	class:GeoreferencingActor
+disabled	vision/FrameAnalyzerActor.h	/^    bool disabled = true;$/;"	m	class:FrameAnalyzerActor
+drawLine	vision/FrameAnalyzerActor.h	/^    bool drawLine;$/;"	m	class:FrameAnalyzerActor
+edgeThresholding	vision/Vision.h	/^    int edgeThresholding = 50;$/;"	m	class:Vision
+edgeThresholdingSlider	ui/ui_ui.h	/^    QSlider *edgeThresholdingSlider;$/;"	m	class:Ui_UI
+enable	gps/GeoreferencingActor.h	/^    void enable(){disabled = false; }$/;"	f	class:GeoreferencingActor
+enable	vision/FrameAnalyzerActor.h	/^      void enable(){ disabled = false; }$/;"	f	class:FrameAnalyzerActor
+ep	vision/Vision.h	/^    static constexpr double ep = 216.0\/24389.0;$/;"	m	class:Vision
+error	util/Log.cpp	/^void Log::error(string s) {$/;"	f	class:Log
+exists	perhaps/perhaps.h	/^bool Option<T>::exists(function<bool(T)> p) const {$/;"	f	class:Option
+extras	util/Messages.h	/^      std::vector<ImageMessage> extras;$/;"	m	class:Messages::PlaneVisionMessage
+f_cbrt	vision/Vision.cpp	/^double Vision::f_cbrt(double r){$/;"	f	class:Vision
+fd	main/MultimodalActor.h	/^    int fd;$/;"	m	class:MultimodalActor
+filter	perhaps/perhaps.h	/^Option<T> Option<T>::filter(function<bool(T)> f) const {$/;"	f	class:Option
+filterNot	perhaps/perhaps.h	/^Option<T> Option<T>::filterNot(function<bool(T)> f) const {$/;"	f	class:Option
+findCandidates	vision/Vision.cpp	/^pair<CvBlobs,Mat> Vision::findCandidates(Mat image, vector<ImageMessage> &extras){$/;"	f	class:Vision
+findPlane	vision/Vision.cpp	/^PlaneVisionMessage Vision::findPlane( Mat image, double blobX, double blobY){$/;"	f	class:Vision
+findPlane	vision/Vision.cpp	/^PlaneVisionMessage Vision::findPlane( Mat image,$/;"	f	class:Vision
+flatMap	perhaps/perhaps.h	/^    Option<B> flatMap(function<Option<B>(T)> f) const {$/;"	f	class:Option
+foreach	perhaps/perhaps.h	/^void Option<T>::foreach(function<void(T)> f) const {$/;"	f	class:Option
+frameAnalyzerActor	ui/imageview.h	/^    Theron::Address frameAnalyzerActor;$/;"	m	class:ImageView
+frameAnalyzerActor	ui/ui.h	/^    FrameAnalyzerActor* frameAnalyzerActor;$/;"	m	class:UI
+frameAnalyzerActor	vision/VideoReceiverInterface.h	/^    Theron::Address frameAnalyzerActor;$/;"	m	class:VideoReceiverInterface
+framework	gps/GPSReceiverInterface.h	/^  Theron::Framework& framework;$/;"	m	class:GPSReceiverInterface
+framework	ui/imageview.h	/^    Theron::Framework& framework;$/;"	m	class:ImageView
+framework	vision/VideoReceiverInterface.h	/^    Theron::Framework& framework;$/;"	m	class:VideoReceiverInterface
+fullColorToBW	vision/Vision.cpp	/^Mat Vision::fullColorToBW (Mat image,  vector<ImageMessage> &extras){$/;"	f	class:Vision
+georeferencingActor	gps/GPSReceiverInterface.h	/^  Theron::Address georeferencingActor;$/;"	m	class:GPSReceiverInterface
+georeferencingActor	ui/ui.h	/^    GeoreferencingActor* georeferencingActor;$/;"	m	class:UI
+get	perhaps/perhaps.h	/^T Option<T>::get() const {$/;"	f	class:Option
+getDisplacement	util/Messages.cpp	/^vector<int> PlaneVisionMessage::getDisplacement(){$/;"	f	class:PlaneVisionMessage
+getDisplacement	vision/Vision.cpp	/^vector<double> Vision::getDisplacement(CvBlob* blob1, CvBlob* blob2){$/;"	f	class:Vision
+getOrElse	perhaps/perhaps.h	/^T Option<T>::getOrElse (T _else) const {$/;"	f	class:Option
+getScore	vision/BlobScorer.cpp	/^double BlobScorer::getScore(double diff, double& maxDiff){$/;"	f	class:BlobScorer
+getScore	vision/Vision.cpp	/^double Vision::BlobScore::getScore(double diff, double& maxDiff){$/;"	f	class:Vision::BlobScore
+goodA	vision/Vision.h	/^    double goodL, goodA, goodB;$/;"	m	class:Vision
+goodB	vision/Vision.h	/^    double goodL, goodA, goodB;$/;"	m	class:Vision
+goodL	vision/Vision.h	/^    double goodL, goodA, goodB;$/;"	m	class:Vision
+gpsLost	main/MultimodalActor.h	/^    bool gpsLost;$/;"	m	class:MultimodalActor
+hasColor	vision/Vision.h	/^    bool hasColor = false;$/;"	m	class:Vision
+hasData	util/Messages.h	/^      bool hasData;$/;"	m	class:Messages::GPSDataMessage
+hasLock	vision/FrameAnalyzerActor.h	/^    bool hasLock = false;$/;"	m	class:FrameAnalyzerActor
+hasPlane	util/Messages.h	/^      bool hasPlane;$/;"	m	class:Messages::PlaneVisionMessage
+hasValue	perhaps/perhaps.h	/^    bool hasValue;$/;"	m	class:Option
+height	ui/imageview.h	/^    int width, height;$/;"	m	class:ImageView
+horizontalLayout	ui/ui_ui.h	/^    QHBoxLayout *horizontalLayout;$/;"	m	class:Ui_UI
+horizontalLayout_2	ui/ui_ui.h	/^    QHBoxLayout *horizontalLayout_2;$/;"	m	class:Ui_UI
+horizontalSpacer	ui/ui_ui.h	/^    QSpacerItem *horizontalSpacer;$/;"	m	class:Ui_UI
+image	util/Messages.h	/^      cv::Mat image;$/;"	m	class:Messages::ImageMessage
+imageLabel	ui/ui_imageview.h	/^    QLabel *imageLabel;$/;"	m	class:Ui_ImageView
+imageView	ui/imageview.h	/^    Ui::ImageView *imageView;$/;"	m	class:ImageView
+imageViewer	vision/FrameAnalyzerActor.h	/^    Theron::Address imageViewer;$/;"	m	class:FrameAnalyzerActor
+instructGimbal	main/MultimodalActor.cpp	/^void MultimodalActor::instructGimbal(const PositionMessage &message){$/;"	f	class:MultimodalActor
+intermediateSteps	vision/Vision.h	/^    bool intermediateSteps;$/;"	m	class:Vision
+iplImageToQImage	ui/imageview.cpp	/^QImage ImageView::iplImageToQImage(Mat image) {$/;"	f	class:ImageView
+isDefined	perhaps/perhaps.h	/^    bool isDefined() const { return hasValue; }$/;"	f	class:Option
+isEmpty	perhaps/perhaps.h	/^    bool isEmpty() const { return !hasValue; }$/;"	f	class:Option
+isEven	perhaps/test.cpp	/^bool isEven(int x){$/;"	f
+ka	vision/Vision.h	/^    static constexpr double ka = 24389.0\/27.0;$/;"	m	class:Vision
+keyPressEvent	ui/ui.cpp	/^void UI::keyPressEvent(QKeyEvent *e){$/;"	f	class:UI
+lat	util/Messages.h	/^      double lat, lon, alt;$/;"	m	class:Messages::GPSDataMessage
+log	util/Log.cpp	/^void Log::log(string s) {$/;"	f	class:Log
+lon	util/Messages.h	/^      double lat, lon, alt;$/;"	m	class:Messages::GPSDataMessage
+main	main/tracker.cpp	/^int main(int argc, char* argv[]){$/;"	f
+main	perhaps/test.cpp	/^int main(int argc, char* argv[]) {$/;"	f
+main	test/georeferencetest.cpp	/^int main(int argc, char** argv){$/;"	f
+mainLayout	ui/ui_ui.h	/^    QVBoxLayout *mainLayout;$/;"	m	class:Ui_UI
+map	perhaps/perhaps.h	/^    Option<B> map(function<B(T)> f) const {$/;"	f	class:Option
+maxBlobSize	vision/Vision.h	/^    int maxBlobSize = 40;$/;"	m	class:Vision
+maxBlobSizeLabel	ui/ui_ui.h	/^    QLabel *maxBlobSizeLabel;$/;"	m	class:Ui_UI
+maxBlobSlider	ui/ui_ui.h	/^    QSlider *maxBlobSlider;$/;"	m	class:Ui_UI
+maxdColor	vision/BlobScorer.h	/^    double maxdColor = 0;$/;"	m	class:BlobScorer
+maxdPosition	vision/BlobScorer.h	/^    double maxdPosition = 0;$/;"	m	class:BlobScorer
+maxdRatio	vision/BlobScorer.h	/^    double maxdRatio = 0;$/;"	m	class:BlobScorer
+maxdSize	vision/BlobScorer.h	/^    double maxdSize = 0;$/;"	m	class:BlobScorer
+menuBar	ui/ui_ui.h	/^    QMenuBar *menuBar;$/;"	m	class:Ui_UI
+menubar	ui/ui_imageview.h	/^    QMenuBar *menubar;$/;"	m	class:Ui_ImageView
+minBlobSize	vision/Vision.h	/^    int minBlobSize = 0;$/;"	m	class:Vision
+minBlobSizeLabel	ui/ui_ui.h	/^    QLabel *minBlobSizeLabel;$/;"	m	class:Ui_UI
+minBlobSlider	ui/ui_ui.h	/^    QSlider *minBlobSlider;$/;"	m	class:Ui_UI
+mouseDoubleClickEvent	ui/imageview.cpp	/^void ImageView::mouseDoubleClickEvent(QMouseEvent *event){$/;"	f	class:ImageView
+multiModalActor	gps/GeoreferencingActor.h	/^    Theron::Address multiModalActor;$/;"	m	class:GeoreferencingActor
+multimodalActor	ui/ui.h	/^    MultimodalActor* multimodalActor;$/;"	m	class:UI
+multimodalActor	vision/FrameAnalyzerActor.h	/^    Theron::Address multimodalActor;$/;"	m	class:FrameAnalyzerActor
+name	util/Messages.h	/^      std::string name;$/;"	m	class:Messages::ImageMessage
+noneGetException	perhaps/perhaps.h	/^class noneGetException: public exception$/;"	c
+noneIntFunc	perhaps/test.cpp	/^None<int> noneIntFunc(){$/;"	f
+operator !=	perhaps/perhaps.h	/^    bool operator!=(const Option<B> &other) const { $/;"	f	class:Option
+operator *	perhaps/perhaps.h	/^    T operator*() const{ return this->get(); }$/;"	f	class:Option
+operator ==	perhaps/perhaps.h	/^    bool operator==(const Option<B> &other) const { $/;"	f	class:Option
+orElse	perhaps/perhaps.h	/^Option<T> Option<T>::orElse (function<Option<T>()> _else) const {$/;"	f	class:Option
+pan	ui/ui.h	/^    int pan = 0, tilt = 0;$/;"	m	class:UI
+pan	util/Messages.h	/^      double pan, tilt;$/;"	m	class:Messages::PositionMessage
+panSlider	ui/ui_ui.h	/^    QSlider *panSlider;$/;"	m	class:Ui_UI
+panTiltLabel	ui/ui_ui.h	/^    QLabel *panTiltLabel;$/;"	m	class:Ui_UI
+panTiltLayout	ui/ui_ui.h	/^    QVBoxLayout *panTiltLayout;$/;"	m	class:Ui_UI
+parseLatitudeOrLongitude	gps/Protocol.cpp	/^double Protocol::parseLatitudeOrLongitude(string input){$/;"	f	class:Protocol
+parseSerialInputForGPS	gps/Protocol.cpp	/^GPSDataMessage Protocol::parseSerialInputForGPS(string input, string& extra) {$/;"	f	class:Protocol
+parseSerialInputLineForGPS	gps/Protocol.cpp	/^GPSDataMessage Protocol::parseSerialInputLineForGPS(string input) { $/;"	f	class:Protocol
+perhapsFun	perhaps/fun.h	/^namespace perhapsFun {$/;"	n
+planeBlob	util/Messages.h	/^      cvb::CvBlob planeBlob;$/;"	m	class:Messages::PlaneVisionMessage
+planeColorButton	ui/ui_ui.h	/^    QPushButton *planeColorButton;$/;"	m	class:Ui_UI
+positionLost	util/Messages.h	/^      bool positionLost;$/;"	m	class:Messages::PositionMessage
+positionWeight	vision/Vision.h	/^        double positionWeight;$/;"	m	class:Vision::BlobScore
+positionWeight	vision/Vision.h	/^    double positionWeight = 0;$/;"	m	class:Vision
+positionWeightLabel	ui/ui_ui.h	/^    QLabel *positionWeightLabel;$/;"	m	class:Ui_UI
+positionWeightSlider	ui/ui_ui.h	/^    QSlider *positionWeightSlider;$/;"	m	class:Ui_UI
+prepareForScoring	vision/BlobScorer.cpp	/^void BlobScorer::prepareForScoring(double dRatio,double dPosition,double dSize,double dColor){$/;"	f	class:BlobScorer
+previousPlanes	vision/FrameAnalyzerActor.h	/^    list<PlaneVisionMessage> previousPlanes;$/;"	m	class:FrameAnalyzerActor
+primaryControls	ui/ui_ui.h	/^    QHBoxLayout *primaryControls;$/;"	m	class:Ui_UI
+ratioWeight	vision/Vision.h	/^        double ratioWeight;$/;"	m	class:Vision::BlobScore
+ratioWeight	vision/Vision.h	/^    double ratioWeight = 0;$/;"	m	class:Vision
+ratioWeightLabel	ui/ui_ui.h	/^    QLabel *ratioWeightLabel;$/;"	m	class:Ui_UI
+ratioWeightSlider	ui/ui_ui.h	/^    QSlider *ratioWeightSlider;$/;"	m	class:Ui_UI
+receiver	gps/GPSReceiverInterface.h	/^  Theron::Receiver receiver;$/;"	m	class:GPSReceiverInterface
+receiver	ui/imageview.h	/^    Theron::Receiver receiver;$/;"	m	class:ImageView
+receiver	vision/VideoReceiverInterface.h	/^    Theron::Receiver receiver;$/;"	m	class:VideoReceiverInterface
+result	util/Messages.h	/^      cv::Mat result;$/;"	m	class:Messages::PlaneVisionMessage
+retranslateUi	ui/ui_imageview.h	/^    void retranslateUi(QMainWindow *ImageView)$/;"	f	class:Ui_ImageView
+retranslateUi	ui/ui_ui.h	/^    void retranslateUi(QMainWindow *UI)$/;"	f	class:Ui_UI
+rgbToCielab	vision/Vision.cpp	/^void Vision::rgbToCielab(uchar _r, uchar _g, uchar _b, double& l, double& a, double& b){$/;"	f	class:Vision
+safeDivide	perhaps/fun.cpp	/^Option<double> perhapsFun::safeDivide(double top, double bottom) {$/;"	f	class:perhapsFun
+safeDivide	perhaps/test.cpp	/^Option<double> safeDivide (int a, int b){$/;"	f
+scale	ui/imageview.h	/^    double scale;$/;"	m	class:ImageView
+scale	vision/FrameAnalyzerActor.h	/^    double scale = 1.0; $/;"	m	class:FrameAnalyzerActor
+scoreControls	ui/ui_ui.h	/^    QHBoxLayout *scoreControls;$/;"	m	class:Ui_UI
+selectColor	vision/FrameAnalyzerActor.cpp	/^void FrameAnalyzerActor::selectColor(){$/;"	f	class:FrameAnalyzerActor
+selectPlaneColor	ui/ui.cpp	/^void UI::selectPlaneColor(bool enabled){$/;"	f	class:UI
+sendGPSData	gps/GPSReceiverInterface.cpp	/^void GPSReceiverInterface::sendGPSData(const GPSDataMessage message){$/;"	f	class:GPSReceiverInterface
+sendImage	ui/imageview.h	/^    void sendImage(cv::Mat image){$/;"	f	class:ImageView
+sendImage	vision/VideoReceiverInterface.cpp	/^void VideoReceiverInterface::sendImage(Mat image){$/;"	f	class:VideoReceiverInterface
+serialPort	gps/GPSReceiverInterface.h	/^  std::string serialPort;$/;"	m	class:GPSReceiverInterface
+setAmplification	main/MultimodalActor.cpp	/^void MultimodalActor::setAmplification(double amplification){$/;"	f	class:MultimodalActor
+setColorWeight	vision/FrameAnalyzerActor.h	/^      void setColorWeight(int weight) { vision->setColorWeight(weight); }$/;"	f	class:FrameAnalyzerActor
+setColorWeight	vision/Vision.h	/^    void setColorWeight(int weight) {colorWeight = (double)weight \/ 100.0;}$/;"	f	class:Vision
+setEdgeThresholding	vision/FrameAnalyzerActor.h	/^      void setEdgeThresholding(int thresholding){ vision->setEdgeThresholding(thresholding); }$/;"	f	class:FrameAnalyzerActor
+setEdgeThresholding	vision/Vision.h	/^    void setEdgeThresholding(int thresholding){ this->edgeThresholding = thresholding; }$/;"	f	class:Vision
+setMaxBlobSize	vision/FrameAnalyzerActor.h	/^      void setMaxBlobSize(int blobSize){ vision->setMaxBlobSize(blobSize); }$/;"	f	class:FrameAnalyzerActor
+setMaxBlobSize	vision/Vision.h	/^    void setMaxBlobSize(int blobSize){ this->maxBlobSize = blobSize; }$/;"	f	class:Vision
+setMinBlobSize	vision/FrameAnalyzerActor.h	/^      void setMinBlobSize(int blobSize){ vision->setMinBlobSize(blobSize); }$/;"	f	class:FrameAnalyzerActor
+setMinBlobSize	vision/Vision.h	/^    void setMinBlobSize(int blobSize){ this->minBlobSize = blobSize; }$/;"	f	class:Vision
+setPlaneBlob	vision/Vision.h	/^    void setPlaneBlob(double blobX, double blobY){ $/;"	f	class:Vision
+setPosition	gps/GeoreferencingActor.cpp	/^void GeoreferencingActor::setPosition(double lat, double lon, double alt){$/;"	f	class:GeoreferencingActor
+setPositionFromRadio	gps/GeoreferencingActor.h	/^    void setPositionFromRadio(){$/;"	f	class:GeoreferencingActor
+setPositionWeight	vision/FrameAnalyzerActor.h	/^      void setPositionWeight(int weight) { vision->setPositionWeight(weight); }$/;"	f	class:FrameAnalyzerActor
+setPositionWeight	vision/Vision.h	/^    void setPositionWeight(int weight) {positionWeight = (double)weight \/ 100.0;};$/;"	f	class:Vision
+setRatioWeight	vision/FrameAnalyzerActor.h	/^      void setRatioWeight(int weight) { vision->setRatioWeight(weight); }$/;"	f	class:FrameAnalyzerActor
+setRatioWeight	vision/Vision.h	/^    void setRatioWeight(int weight) {ratioWeight = (double)weight \/ 100.0;}$/;"	f	class:Vision
+setSizeWeight	vision/FrameAnalyzerActor.h	/^      void setSizeWeight(int weight) { vision->setSizeWeight(weight); }$/;"	f	class:FrameAnalyzerActor
+setSizeWeight	vision/Vision.h	/^    void setSizeWeight(int weight) {sizeWeight = (double)weight \/ 100.0;}$/;"	f	class:Vision
+setTrackerGPSFromFields	ui/ui.cpp	/^void UI::setTrackerGPSFromFields(){$/;"	f	class:UI
+setTrackerGPSFromRadio	ui/ui.cpp	/^void UI::setTrackerGPSFromRadio(){$/;"	f	class:UI
+setUseColor	vision/Vision.h	/^    void setUseColor(bool useColor) { this->useColor = useColor; this->hasColor = false; }$/;"	f	class:Vision
+setUsePosition	vision/Vision.h	/^    void setUsePosition(bool usePosition) { this->usePosition = usePosition; }$/;"	f	class:Vision
+setUseRatio	vision/Vision.h	/^    void setUseRatio(bool useRatio) { this->useRatio= useRatio; }$/;"	f	class:Vision
+setUseSize	vision/Vision.h	/^    void setUseSize(bool useSize) { this->useSize = useSize; }$/;"	f	class:Vision
+setupUi	ui/ui_imageview.h	/^    void setupUi(QMainWindow *ImageView)$/;"	f	class:Ui_ImageView
+setupUi	ui/ui_ui.h	/^    void setupUi(QMainWindow *UI)$/;"	f	class:Ui_UI
+showImage	main/tracker.cpp	/^void showImage(ImageView* imageView, Mat image, int width, int height){$/;"	f
+sizeWeight	vision/Vision.h	/^        double sizeWeight;$/;"	m	class:Vision::BlobScore
+sizeWeight	vision/Vision.h	/^    double sizeWeight = 0;$/;"	m	class:Vision
+sizeWeightLabel	ui/ui_ui.h	/^    QLabel *sizeWeightLabel;$/;"	m	class:Ui_UI
+sizeWeightSlider	ui/ui_ui.h	/^    QSlider *sizeWeightSlider;$/;"	m	class:Ui_UI
+someIntFunc	perhaps/test.cpp	/^Some<int> someIntFunc(){$/;"	f
+statusBar	ui/ui_ui.h	/^    QStatusBar *statusBar;$/;"	m	class:Ui_UI
+statusbar	ui/ui_imageview.h	/^    QStatusBar *statusbar;$/;"	m	class:Ui_ImageView
+success	util/Log.cpp	/^void Log::success(string s) {$/;"	f	class:Log
+thresholdingLabel	ui/ui_ui.h	/^    QLabel *thresholdingLabel;$/;"	m	class:Ui_UI
+throwException	perhaps/test.cpp	/^void throwException(int dummy){$/;"	f
+tilt	ui/ui.h	/^    int pan = 0, tilt = 0;$/;"	m	class:UI
+tilt	util/Messages.h	/^      double pan, tilt;$/;"	m	class:Messages::PositionMessage
+tiltSlider	ui/ui_ui.h	/^    QSlider *tiltSlider;$/;"	m	class:Ui_UI
+toBytes	util/Messages.cpp	/^vector<char> AbsolutePositionMessage::toBytes() const{$/;"	f	class:AbsolutePositionMessage
+toBytes	util/Messages.cpp	/^vector<char> RelativePositionMessage::toBytes() const {$/;"	f	class:RelativePositionMessage
+toBytes	util/Messages.cpp	/^vector<char> UseRSSIMessage::toBytes() const{$/;"	f	class:UseRSSIMessage
+toDouble	perhaps/test.cpp	/^double toDouble (int input){$/;"	f
+toVector	perhaps/perhaps.h	/^vector<T> Option<T>::toVector() const {$/;"	f	class:Option
+toggleGPS	ui/ui.cpp	/^void UI::toggleGPS(bool disabled) {$/;"	f	class:UI
+toggleGPSButton	ui/ui_ui.h	/^    QPushButton *toggleGPSButton;$/;"	m	class:Ui_UI
+toggleVideo	ui/ui.cpp	/^void UI::toggleVideo(bool disabled){$/;"	f	class:UI
+toggleVideoButton	ui/ui_ui.h	/^    QPushButton *toggleVideoButton;$/;"	m	class:Ui_UI
+trackerAltitude	gps/GeoreferencingActor.h	/^    double trackerLatitude,trackerLongitude,trackerAltitude;$/;"	m	class:GeoreferencingActor
+trackerAltitudeLabel	ui/ui_ui.h	/^    QLabel *trackerAltitudeLabel;$/;"	m	class:Ui_UI
+trackerAltitudeLayout	ui/ui_ui.h	/^    QVBoxLayout *trackerAltitudeLayout;$/;"	m	class:Ui_UI
+trackerAltitudeTextEdit	ui/ui_ui.h	/^    QPlainTextEdit *trackerAltitudeTextEdit;$/;"	m	class:Ui_UI
+trackerLatitude	gps/GeoreferencingActor.h	/^    double trackerLatitude,trackerLongitude,trackerAltitude;$/;"	m	class:GeoreferencingActor
+trackerLatitudeLabel	ui/ui_ui.h	/^    QLabel *trackerLatitudeLabel;$/;"	m	class:Ui_UI
+trackerLatitudeLayout	ui/ui_ui.h	/^    QVBoxLayout *trackerLatitudeLayout;$/;"	m	class:Ui_UI
+trackerLatitudeTextEdit	ui/ui_ui.h	/^    QPlainTextEdit *trackerLatitudeTextEdit;$/;"	m	class:Ui_UI
+trackerLongitude	gps/GeoreferencingActor.h	/^    double trackerLatitude,trackerLongitude,trackerAltitude;$/;"	m	class:GeoreferencingActor
+trackerLongitudeLabel	ui/ui_ui.h	/^    QLabel *trackerLongitudeLabel;$/;"	m	class:Ui_UI
+trackerLongitudeLayout	ui/ui_ui.h	/^    QVBoxLayout *trackerLongitudeLayout;$/;"	m	class:Ui_UI
+trackerLongitudeTextEdit	ui/ui_ui.h	/^    QPlainTextEdit *trackerLongitudeTextEdit;$/;"	m	class:Ui_UI
+trackerPositionSettings	ui/ui_ui.h	/^    QVBoxLayout *trackerPositionSettings;$/;"	m	class:Ui_UI
+ui	ui/ui.h	/^    Ui::UI *ui;$/;"	m	class:UI
+updateAmplification	ui/ui.cpp	/^void UI::updateAmplification(int amplification){$/;"	f	class:UI
+updateColorWeight	ui/ui.cpp	/^void UI::updateColorWeight(int weight){$/;"	f	class:UI
+updateEdgeThresholding	ui/ui.cpp	/^void UI::updateEdgeThresholding(int thresholding){$/;"	f	class:UI
+updateImage	ui/imageview.cpp	/^void ImageView::updateImage(Mat image){$/;"	f	class:ImageView
+updateMaxBlobSize	ui/ui.cpp	/^void UI::updateMaxBlobSize(int blobSize){$/;"	f	class:UI
+updateMinBlobSize	ui/ui.cpp	/^void UI::updateMinBlobSize(int blobSize){$/;"	f	class:UI
+updatePan	ui/ui.cpp	/^void UI::updatePan(int pan){$/;"	f	class:UI
+updatePositionWeight	ui/ui.cpp	/^void UI::updatePositionWeight(int weight){$/;"	f	class:UI
+updateRatioWeight	ui/ui.cpp	/^void UI::updateRatioWeight(int weight){$/;"	f	class:UI
+updateSizeWeight	ui/ui.cpp	/^void UI::updateSizeWeight(int weight){$/;"	f	class:UI
+updateTilt	ui/ui.cpp	/^void UI::updateTilt(int tilt){$/;"	f	class:UI
+useColor	vision/Vision.h	/^    bool useColor = false;$/;"	m	class:Vision
+usePosition	vision/Vision.h	/^    bool usePosition = true;$/;"	m	class:Vision
+useRSSI	main/MultimodalActor.h	/^    bool useRSSI;$/;"	m	class:MultimodalActor
+useRadioPosition	ui/ui_ui.h	/^    QPushButton *useRadioPosition;$/;"	m	class:Ui_UI
+useRatio	vision/Vision.h	/^    bool useRatio = true;$/;"	m	class:Vision
+useSize	vision/Vision.h	/^    bool useSize = true;$/;"	m	class:Vision
+useTextPosition	ui/ui_ui.h	/^    QPushButton *useTextPosition;$/;"	m	class:Ui_UI
+vInterface	vision/VideoReceiverInterface.cpp	/^    VideoReceiverInterface* vInterface;$/;"	m	class:VideoCallback	file:
+value	perhaps/perhaps.h	/^    T value;$/;"	m	class:Option
+videoFunction	vision/VideoReceiverInterface.cpp	/^void VideoReceiverInterface::videoFunction(string videoFilename){$/;"	f	class:VideoReceiverInterface
+videoLost	main/MultimodalActor.h	/^    bool videoLost;$/;"	m	class:MultimodalActor
+vision	vision/FrameAnalyzerActor.h	/^    Vision* vision;$/;"	m	class:FrameAnalyzerActor
+warn	util/Log.cpp	/^void Log::warn(string s) {$/;"	f	class:Log
+what	perhaps/perhaps.h	/^  virtual const char* what() const throw() {$/;"	f	class:noneGetException
+width	ui/imageview.h	/^    int width, height;$/;"	m	class:ImageView
+workerFunction	gps/GPSReceiverInterface.cpp	/^void GPSReceiverInterface::workerFunction(){$/;"	f	class:GPSReceiverInterface
+x	util/Messages.h	/^      double x,y;$/;"	m	class:Messages::BlobPositionMessage
+y	util/Messages.h	/^      double x,y;$/;"	m	class:Messages::BlobPositionMessage
+~ImageView	ui/imageview.cpp	/^ImageView::~ImageView()$/;"	f	class:ImageView
+~UI	ui/ui.cpp	/^UI::~UI()$/;"	f	class:UI
