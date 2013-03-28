@@ -1,0 +1,329 @@
+namespace PlaneTracking {
+
+  ////////// UI ////////////////////
+
+  UI {
+    pointer to commanders
+    pointer to dataAggregotor
+  }
+  /////// Raw Data Receivers ////////
+
+  StandardVideoReceiever: VideoReceiverInterface {
+    StandardVideoReceiever()
+  }
+
+  ImageVideoReceiver: VideoReceiverInterface {
+    ImageVideoReceiver(ImageSource)
+  }
+
+  VideoFileReceiver: VideoReceiverInterface {
+    VideoFileReceiver(VideoFileSource)
+  }
+
+  abstract class VideoReceiverInterface: RawDataReceiver {
+  }
+
+  abstract class GPSReceiverInterface: RawDataReceiver {
+    GPSReceiverInterface(SerialConnectionData)
+  }
+
+  class: RawDataReceiver {
+    public: 
+      void startDataReceiverThread override
+
+    private:
+      void dataReceiverThreadFunction override
+      Address targetAddress;
+  }
+
+  PlaneGPSReceiver : GPSReceiverInterface {
+    PlaneGPSReceiver(SerialConnectionData)
+  }
+
+  SerialTrackerGPSReceiver : GPSReceiverInterface {
+    TrackerGPSReceiver(SerialConnectionData)
+  }
+
+  FixedPositionTracker : GPSReceiverInterface {
+    FixedPositionTracker(GPSData position)
+  }
+
+  RSSITracker : RawDataReceiver 
+
+  //////// RSSI /////////
+  enum Direction {
+    Left, Right
+  }
+
+  struct RSSIDataMessage{
+    double rawResult;
+    Direction direction;
+  }
+
+  ////// Size ////////////
+
+  struct SizePixels {
+    double x;
+    double y
+  }
+
+  struct SizeMeters {
+    double widht;
+    double height;
+  }
+
+  ////////// GPS ///////////
+
+  struct GPSData {
+    double lat;
+    double lon;
+    double altMeters;
+  }
+
+  struct PitchYawDegrees {
+    double pitch;
+    double yaw;
+  }
+
+  namespace Georeference {
+    SizePixels estimatePlaneSize(SizeMeters planeSizeMeters,
+                                    GPSData plane, GPSData tracker,
+                                    CameraArguments camera) const;
+    LocationPixels estimatePlaneLocation(GPSData trackerGPS, GPSData plane, CameraArguments arguments)
+
+    bool planeInFov(GPSData tracker, GPSData plane, CameraArguments arguments)
+    PitchYawDegrees getAngle(GPSData tracker, GPSData plane);
+    bool contradicts(RSSIDataMessage, GPSDataMessage);
+    
+    bool shouldConsiderBlob(Blob planeBlob, Direction dir, CameraArguments arguments)
+  }
+
+
+  //////////////// Vision ///////////////
+
+  struct ColorHSV {
+    double hue;
+    double saturation;
+    double value;
+  }
+
+  /////////// Camera ///////////////////
+
+  struct CameraArguments {
+    double horizontalFOV;
+    double verticalFOV;
+    SizePixels imageDimensions;
+  }
+
+
+  ///////////// GimbalCommands ////////////
+
+  struct CommanderStation {
+    CommandStation{
+      DataPointers;
+      Vision vision;
+    }
+    GimbalCommander getGimbalCommanderForMode( mode )
+      AllAvailableCommander 
+      VideoGPSNoRSSICommander 
+      VideoRSSINoGPSCommander 
+      VideoCommander 
+      GPSCommander
+      RSSICommander
+      NoCommander
+      UICommander
+  }
+
+
+  ///////// Aggregation //////////////
+
+  class GimbalCommandSender {
+    GimbalCommandSender(CommandStation, Args)
+    public:
+      void sendCommandUsingMode(TrackingMode)
+      void sendCommand(GimbalCommand)
+  }
+
+  class DataAggregator {
+    friend struct CommandStation
+    
+    public:
+      bool disableVideo();
+      bool disablePlaneGPS();
+      bool disableTrackerGPS();
+      bool disableRSSI();
+
+      bool enableVideo();
+      bool enablePlaneGPS();
+      bool enableTrackerGPS();
+      bool enableRSSI();
+
+      double setTrackerPitch();
+      double setTrackerYaw();
+
+    private:
+      SizePixels estimatePlaneSizePixels(); 
+
+      TrackingMode getCurrentTrackingMode();
+      
+      void pingGimbalCommandSender(GimbalCommandSender);
+
+      void updateVideoData( PlaneVisionMessage )
+      void updateTrackerGPSData( GPSDataMessage )
+      void updatePlaneGPSData( GPSDataMessage )
+      void updateRSSIData( Direction )
+      void updateTrackerOrientation( TrackerOrientationMessage )
+
+      bool hasVideo() const
+      bool hasPlaneGPS() const 
+      bool hasRSSI() const
+
+      double videoTimeoutMS;
+      double planeGPSTimeoutMS;
+      double rssiTimeoutMS;
+  }
+
+  class VideoAvailable {
+    private:
+      option<PlaneDataMessage> lastPlaneData;
+      PlaneVisionMessage videoData;
+  }
+
+  class GPSAvailable {
+    private:
+      GPSDataMessage planeGPS;
+      GPSDataMessage trackerGPS;
+  }
+
+  class RSSIAvailable {
+    private:
+      RSSIDataMessage rssiData;
+  }
+
+  class Commander {
+    public:
+      virtual GimbalActionMessage getCommand()
+  }
+
+
+  class AllAvailableCommander : VideoAvailable, GPSAvailable, RSSIAvailable, Commander {
+    getCommand() {
+      
+    }
+  class VideoGPSNoRSSICommander : VideoAvailable, GPSAvailable, Commander
+  class VideoRSSINoGPSCommander : VideoAvailable, RSSIAvailable, Commander
+  class VideoCommander : VideoAvailable, Commander
+  class GPSCommander: GPSAvailable, Commander
+  class RSSICommander: RSSIAvailable, Commander
+  class NoCommander: Commander
+
+  struct GeoreferenceResultMessage {
+    double angleHorizontalDegrees;
+    double angleVerticalDegrees;
+  }
+
+  class GeoreferencingActor {
+    public:
+      receive(GPSDataMessage message)
+  }
+
+  abstract class VideoSource {
+    public VideoReceiverInterface getInterface()
+  }
+
+  class StandardVideoSource: VideoSource;
+
+  class ImageSource: VideoSource {
+    string imageFilename;
+  }
+
+  class VideoFileSource: VideoSource {
+    string videoFilename; 
+  }
+
+
+  abstract class Arguments {
+    static virtual public array<string> allowedArguments() const;
+    static virtual public array<string> invalidArguments(argc, argv) const;
+  }
+
+  struct PlaneTrackerClientArgs: Arguments {
+    GPSArgs gpsArguments;
+    VideoArgs videoArguments;
+  }
+
+  struct PlaneTrackerClientArgs: Arguments {
+    UIArgs uiArguments;
+    PlaneTrackerBackendArgs backendArgs;j
+    public:
+      PlaneTrackerArgs(String string)
+  }
+
+  struct GPSArgs: Arguments {
+      option<SerialConnectionData> planeGPS;
+      option<SerialConnectionData> trackerGPS;
+  }
+
+  struct VideoArgs: Arguments {
+      option<VideoSource> source;
+  }
+
+  struct UIArgs: UIArguments {
+    private:
+      bool showExtras;
+  }
+
+  class PlaneTrackerClient {
+    public:
+      PlaneTrackerClient(PlaneTrackerArgs args)
+      void run()
+    private:
+      UI ui
+      PlaneTrackerBackend backend
+  }
+
+  class PlaneTrackerBackend {
+    public:
+      PlaneTracker (PlaneTrackerArgs args)
+    private:
+      option<VisionTrackerComponent> visionTrackerComponentOption;
+      option<GPSTrackerComponent> gpsTrackerComponentOption;
+      VisionAndGPSAggregator aggregator;
+      TrackerHardwareController hardwareController;
+      option<UI> ui;
+  }
+
+  class GimbalRotationTrackerComponent: TrackerDatasource {
+    public:
+      void startDataReceiverThread override
+    private:
+      void dataReceiverThreadFunction override
+      Address analyzerAddress
+  }
+
+  class VisionTrackerComponent: TrackerDatasource {
+  private:
+    FrameReceiver receiver
+    FrameAnalyzerActor analyzer
+  }
+
+  class GPSTrackerComponent: TrackerDatasource {
+    GPSReceiver receiver: RawDataReceiver;
+    GPSAnalyzerActor analyzer: PlaneDataMessageSender;
+  }
+
+  class FrameReceiver: RawDataReceiver {
+    public: 
+      void startDataReceiverThread override
+
+    private:
+      void dataReceiverThreadFunction override
+      Address analyzerAddress;
+  }
+
+  class GimbalInstructorActor: Actor {
+    private:
+      void instructGimbal(GimbalActionMessage)
+  }
+
+}

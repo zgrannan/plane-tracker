@@ -1,10 +1,101 @@
 **Overview**
 
-This software uses video and GPS data to instruct our UAV aerial tracking platform. By default,
-this program will analyze video from the HDMI input to a connected Decklink capture card. GPS
-information will be received using a USB-serial connection to any GPS transmitter that
-implements the NMEA protocol. Tracker commands are sent via a USB-serial connection to the 
-Arduino microcontroller connected to the tracker hardware.
+The UAV Tracker is designed to record the flight of a UAV. The tracker combines Computer Vision,
+GPS from the UAV, and RSSI to determine where to point the gimbal. 
+
+The different tracking methods can be combined to provide improved tracking when all three 
+systems are available, and can still perform degraded tracking when one or more of the systems 
+are lost. The tracker also exposes an interface for manual tracking, when necessary.
+
+**Implementation Details**
+
+111
+Case 1 (Video, GPS, and RSSI are available):
+  1. If the RSSI data contradicts the GPS data, proceed to case 4.
+  2. If the GPS data indicates that the plane is not in the camera's FOV, proceed to case 5
+  3. The image is converted to grayscale, canny edge detection is run on the resulting image
+  4. Each blob is given a score, based on the following criteria:
+    1. How close is each blob to the place where GPS indicates the blob should be
+    2. How close is the size to the GPS indicated size
+    3. How far is this blob from the previously detected blob, and does that correspond
+       with the plane's speed?
+    4. Does the color match the indicated color?
+
+110
+Case 2 (Video and GPS available, RSSI not available)
+
+  1. If the GPS data indicates that the plane is not in the camera's FOV, proceed to case 5
+  2. The image is converted to grayscale, canny edge detection is run on the resulting image
+  3. Each blob is given a score, based on the following criteria:
+    1. How close is this blob to the previously detected blob?
+    2. How close is each blob to the place where GPS indicates the blob should be
+    3. How close is the size to the GPS indicated size
+    4. How far is this blob from the previously detected blob, and does that correspond
+       with the plane's speed?
+    5. Does the color match the indicated color?
+
+101
+Case 3 (Video and RSSI available, GPS not available)
+
+  1. The image is converted to grayscale, canny edge detection is run on the resulting image
+  2. If the RSSI indicates the plane is to the left, disregard all blobs to the right
+  3. The remaining blobs are scored based on the following criteria:
+    1. How close is this blob to the previously detected blob?
+    2. Does the color match the indicated color?
+
+100
+Case 4 (Video is available only)
+  1. The image is converted to grayscale, canny edge detection is run on the resulting image
+  2. Blobs are scored based on the following criteria:
+    1. How close is this blob to the previously detected blob?
+    2. Does the color match the indicated color?
+
+011 / 010
+Case 5 (Video is not available, GPS is available, RSSI may or may not be available)
+  1. Use georeferencing to point the gimbal
+
+Case 6 (Only RSSI is available):
+  1. Use RSSI to move the gimbal left or right
+
+case 7 (No data available):
+  1. Do nothing
+
+
+**Tracker Software Components**
+
+`PlaneTrackerClient`:
+
+  `PlaneTrackerClient` contains a `PlaneTrackerBackend` which does the business logic, and 
+  a `UI` object that allows the user to interact with the backend. It is responsible for 
+  applying the arguments from the user to `UI` and `PlaneTrackerBackend`
+
+`PlaneTrackerBackend`:
+  
+  The backend is the main driver for the the UAV Tracker. It contains options for 
+  `VisionTrackerComponent`, for handling the video input, a `GPSTrackerComponent` for 
+  handling the updates to the plane and tracker GPS an `RSSITrackerComponent` for handling 
+  information from the RSSI, and a `TrackerOrientationUpdater` for handling updates to the 
+  tracker orientation. It also has access to a UI object, so that it can notify the UI with 
+  new data. It contains a  `DataAggregatorActor`, which listens to all of the components, and 
+  a `TrackerHardwareController` which allows it to control the tracker.
+
+`GPSTrackerComponent`:
+
+  The GPSTrackerComponent is responsible for listening to updates to the Plane And Tracker
+  GPS. It contains a `PlaneGPSListener` and an optional `TrackerGPSListener`. It sends 
+  `GPSDataMessage`s to the DataAggregatorActor
+
+`VisionTrackerComponent`:
+
+  The VisionTrackerComponent captures frames from the camera using a 
+  `VideoReceiverInterface`. `FrameAnalyzerActor` receives the frames from 
+  `VideoReceiverInterface`, calculates the blobs in the frames, and sends 
+  the resulting `PlaneVisionMessage` to the `DataAggregatorActor`
+
+`RSSITrackerComponent`:
+  
+  The `RSSITrackerComponent` captures RSSI data, and sends resulting `RSSIDataMessage` to 
+  the `DataAggregatorActor`
 
 Here is a sample video that shows the CV algorithm detecting the plane:
 
