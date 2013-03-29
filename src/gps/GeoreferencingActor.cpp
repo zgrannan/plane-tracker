@@ -1,5 +1,5 @@
 #include "src/gps/GeoreferencingActor.h"
-#include "src/gps/Georeference.h"
+#include "src/gps/GeoReference.h"
 #include "src/util/Messages.h"
 #include "src/util/Log.h"
 #include <boost/lexical_cast.hpp>

@@ -10,7 +10,7 @@
 #include <thread>
 #include "src/gps/GPSReceiverInterface.h"
 #include "src/gps/GeoreferencingActor.h"
-#include "src/main/MultiModalActor.h"
+#include "src/main/MultimodalActor.h"
 #include "src/util/Log.h"
 #include "src/vision/FrameAnalyzerActor.h"
 #include "src/vision/VideoReceiverInterface.h"
@@ -41,7 +41,6 @@ int baudRate(const string baudRate){
   if (baudRate == "19200") return B19200;
   if (baudRate == "38400") return B38400;
   if (baudRate == "57600") return B57600;
-  if (baudRate == "76800") return B76800;
   if (baudRate == "115200") return B115200;
   Log::error("Invalid baudrate: " + baudRate);
   return -1;
@@ -317,11 +316,8 @@ int main(int argc, char* argv[]){
   if (arguments.imageFilename == ""){
     Log::log("Spawning VideoReceiver Interface...");
     if (arguments.videoFilename == ""){
-      new VideoReceiverInterface(
-          framework,
-          frameAnalyzerActor->GetAddress(),
-          arguments.useCompositeInput
-          );
+      Log::error("A video or image input file is necessary for this platform.\n");
+      return 1;
     } else {
       new VideoReceiverInterface(
           framework,

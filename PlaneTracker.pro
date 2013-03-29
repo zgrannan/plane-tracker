@@ -6,15 +6,15 @@
 
 QT       += core gui
 
+QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS -= -O2
+
 CONFIG += console
 TARGET = PlaneTracker
 TEMPLATE = app
 
-DEFINES += THERON_BOOST
-
-INCLUDEPATH += /usr/local/include/External 
-INCLUDEPATH += /Users/zgrannan/opencv_trunk/include/opencv
-QMAKE_CXXFLAGS += -isystem /usr/local/include/decklink
+INCLUDEPATH += /home/atom/Theron-5.01.01/Include
+INCLUDEPATH += /usr/include/opencv
 
 OBJECTS_DIR = ./obj
 MOC_DIR = .moc
@@ -22,17 +22,17 @@ UI_DIR = src/ui
 
 LIBS +=  `pkg-config opencv cvblob --cflags --libs` \
   -lopencv_core \
-  -lboost_system-mt \
-  -lboost_iostreams-mt \
+  -lboost_system \
+  -lboost_iostreams \
   -ltherond \
-  -lboost_date_time-mt \
-  -lboost_thread-mt \
-  -lboost_program_options-mt \
+  -lboost_date_time \
+  -lboost_thread \
+  -lboost_program_options \
   -lopencv_highgui \
   -lopencv_imgproc \
   -lm \
-  -lpthread \
-  -framework CoreFoundation \
+  -L/home/atom/Theron-5.01.01/Lib \
+  -lpthread
 
 HEADERS += src/util/Log.h
 HEADERS += src/vision/FrameAnalyzerActor.h

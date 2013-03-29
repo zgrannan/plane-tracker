@@ -5,7 +5,7 @@
 #include "src/vision/Vision.h"
 #include "src/util/Log.h"
 #include "src/perhaps/perhaps.h"
-#include "src/perhaps/fun.cpp"
+//#include "src/perhaps/fun.cpp"
 #include <boost/lexical_cast.hpp>
 
 using namespace cvb;
