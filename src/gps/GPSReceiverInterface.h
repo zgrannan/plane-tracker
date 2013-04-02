@@ -11,7 +11,7 @@ namespace PlaneTracking {
                            shared_ptr<SerialConnection> serial);
     
     protected:
-      static virtual GPSCoordinateMessage toMessage(GPSCoordinate coordinate) const = 0;
+      static virtual Message<GPSCoordinate> toMessage(GPSCoordinate coordinate) const = 0;
       shared_ptr<GPSProtocol> protocol;
       shared_ptr<SerialConnection> serial;
   };

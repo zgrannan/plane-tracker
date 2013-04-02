@@ -6,4 +6,7 @@ namespace PlaneTracking {
     double lon;
     Units::Meters altitude;
   }
+
+  struct PlaneGPSCoordinate : public GPSCoordinate {};
+  struct TrackerGPSCoordinate : public GPSCoordinate {};
 }

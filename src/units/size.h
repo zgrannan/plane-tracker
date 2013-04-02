@@ -2,8 +2,8 @@
 
 namespace PlaneTracking {
   namespace Units {
-    struct Meters {
-      double meters;
+    struct Size<typename T> {
+      T width, height;
     }
   }
 }
