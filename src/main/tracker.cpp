@@ -156,7 +156,7 @@ int main(int argc, char* argv[]){
   Theron::Address                           from;
   PlaneVisionMessage                        message;
 
-  int displayWindowWidth = 1920;
+  int displayWindowWidth = 720;
   int displayWindowHeight = 486;
 
 
