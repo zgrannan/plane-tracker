@@ -9,7 +9,7 @@ QT       += core gui
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_CXXFLAGS -= -O2
 
-CONFIG += console
+CONFIG += console debug
 TARGET = PlaneTracker
 TEMPLATE = app
 

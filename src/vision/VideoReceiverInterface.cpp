@@ -16,6 +16,18 @@ void VideoReceiverInterface::sendImage(IplImage* image){
   framework.Send(message,receiver.GetAddress(),frameAnalyzerActor);
 }
 
+void VideoReceiverInterface::cameraFunction(){
+  VideoCapture capture(0);
+  Mat temp;
+  IplImage* image;
+  while(true){
+    capture >> temp;
+    IplImage tempIpl = temp;
+    image = new IplImage(tempIpl);
+    sendImage(cvCloneImage(image));
+  }
+}
+
 void VideoReceiverInterface::videoFunction(string videoFilename){
   int startFrame = 0;
   int framerate = 10;
@@ -36,4 +48,8 @@ void VideoReceiverInterface::videoFunction(string videoFilename){
 
 VideoReceiverInterface::VideoReceiverInterface(Theron::Framework &framework, string videoFilename, Theron::Address frameAnalyzerActor): framework(framework), frameAnalyzerActor(frameAnalyzerActor) {
   boost::thread workerThread(&VideoReceiverInterface::videoFunction, this, videoFilename);
+}
+
+VideoReceiverInterface::VideoReceiverInterface(Theron::Framework &framework, Theron::Address frameAnalyzerActor): framework(framework), frameAnalyzerActor(frameAnalyzerActor) {
+  boost::thread workerThread(&VideoReceiverInterface::cameraFunction, this);
 }

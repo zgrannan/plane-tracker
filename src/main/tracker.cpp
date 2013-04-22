@@ -316,8 +316,8 @@ int main(int argc, char* argv[]){
   if (arguments.imageFilename == ""){
     Log::log("Spawning VideoReceiver Interface...");
     if (arguments.videoFilename == ""){
-      Log::error("A video or image input file is necessary for this platform.\n");
-      return 1;
+      new VideoReceiverInterface(framework,
+                                 frameAnalyzerActor->GetAddress());
     } else {
       new VideoReceiverInterface(
           framework,
