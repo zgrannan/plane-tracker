@@ -28,11 +28,8 @@ namespace po = boost::program_options;
 /**
  * Displays the image on the screen for debugging purposes
  */
-void showImage(ImageView* const imageView, const IplImage* const image, const int width, const int height){
-  const CvSize newSize = cvSize(width,height);
-  IplImage* const newImage = cvCreateImage(newSize,image->depth,image->nChannels);
-  cvResize(image,newImage); 
-  imageView->sendImage(newImage);
+void showImage(ImageView* const imageView, IplImage* image, const int width, const int height){
+  imageView->sendImage(image);
 }
 
 int baudRate(const string baudRate){
@@ -50,7 +47,7 @@ int main(int argc, char* argv[]){
 
   struct arguments{
     bool debug;
-    bool useCompositeInput;
+    bool noVideo;
     bool drawLine;
     bool showExtras;
     double alt; 
@@ -78,7 +75,7 @@ int main(int argc, char* argv[]){
     ("arduino-port",
       po::value<string>(&arguments.arduinoPort)->default_value("/dev/tty.usbmodem1411"),
       "Specify arduino serial port")
-    ("composite","Use composite input instead of HDMI")
+    ("no-video","Don't use video")
     ("debug", "Display debug output")
     ("extras","Display intermediate steps")
     ("gps-baud",
@@ -125,7 +122,7 @@ int main(int argc, char* argv[]){
   arguments.alt = vm["alt"].as<double>();
   arguments.arduinoBaud= vm["arduino-baud"].as<string>();
   arguments.arduinoPort= vm["arduino-port"].as<string>();
-  arguments.useCompositeInput = vm.count("composite");
+  arguments.noVideo = vm.count("no-video");
   arguments.debug = vm.count("debug");
   arguments.drawLine = vm.count("line");
   arguments.gpsBaud = vm["gps-baud"].as<string>();
@@ -139,7 +136,7 @@ int main(int argc, char* argv[]){
   arguments.videoFilename = vm["video"].as<string>();
 
   if (arguments.scale <= 0.0){
-    if (arguments.useCompositeInput || arguments.videoFilename != ""){
+    if (arguments.videoFilename != ""){
       arguments.scale = 1.0;
     } else {
       arguments.scale = 0.5;
@@ -156,14 +153,11 @@ int main(int argc, char* argv[]){
   Theron::Address                           from;
   PlaneVisionMessage                        message;
 
-  int displayWindowWidth = 720;
-  int displayWindowHeight = 486;
+  int displayWindowWidth = 360;
+  int displayWindowHeight = 243;
 
 
-  if ( arguments.useCompositeInput ){
-    displayWindowWidth = 720 * arguments.scale;
-    displayWindowHeight = 486 * arguments.scale;
-  } else if ( arguments.videoFilename != "" ){
+  if ( arguments.videoFilename != "" ){
     VideoCapture cap(arguments.videoFilename);
     Mat firstFrame;
     cap >> firstFrame;
@@ -187,7 +181,9 @@ int main(int argc, char* argv[]){
     Log::log("\tSimulating flight using " + arguments.videoFilename);
   } else if (arguments.imageFilename != "") {
     Log::log("\tAnalyzing image: " + arguments.imageFilename);
-  } else {
+  } else if (arguments.noVideo){
+    Log::log("\tNot using video");
+  }else {
     Log::log("\tUsing live video");
   }
 
@@ -303,22 +299,24 @@ int main(int argc, char* argv[]){
         DEBUG("Saving current frame to: " + filename);
         cvSaveImage(filename.c_str(),message.result);
       }
-      cvReleaseImage(&message.result);
+      // cvReleaseImage(&message.result);
     } 
   };
 
   const auto t = thread(threadFunct);
 
+  /*
   Log::log("Spawning GPSReceiver Interface..."); 
   new GPSReceiverInterface(framework, arguments.gpsPort,
                            baudRate(arguments.gpsBaud),
                            georeferencingActor->GetAddress());
+                           */
   if (arguments.imageFilename == ""){
     Log::log("Spawning VideoReceiver Interface...");
-    if (arguments.videoFilename == ""){
+    if (arguments.videoFilename == "" and !arguments.noVideo){
       new VideoReceiverInterface(framework,
                                  frameAnalyzerActor->GetAddress());
-    } else {
+    } else if (!arguments.noVideo){
       new VideoReceiverInterface(
           framework,
           arguments.videoFilename,

@@ -26,6 +26,7 @@ MultimodalActor::MultimodalActor(Theron::Framework &framework,
   }
 void MultimodalActor::GPSHandler(const AbsolutePositionMessage &message,
     const Theron::Address){
+  
   DEBUG("AbsolutePositionMessage received");
   if (!message.positionLost){
     gpsLost = false;
@@ -48,6 +49,9 @@ void MultimodalActor::GPSHandler(const AbsolutePositionMessage &message,
 void MultimodalActor::VisionHandler(const RelativePositionMessage &message,
     const Theron::Address){
   DEBUG("RelativePositionMessage received");
+  static int num = 0;
+  num++;
+  if (num % 5 != 0) return;
   if (!message.positionLost){
     videoLost = false;
     useRSSI = false;

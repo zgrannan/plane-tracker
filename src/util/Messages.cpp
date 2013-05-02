@@ -11,11 +11,11 @@ vector<char> RelativePositionMessage::toBytes() const {
   vector<char> byteVector;
   string byteString;
   const int _pan = -(int)this->pan;
-  const int _tilt= -(int)this->tilt;
+  const int _tilt= (int)this->tilt;
   const string panS = (boost::format("%04d") % _pan).str();
   const string tiltS = (boost::format("%04d") % _tilt).str();
   if (!positionLost){
-    byteString = "#1 " + panS + " " + tiltS + "\n";
+    byteString = "#1 " + panS + " " + tiltS;
   } else {
     byteString = "";
   }
@@ -26,11 +26,11 @@ vector<char> AbsolutePositionMessage::toBytes() const{
   vector<char> byteVector;
   string byteString;
   const int _pan = -(int)this->pan;
-  const int _tilt= -(int)this->tilt;
+  const int _tilt= (int)this->tilt;
   const string panS = (boost::format("%04d") % _pan).str();
   const string tiltS = (boost::format("%04d") % _tilt).str();
   if (!positionLost){
-    byteString = "#0 " + panS + " " + tiltS + "\n";
+    byteString = "#0 " + panS + " " + tiltS;
   } else {
     byteString = "";
   }
@@ -38,7 +38,7 @@ vector<char> AbsolutePositionMessage::toBytes() const{
 }
 
 vector<char> UseRSSIMessage::toBytes() const{
-  const string byteString = "#2 0000 0000\n";
+  const string byteString = "#2 0000 0000";
   return vector<char>(byteString.begin(),byteString.end());
 }
 

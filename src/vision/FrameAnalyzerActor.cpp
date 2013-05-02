@@ -5,8 +5,8 @@
 #include "src/util/Log.h"
 #include <cv.h>
 
-#define CAMERA_H_FOV 12.8
-#define CAMERA_V_FOV 8.6
+#define CAMERA_H_FOV 64 
+#define CAMERA_V_FOV 35.2
 
 using namespace cv;
 

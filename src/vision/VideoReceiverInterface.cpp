@@ -24,7 +24,9 @@ void VideoReceiverInterface::cameraFunction(){
     capture >> temp;
     IplImage tempIpl = temp;
     image = new IplImage(tempIpl);
-    sendImage(cvCloneImage(image));
+    IplImage* halfImage = cvCreateImage(cvSize(image->width/2, image->height/2), image->depth, image->nChannels);
+    cvResize(image, halfImage);
+    sendImage(halfImage);
   }
 }
 
@@ -41,8 +43,7 @@ void VideoReceiverInterface::videoFunction(string videoFilename){
     if ( i > startFrame) {
       image = new IplImage(tempIpl); 
       sendImage(cvCloneImage(image));
-      usleep(1000000 / framerate);
-    }
+      usleep(1000000 / framerate); }
   }
 }
 
