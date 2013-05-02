@@ -35,6 +35,9 @@ class FrameAnalyzerActor : public Theron::Actor {
       void selectColor();
       void deselectColor();
 
+      double percentageSeen() const;
+      double averageDistance() const;
+
       void setEdgeThresholding(int thresholding){ vision->setEdgeThresholding(thresholding); }
       void setMinBlobSize(int blobSize){ 
         vision->setMinBlobSize(blobSize);
@@ -60,6 +63,9 @@ class FrameAnalyzerActor : public Theron::Actor {
     Option<int>sizeBoxToDraw = None<int>();
     unsigned int consecutiveLost = 0;
     list<PlaneVisionMessage> previousPlanes;
+    unsigned int numFrames = 0;
+    unsigned int identifiedFrames = 0;
+    double distanceSum = 0;
 
     void ImageHandler(const ImageMessage& message, const Theron::Address from);
     void BlobPositionHandler(const BlobPositionMessage& message, const Theron::Address from);

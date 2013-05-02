@@ -21,6 +21,9 @@ class MultimodalActor : public Theron::Actor {
   private:
     void GPSHandler(const AbsolutePositionMessage &message, const Theron::Address from);
     void VisionHandler(const RelativePositionMessage &message, const Theron::Address from);
+    AbsolutePositionMessage lastGPSMessage;
+    RelativePositionMessage lastVisionMessage;
+    boost::posix_time::ptime lastInstructionTime;
     int fd;
     bool useRSSI;
     bool videoLost;

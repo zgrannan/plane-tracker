@@ -7,10 +7,12 @@
 #include "src/perhaps/perhaps.h"
 //#include "src/perhaps/fun.cpp"
 #include <boost/lexical_cast.hpp>
+#include "boost/date_time/posix_time/posix_time.hpp"
 
 using namespace cvb;
 using namespace std;
 using namespace cv;
+using namespace boost::posix_time;
 
 void Vision::testRgbToHsv(){
   uchar r = 34, g = 52, b = 29;
@@ -184,6 +186,8 @@ PlaneVisionMessage Vision::findPlane(IplImage* image, double blobX, double blobY
 PlaneVisionMessage Vision::findPlane( IplImage* image,
     list<PlaneVisionMessage> previousPlanes){
 
+  auto start = microsec_clock::local_time();
+
   if(image == nullptr){
     return PlaneVisionMessage();
   }
@@ -192,6 +196,8 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
     PlaneVisionMessage result = findPlane(image,*blobXOption,*blobYOption);
     blobXOption = None<double>();
     blobYOption = None<double>();
+    auto end = microsec_clock::local_time();
+    DEBUG("Analyzed frame in: " + boost::lexical_cast<string>((end-start).total_milliseconds()) + " milliseconds");
     return result;
   }
 
@@ -249,7 +255,10 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
         Vision::rgbToHsv(color.val[0],color.val[1],color.val[2],h,s,v);
         double dColor = fabs(h - goodH); 
         if (dColor > 360.0 * (1.0 - colorThresh)) {
+          DEBUG("colorHue: " + boost::lexical_cast<string>(h) + " goodH" +
+                boost::lexical_cast<string>(goodH));
           DEBUG("Filtered blob by color: " + boost::lexical_cast<string>(dColor));
+          DEBUG("colorThresh: " + boost::lexical_cast<string>(colorThresh))
           continue;
         }
       } else if (!useColor) {
@@ -275,8 +284,12 @@ PlaneVisionMessage Vision::findPlane( IplImage* image,
       hasColor = true;
     }
     cvReleaseImage(&label);
+    auto end = microsec_clock::local_time();
+    DEBUG("Analyzed frame in: " + boost::lexical_cast<string>((end-start).total_milliseconds()) + " milliseconds");
     return PlaneVisionMessage(*bestCandidate,image,extras);
   } else {
+    auto end = microsec_clock::local_time();
+    DEBUG("Analyzed frame in: " + boost::lexical_cast<string>((end-start).total_milliseconds()) + " milliseconds");
     return PlaneVisionMessage(image,extras);
   }
 }

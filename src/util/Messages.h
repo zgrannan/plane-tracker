@@ -85,22 +85,40 @@ namespace Messages{
     public:
       const double pan, tilt;
       const bool positionLost;
+      PositionMessage(const double pan, const double tilt, const bool positionLost): pan(pan), tilt(tilt), positionLost(positionLost){}
       PositionMessage(const double pan, const double tilt): pan(pan), tilt(tilt), positionLost(false){}
       PositionMessage(): pan(0), tilt(0), positionLost(true){}
       virtual vector<char> toBytes() const = 0;
   };
 
-  class RelativePositionMessage: public PositionMessage{
-    public:
-      RelativePositionMessage(const double pan, const double tilt): PositionMessage(pan,tilt){}
-      RelativePositionMessage(): PositionMessage(){}
-      vector<char> toBytes() const;
-  };
 
   class AbsolutePositionMessage: public PositionMessage{
     public:
       AbsolutePositionMessage(const double pan, const double tilt): PositionMessage(pan,tilt){}
       AbsolutePositionMessage(): PositionMessage(){}
+      AbsolutePositionMessage operator=(const AbsolutePositionMessage& other){
+        if (other.positionLost){
+          return AbsolutePositionMessage();
+        } else {
+          return AbsolutePositionMessage(other.pan, other.tilt);
+        }
+      }
+      vector<char> toBytes() const;
+  };
+
+  class RelativePositionMessage: public PositionMessage{
+    public:
+      RelativePositionMessage(AbsolutePositionMessage current, AbsolutePositionMessage previous): 
+        PositionMessage(current.pan-previous.pan, current.tilt-previous.tilt, current.positionLost && previous.positionLost) {}
+      RelativePositionMessage(const double pan, const double tilt): PositionMessage(pan,tilt){}
+      RelativePositionMessage operator=(const RelativePositionMessage& other){
+        if (other.positionLost){
+          return RelativePositionMessage();
+        } else {
+          return RelativePositionMessage(other.pan, other.tilt);
+        }
+      }
+      RelativePositionMessage(): PositionMessage(){}
       vector<char> toBytes() const;
   };
 

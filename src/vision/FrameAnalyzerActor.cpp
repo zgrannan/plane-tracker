@@ -4,6 +4,7 @@
 #include "src/util/Messages.h"
 #include "src/util/Log.h"
 #include <cv.h>
+#include <boost/lexical_cast.hpp>
 
 #define CAMERA_H_FOV 64 
 #define CAMERA_V_FOV 35.2
@@ -21,6 +22,14 @@ void FrameAnalyzerActor::selectColor(){
 void FrameAnalyzerActor::deselectColor(){
   DEBUG("No longer using plane color");
   vision->setUseColor(false);
+}
+
+double FrameAnalyzerActor::percentageSeen() const {
+  return ((double) identifiedFrames / (double) numFrames) * 100.0;
+}
+
+double FrameAnalyzerActor::averageDistance() const {
+  return (distanceSum / (double) identifiedFrames) * 100.0;
 }
 
 void FrameAnalyzerActor::BlobPositionHandler(const BlobPositionMessage& message,
@@ -46,18 +55,9 @@ void FrameAnalyzerActor::ImageHandler(const ImageMessage& message, const Theron:
 }
 
 RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const ImageMessage& message){
-  IplImage* image;
-  if ( scale != 1.0){
-    image = cvCreateImage(cvSize(message.image->height * scale,
-                                       message.image->width * scale),
-                                       message.image->depth,
-                                       message.image->nChannels);
-    cvResize(message.image,image);
-    cvReleaseImage((IplImage**)&(message.image));
-  } else {
-    image = message.image;
-  }
 
+  numFrames++;
+  IplImage* image = message.image;
   PlaneVisionMessage data = vision->findPlane(image,previousPlanes);
 
   if (data.userHasConfirmed){
@@ -80,6 +80,7 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
 
   double pan = 0,tilt = 0;
   if (data.hasPlane){
+    identifiedFrames++;
     consecutiveLost = 0;
     previousPlanes.push_front(data);
     if ( previousPlanes.size() > planesToConsider ) {
@@ -87,6 +88,10 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
     }
     double dx = data.getDisplacement()[0];
     double dy = data.getDisplacement()[1];
+
+    double magnitude = sqrt(dx*dx+dy*dy);
+    distanceSum += magnitude;
+
     double centerX = data.result->width / 2;
     double centerY = data.result->height/ 2;
     pan = dx / data.result->width * CAMERA_H_FOV;
@@ -104,6 +109,9 @@ RelativePositionMessage FrameAnalyzerActor::calculateRelativePosition(const Imag
       previousPlanes.pop_back();
     }
   } 
+
+  DEBUG("Percentage identified: " + boost::lexical_cast<string>(percentageSeen()));
+  DEBUG("Average Distance: " + boost::lexical_cast<string>(averageDistance()));
   
   Send(data,imageViewer);
   if (data.hasPlane){

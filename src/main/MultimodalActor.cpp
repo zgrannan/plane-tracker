@@ -5,6 +5,7 @@
 #include "src/util/Log.h"
 
 using namespace boost;
+using namespace boost::posix_time;
 
 MultimodalActor::MultimodalActor(Theron::Framework &framework, 
                                  const string serialPort,
@@ -29,6 +30,7 @@ void MultimodalActor::GPSHandler(const AbsolutePositionMessage &message,
   
   DEBUG("AbsolutePositionMessage received");
   if (!message.positionLost){
+    lastGPSMessage = message;
     gpsLost = false;
     useRSSI = false;
     DEBUG("Pan: " + lexical_cast<string>(message.pan) + " Tilt: " + lexical_cast<string>(message.tilt));
@@ -49,9 +51,13 @@ void MultimodalActor::GPSHandler(const AbsolutePositionMessage &message,
 void MultimodalActor::VisionHandler(const RelativePositionMessage &message,
     const Theron::Address){
   DEBUG("RelativePositionMessage received");
-  static int num = 0;
-  num++;
-  if (num % 5 != 0) return;
+  if (!message.positionLost && !lastGPSMessage.positionLost){
+    if ( (message.pan > 0 ^ lastGPSMessage.pan > 0) ||
+         (message.tilt > 0 ^ lastGPSMessage.tilt > 0 )){
+      Log::warn("GPS and Video contradict each other. You should probably disable one.");
+    }
+  }
+  lastVisionMessage = message;
   if (!message.positionLost){
     videoLost = false;
     useRSSI = false;
@@ -75,10 +81,16 @@ void MultimodalActor::VisionHandler(const RelativePositionMessage &message,
 }
 
 void MultimodalActor::instructGimbal(const PositionMessage &message){
+  auto now = microsec_clock::local_time();
+  if ((now - lastInstructionTime).total_milliseconds() < 100){
+    DEBUG("Not instructing gimbal, last instruction was less than 100ms ago");
+    return;
+  } 
   const vector<char> bytes = message.toBytes();
   const char* const bytePtr = &bytes[0];
   DEBUG(string("Writing message: ") + string(bytes.begin(),bytes.end()));
   write(fd, bytePtr, bytes.size());
+  lastInstructionTime = now;
 }
 
 void MultimodalActor::setAmplification(const double amplification){
