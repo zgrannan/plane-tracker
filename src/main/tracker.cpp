@@ -28,7 +28,7 @@ namespace po = boost::program_options;
 /**
  * Displays the image on the screen for debugging purposes
  */
-void showImage(ImageView* const imageView, IplImage* image, const int width, const int height){
+void showImage(ImageView* const imageView, IplImage* image) {
   imageView->sendImage(image);
 }
 
@@ -54,7 +54,6 @@ int main(int argc, char* argv[]){
     double cvScale;
     double lat; 
     double lon; 
-    double scale; 
     string arduinoBaud;
     string gpsBaud;
     string arduinoPort; 
@@ -98,7 +97,6 @@ int main(int argc, char* argv[]){
     ("record",
       po::value<string>(&arguments.recordDirectory)->default_value(""),
       "Record to directory [arg]")
-    ("scale",po::value<double>(&arguments.scale)->default_value(0.0),"Video scale")
     ("video",
       po::value<string>(&arguments.videoFilename)->default_value(""),
       "Simulate using video file [arg]");
@@ -131,17 +129,8 @@ int main(int argc, char* argv[]){
   arguments.lat = vm["lat"].as<double>();
   arguments.lon = vm["lon"].as<double>();
   arguments.recordDirectory = vm["record"].as<string>();
-  arguments.scale = vm["scale"].as<double>();
   arguments.showExtras = vm.count("extras");
   arguments.videoFilename = vm["video"].as<string>();
-
-  if (arguments.scale <= 0.0){
-    if (arguments.videoFilename != ""){
-      arguments.scale = 1.0;
-    } else {
-      arguments.scale = 0.5;
-    }
-  }
 
   /* Initialize variables */
   Theron::Receiver                          imageReceiver;
@@ -161,8 +150,8 @@ int main(int argc, char* argv[]){
     VideoCapture cap(arguments.videoFilename);
     Mat firstFrame;
     cap >> firstFrame;
-    displayWindowWidth = firstFrame.cols * arguments.scale;
-    displayWindowHeight = firstFrame.rows * arguments.scale;
+    displayWindowWidth = firstFrame.cols;
+    displayWindowHeight = firstFrame.rows;
   }
 
   imageReceiver.RegisterHandler(&imageCatcher,&Theron::Catcher<PlaneVisionMessage>::Push);
@@ -224,7 +213,7 @@ int main(int argc, char* argv[]){
   Log::log("Spawning Frame Analyzer Actor...");
   frameAnalyzerActor = new FrameAnalyzerActor(
       framework,
-      arguments.scale,
+      1,
       1,
       arguments.drawLine,
       vision,
@@ -253,7 +242,7 @@ int main(int argc, char* argv[]){
       extraViews.push_back(new ImageView(&ui,
                                          displayWindowWidth,
                                          displayWindowHeight,
-                                         arguments.scale,
+                                         1,
                                          frameAnalyzerActor->GetAddress(),
                                          framework));
       extraViews[i]->show();
@@ -263,7 +252,7 @@ int main(int argc, char* argv[]){
   ImageView* const imageView = new ImageView(&ui,
                                        displayWindowWidth,
                                        displayWindowHeight,
-                                       arguments.scale,
+                                       1,
                                        frameAnalyzerActor->GetAddress(),
                                        framework);
   imageView->show();
@@ -288,18 +277,16 @@ int main(int argc, char* argv[]){
 
       for (unsigned int i = 0; i < message.extras.size(); i++){
         auto extra = message.extras[i];
-        showImage(extraViews[i],extra.image, displayWindowWidth, displayWindowHeight);
-        cvReleaseImage(&extra.image);
+        showImage(extraViews[i],extra.image);
       }
 
-      showImage(imageView, message.result, displayWindowWidth, displayWindowHeight);
+      showImage(imageView, message.result);
       if (arguments.recordDirectory != "") {
         const string frame = (boost::format("%06d") % currentFrame).str();
         const string filename = arguments.recordDirectory + "/" + frame + ".bmp";
         DEBUG("Saving current frame to: " + filename);
         cvSaveImage(filename.c_str(),message.result);
       }
-      // cvReleaseImage(&message.result);
     } 
   };
 
